@@ -1,0 +1,17 @@
+package org.example.rgybackend.Entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UrlData {
+    private Long urlid;
+    private String type;
+    private String title;
+    private String img;
+    private String description;
+    private String url;
+}
