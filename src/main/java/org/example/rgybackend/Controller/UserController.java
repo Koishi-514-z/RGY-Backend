@@ -1,9 +1,9 @@
 package org.example.rgybackend.Controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.example.rgybackend.Entity.Profile;
+import org.example.rgybackend.Entity.SimplifiedProfile;
 import org.example.rgybackend.Entity.User;
 import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.ForbiddenException;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpSession;
 
-
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -27,37 +26,51 @@ public class UserController {
 
     @GetMapping("/login")
     public boolean login(@RequestParam String username, @RequestParam String password, HttpSession session) {
+        boolean result = userService.verifyPasswordByName(username, password);
+        if(result) {
+            String userid = userService.getProfileByName(username).getUserid();
+            session.setAttribute("user", userid);
+        }
+        return result;
+    }
+
+    @GetMapping("/logout")
+    public boolean logout(HttpSession session) {
+        session.invalidate();
         return true;
     }
 
     @GetMapping("/existed")
     public boolean userExisted(@RequestParam String username) {
-        return false;
+        return userService.userExisted(username);
     }
 
     @GetMapping("/get")
     public Profile getUserProfile(HttpSession session) {
-        return new Profile("123456789", "Koishi", "zsb_sjtu@sjtu.edu.cn", null, null);
+        String userid = (String)session.getAttribute("user");
+        return userService.getUserProfile(userid);
+    }
+
+    @GetMapping("/getsim")
+    public SimplifiedProfile getSimplifiedProfile(@RequestParam String userid) {
+        return userService.getSimplifiedProfile(userid);
     }
 
     @GetMapping("/getintm")
-    public List<Profile> getIntimateUsers() {
-        List<Profile> profiles = new ArrayList<>();
-        profiles.add(new Profile("123456789", "Koishi", "zsb_sjtu@sjtu.edu.cn", null, null));
-        profiles.add(new Profile("123456789", "Koishi", "zsb_sjtu@sjtu.edu.cn", null, null));
-        profiles.add(new Profile("123456789", "Koishi", "zsb_sjtu@sjtu.edu.cn", null, null));
-        profiles.add(new Profile("123456789", "Koishi", "zsb_sjtu@sjtu.edu.cn", null, null));
-        return profiles;
+    public List<SimplifiedProfile> getIntimateUsers(HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return userService.getIntimateUsers(userid);
     }
 
     @GetMapping("/verify/pwd")
-    public boolean verifyPassword(@RequestParam String password) {
-        return true;
+    public boolean verifyPassword(@RequestParam String password, HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return userService.verifyPassword(userid, password);
     }
 
     @PostMapping("/add")
     public boolean addUser(@RequestBody User user) {
-        return true;
+        return userService.addUser(user);
     }
 
     @PutMapping("/profile/update")
@@ -66,11 +79,12 @@ public class UserController {
         if(!userid.equals(profile.getUserid())) {
             throw new ForbiddenException("无权修改该用户信息");
         }
-        return true;
+        return userService.updateProfile(profile);
     }
 
     @PutMapping("pwd")
-    public boolean updatePassword(@RequestParam String password) {
-        return true;
+    public boolean updatePassword(@RequestParam String password, HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return userService.updatePassword(userid, password);
     }
 }

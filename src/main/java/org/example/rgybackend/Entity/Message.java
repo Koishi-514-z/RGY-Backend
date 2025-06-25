@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Diary {
-    private Long diaryid;
-    private String userid;
+public class Message {
+    private Long messageid;
+    private Long role;
     private Long timestamp;
-    private Long label;
     private String content;
 }

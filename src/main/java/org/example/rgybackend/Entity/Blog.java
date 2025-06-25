@@ -1,6 +1,5 @@
 package org.example.rgybackend.Entity;
 
-import java.util.Date;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class Blog {
     private Long blogid;
     private String userid;
-    private Date timestamp;
+    private Long timestamp;
     private Long likeNum;
     private String title;
     private String cover;

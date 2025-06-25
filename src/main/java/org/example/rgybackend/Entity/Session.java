@@ -1,5 +1,7 @@
 package org.example.rgybackend.Entity;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Diary {
-    private Long diaryid;
-    private String userid;
+public class Session {
+    private Long sessionid;
+    private SimplifiedProfile myself;
+    private SimplifiedProfile other;
     private Long timestamp;
-    private Long label;
-    private String content;
+    private List<Message> messages;
 }

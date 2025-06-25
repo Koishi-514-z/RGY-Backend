@@ -1,11 +1,11 @@
 package org.example.rgybackend.Controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.example.rgybackend.Entity.Diary;
 import org.example.rgybackend.Entity.Emotion;
+import org.example.rgybackend.Entity.EmotionData;
 import org.example.rgybackend.Entity.Tag;
 import org.example.rgybackend.Entity.UrlData;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +22,7 @@ public class EmotionController {
     
     @GetMapping("/tag/get")
     public Emotion getEmotion() {
-        return new Emotion(1L, "123456789", new Date(), new Tag(2L, "沮丧"), 2L);
+        return new Emotion(1L, "123456789", 6519874198741L, new Tag(2L, "沮丧"), 2L);
     }
 
     @GetMapping("/tag/getall")
@@ -52,7 +52,33 @@ public class EmotionController {
 
     @GetMapping("/diary/get")
     public Diary getDiary(HttpSession session) {
-        return new Diary(1L, "123456789", new Date(), 0L, "Hello World!");
+        return new Diary(1L, "123456789", 984650268L, 0L, "Hello World!");
+    }
+
+    @GetMapping("/data/getweek")
+    public List<EmotionData> getWeekData(HttpSession session) {
+        List<EmotionData> datas = new ArrayList<>();
+        datas.add(new EmotionData(1L, 1L));
+        datas.add(new EmotionData(2L, 2L));
+        datas.add(new EmotionData(3L, 3L));
+        datas.add(new EmotionData(4L, 4L));
+        datas.add(new EmotionData(5L, 5L));
+        datas.add(new EmotionData(6L, 3L));
+        datas.add(new EmotionData(7L, 2L));
+        return datas;
+    }
+
+    @GetMapping("/data/getmonth")
+    public List<EmotionData> getMonthData(HttpSession session) {
+        List<EmotionData> datas = new ArrayList<>();
+        datas.add(new EmotionData(1L, 1L));
+        datas.add(new EmotionData(2L, 2L));
+        datas.add(new EmotionData(3L, 3L));
+        datas.add(new EmotionData(4L, 4L));
+        datas.add(new EmotionData(5L, 5L));
+        datas.add(new EmotionData(6L, 3L));
+        datas.add(new EmotionData(7L, 2L));
+        return datas;
     }
 
     @PutMapping("/tag/update")

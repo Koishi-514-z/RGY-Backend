@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Diary {
-    private Long diaryid;
-    private String userid;
-    private Long timestamp;
-    private Long label;
-    private String content;
+public class EmotionData {
+    private Long time;
+    private Long score;
 }
