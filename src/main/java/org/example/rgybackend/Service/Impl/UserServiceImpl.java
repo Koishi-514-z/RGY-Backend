@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.example.rgybackend.DAO.UserAuthDAO;
 import org.example.rgybackend.DAO.UserDAO;
-import org.example.rgybackend.Model.Profile;
-import org.example.rgybackend.Model.SimplifiedProfile;
-import org.example.rgybackend.Model.User;
+import org.example.rgybackend.Model.ProfileModel;
+import org.example.rgybackend.Model.SimplifiedProfileModel;
+import org.example.rgybackend.Model.UserModel;
 import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.NotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
         if(!exists) {
             return false;
         }
-        Profile profile = userDAO.getByName(username);
+        ProfileModel profile = userDAO.getByName(username);
         String userid = profile.getUserid();
         return userAuthDAO.pwdMatch(userid, password);
     }
@@ -38,27 +38,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Profile getUserProfile(String userid) {
+    public ProfileModel getUserProfile(String userid) {
         return userDAO.get(userid);
     }
 
     @Override
-    public Profile getProfileByName(String username) {
+    public ProfileModel getProfileByName(String username) {
         return userDAO.getByName(username);
     }
 
     @Override
-    public SimplifiedProfile getSimplifiedProfile(String userid) {
+    public SimplifiedProfileModel getSimplifiedProfile(String userid) {
         return userDAO.getSimplified(userid);
     }
 
     @Override
-    public List<SimplifiedProfile> getIntimateUsers(String userid) {
-        List<SimplifiedProfile> simplifiedProfiles = new ArrayList<>();
-        simplifiedProfiles.add(new SimplifiedProfile("123456789", "Koishi_plus", null, null));
-        simplifiedProfiles.add(new SimplifiedProfile("123456789", "Koishi_plus", null, null));
-        simplifiedProfiles.add(new SimplifiedProfile("123456789", "Koishi_plus", null, null));
-        simplifiedProfiles.add(new SimplifiedProfile("123456789", "Koishi_plus", null, null));
+    public List<SimplifiedProfileModel> getIntimateUsers(String userid) {
+        List<SimplifiedProfileModel> simplifiedProfiles = new ArrayList<>();
+        simplifiedProfiles.add(new SimplifiedProfileModel("123456789", "Koishi_plus", null, null));
+        simplifiedProfiles.add(new SimplifiedProfileModel("123456789", "Koishi_plus", null, null));
+        simplifiedProfiles.add(new SimplifiedProfileModel("123456789", "Koishi_plus", null, null));
+        simplifiedProfiles.add(new SimplifiedProfileModel("123456789", "Koishi_plus", null, null));
         return simplifiedProfiles;
     }
 
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean addUser(User user) {
+    public boolean addUser(UserModel user) {
         boolean result = true;
         result = result && userDAO.add(user.getProfile());
         result = result && userAuthDAO.addAuth(user.getProfile().getUserid(), user.getStuid(), user.getPassword());
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateProfile(Profile profile) {
+    public boolean updateProfile(ProfileModel profile) {
         return userDAO.update(profile);
     }
 

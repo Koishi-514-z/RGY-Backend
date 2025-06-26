@@ -3,9 +3,9 @@ package org.example.rgybackend.Controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.example.rgybackend.Model.Profile;
-import org.example.rgybackend.Model.SimplifiedProfile;
-import org.example.rgybackend.Model.User;
+import org.example.rgybackend.Model.ProfileModel;
+import org.example.rgybackend.Model.SimplifiedProfileModel;
+import org.example.rgybackend.Model.UserModel;
 import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.ForbiddenException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,27 +49,27 @@ public class UserController {
     }
 
     @GetMapping("/get")
-    public Profile getUserProfile(HttpSession session) {
+    public ProfileModel getUserProfile(HttpSession session) {
         // String userid = (String)session.getAttribute("user");
         // return userService.getUserProfile(userid);
-        return new Profile("123456789", "Koishi", "zsb_sjtu@sjtu.edu.cn", null, null);
+        return new ProfileModel("123456789", "Koishi", "zsb_sjtu@sjtu.edu.cn", null, null);
     }
 
     @GetMapping("/getsim")
-    public SimplifiedProfile getSimplifiedProfile(@RequestParam String userid) {
+    public SimplifiedProfileModel getSimplifiedProfile(@RequestParam String userid) {
         // return userService.getSimplifiedProfile(userid);
-        return new SimplifiedProfile("12345678", "Koishi_Plus", null, null);
+        return new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null);
     }
 
     @GetMapping("/getintm")
-    public List<SimplifiedProfile> getIntimateUsers(HttpSession session) {
+    public List<SimplifiedProfileModel> getIntimateUsers(HttpSession session) {
         // String userid = (String)session.getAttribute("user");
         // return userService.getIntimateUsers(userid);
-        List<SimplifiedProfile> simplifiedProfiles = new ArrayList<>();
-        simplifiedProfiles.add(new SimplifiedProfile("12345678", "Koishi_Plus", null, null));
-        simplifiedProfiles.add(new SimplifiedProfile("12345678", "Koishi_Plus", null, null));
-        simplifiedProfiles.add(new SimplifiedProfile("12345678", "Koishi_Plus", null, null));
-        simplifiedProfiles.add(new SimplifiedProfile("12345678", "Koishi_Plus", null, null));
+        List<SimplifiedProfileModel> simplifiedProfiles = new ArrayList<>();
+        simplifiedProfiles.add(new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null));
+        simplifiedProfiles.add(new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null));
+        simplifiedProfiles.add(new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null));
+        simplifiedProfiles.add(new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null));
         return simplifiedProfiles;
     }
 
@@ -81,13 +81,13 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public boolean addUser(@RequestBody User user) {
+    public boolean addUser(@RequestBody UserModel user) {
         // return userService.addUser(user);
         return true;
     }
 
     @PutMapping("/profile/update")
-    public boolean updateProfile(@RequestBody Profile profile, HttpSession session) {
+    public boolean updateProfile(@RequestBody ProfileModel profile, HttpSession session) {
         // String userid = (String)session.getAttribute("user");
         // if(!userid.equals(profile.getUserid())) {
         //     throw new ForbiddenException("无权修改该用户信息");

@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Session {
+public class SessionModel {
     private Long sessionid;
-    private SimplifiedProfile myself;
-    private SimplifiedProfile other;
+    private SimplifiedProfileModel myself;
+    private SimplifiedProfileModel other;
     private Long timestamp;
-    private List<Message> messages;
+    private List<MessageModel> messages;
 }

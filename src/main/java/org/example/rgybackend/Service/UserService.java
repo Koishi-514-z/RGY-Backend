@@ -2,28 +2,28 @@ package org.example.rgybackend.Service;
 
 import java.util.List;
 
-import org.example.rgybackend.Model.Profile;
-import org.example.rgybackend.Model.SimplifiedProfile;
-import org.example.rgybackend.Model.User;
+import org.example.rgybackend.Model.ProfileModel;
+import org.example.rgybackend.Model.SimplifiedProfileModel;
+import org.example.rgybackend.Model.UserModel;
 
 public interface UserService {
     boolean verifyPasswordByName(String username, String password);
 
     boolean userExisted(String username);
 
-    Profile getUserProfile(String userid);
+    ProfileModel getUserProfile(String userid);
 
-    Profile getProfileByName(String username);
+    ProfileModel getProfileByName(String username);
 
-    SimplifiedProfile getSimplifiedProfile(String userid);
+    SimplifiedProfileModel getSimplifiedProfile(String userid);
 
-    List<SimplifiedProfile> getIntimateUsers(String userid);
+    List<SimplifiedProfileModel> getIntimateUsers(String userid);
 
     boolean verifyPassword(String userid, String password);
 
-    boolean addUser(User user);
+    boolean addUser(UserModel user);
 
-    boolean updateProfile(Profile profile);
+    boolean updateProfile(ProfileModel profile);
 
     boolean updatePassword(String userid, String password);
 }

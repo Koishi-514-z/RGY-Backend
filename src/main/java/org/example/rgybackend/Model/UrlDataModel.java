@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UrlData {
+public class UrlDataModel {
     private Long urlid;
     private String type;
     private String title;

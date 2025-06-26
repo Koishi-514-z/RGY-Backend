@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SessionTag {
-    private Long sessionid;
-    private SimplifiedProfile myself;
-    private SimplifiedProfile other;
+public class ReplyModel {
+    private Long replyid;
+    private Long blogid;
+    private String userid;
     private Long timestamp;
+    private String content;
 }

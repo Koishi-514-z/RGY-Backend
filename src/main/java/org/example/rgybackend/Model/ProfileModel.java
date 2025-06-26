@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Profile {
+public class ProfileModel {
     private String userid;
     private String username;
     private String email;
     private String avatar;
     private String note;
 
-    public Profile(UserProfile userProfileDTO) {
+    public ProfileModel(UserProfile userProfileDTO) {
         this.userid = userProfileDTO.getUserid();
         this.username = userProfileDTO.getUsername();
         this.email = userProfileDTO.getEmail();

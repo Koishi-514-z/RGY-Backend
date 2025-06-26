@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tag {
-    private Long id;
-    private String content;
+public class EmotionModel {
+    private Long emotionid;
+    private String userid;
+    private Long timestamp;
+    private TagModel tag;
+    private Long score;
 }

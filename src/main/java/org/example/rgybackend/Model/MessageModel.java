@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmotionData {
-    private Long time;
-    private Long score;
+public class MessageModel {
+    private Long messageid;
+    private Long role;
+    private Long timestamp;
+    private String content;
 }

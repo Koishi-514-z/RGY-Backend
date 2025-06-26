@@ -2,25 +2,25 @@ package org.example.rgybackend.DAO;
 
 import java.util.List;
 
-import org.example.rgybackend.Model.Profile;
-import org.example.rgybackend.Model.SimplifiedProfile;
+import org.example.rgybackend.Model.ProfileModel;
+import org.example.rgybackend.Model.SimplifiedProfileModel;
 
 public interface UserDAO {
     boolean existed(String userid);
 
     boolean existedByName(String username);
 
-    List<Profile> getAll();
+    List<ProfileModel> getAll();
 
-    Profile get(String userid);
+    ProfileModel get(String userid);
 
-    Profile getByName(String username);
+    ProfileModel getByName(String username);
 
-    SimplifiedProfile getSimplified(String userid);
+    SimplifiedProfileModel getSimplified(String userid);
 
-    boolean add(Profile profile);
+    boolean add(ProfileModel profile);
 
-    boolean update(Profile profile);
+    boolean update(ProfileModel profile);
 
     boolean remove(String userid);
 }

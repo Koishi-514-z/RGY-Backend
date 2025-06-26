@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Message {
-    private Long messageid;
-    private Long role;
+public class SessionTagModel {
+    private Long sessionid;
+    private SimplifiedProfileModel myself;
+    private SimplifiedProfileModel other;
     private Long timestamp;
-    private String content;
 }

@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SimplifiedProfile {
-    private String userid;
-    private String username;
-    private String avatar;
-    private String note;
+public class UserModel {
+    private String password;
+    private String stuid;
+    private ProfileModel profile;
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Blog {
+public class BlogModel {
     private Long blogid;
     private String userid;
     private Long timestamp;
@@ -18,5 +18,5 @@ public class Blog {
     private String cover;
     private String content;
     private List<String> tags;
-    private List<Reply> replies;
+    private List<ReplyModel> replies;
 }

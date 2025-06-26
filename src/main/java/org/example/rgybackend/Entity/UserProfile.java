@@ -1,6 +1,6 @@
 package org.example.rgybackend.Entity;
 
-import org.example.rgybackend.Model.Profile;
+import org.example.rgybackend.Model.ProfileModel;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -37,7 +37,7 @@ public class UserProfile {
     @Column(name = "note")
     private String note;
 
-    public UserProfile(Profile profile) {
+    public UserProfile(ProfileModel profile) {
         this.userid = profile.getUserid();
         this.username = profile.getUsername();
         this.email = profile.getEmail();
