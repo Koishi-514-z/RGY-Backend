@@ -13,16 +13,16 @@ import jakarta.servlet.http.HttpSession;
 public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
-        if("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            return true;
-        }
-        HttpSession session = request.getSession(false);
-        if(session == null || session.getAttribute("user") == null) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\":\"UNAUTHORIZED\",\"code\":401}");
-            return false;
-        }
+        // if("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+        //     return true;
+        // }
+        // HttpSession session = request.getSession(false);
+        // if(session == null || session.getAttribute("user") == null) {
+        //     response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        //     response.setContentType("application/json");
+        //     response.getWriter().write("{\"error\":\"UNAUTHORIZED\",\"code\":401}");
+        //     return false;
+        // }
         return true;
     }
 }

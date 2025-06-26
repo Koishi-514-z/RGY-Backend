@@ -3,7 +3,7 @@ package org.example.rgybackend.DAO.Impl;
 import java.util.Optional;
 
 import org.example.rgybackend.DAO.UserAuthDAO;
-import org.example.rgybackend.Entity.DTO.UserAuthDTO;
+import org.example.rgybackend.Entity.UserAuth;
 import org.example.rgybackend.Repository.UserAuthRepository;
 import org.example.rgybackend.Utils.NotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +20,11 @@ public class UserAuthDAOImpl implements UserAuthDAO {
 
     @Override
     public boolean pwdMatch(String userid, String password) {
-        Optional<UserAuthDTO> userAuthOptional = userAuthRepository.findById(userid);
+        Optional<UserAuth> userAuthOptional = userAuthRepository.findById(userid);
         if(userAuthOptional.isEmpty()) {
             return false;
         }
-        UserAuthDTO userAuthDTO = userAuthOptional.get();
+        UserAuth userAuthDTO = userAuthOptional.get();
         return passwordEncoder.matches(password, userAuthDTO.getPassword());
     }
 
@@ -34,7 +34,7 @@ public class UserAuthDAOImpl implements UserAuthDAO {
             throw new RuntimeException("Duplicate user, userid: " + userid);
         }
         String encodedPassword = passwordEncoder.encode(password);
-        UserAuthDTO userAuthDTO = new UserAuthDTO(userid, stuid, encodedPassword);
+        UserAuth userAuthDTO = new UserAuth(userid, stuid, encodedPassword);
         userAuthRepository.save(userAuthDTO);
         return true;
     }
@@ -44,11 +44,11 @@ public class UserAuthDAOImpl implements UserAuthDAO {
         if(!userAuthRepository.existsById(userid)) {
             throw new NotExistException("User not exists, userid: " + userid);
         }
-        Optional<UserAuthDTO> userAuthOptional = userAuthRepository.findById(userid);
+        Optional<UserAuth> userAuthOptional = userAuthRepository.findById(userid);
         if(userAuthOptional.isEmpty()) {
             return false;
         }
-        UserAuthDTO userAuthDTO = userAuthOptional.get();
+        UserAuth userAuthDTO = userAuthOptional.get();
         userAuthDTO.setPassword(password);
         userAuthRepository.save(userAuthDTO);
         return true;

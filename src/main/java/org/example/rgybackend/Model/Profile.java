@@ -1,6 +1,6 @@
-package org.example.rgybackend.Entity;
+package org.example.rgybackend.Model;
 
-import org.example.rgybackend.Entity.DTO.UserProfileDTO;
+import org.example.rgybackend.Entity.UserProfile;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +16,7 @@ public class Profile {
     private String avatar;
     private String note;
 
-    public Profile(UserProfileDTO userProfileDTO) {
+    public Profile(UserProfile userProfileDTO) {
         this.userid = userProfileDTO.getUserid();
         this.username = userProfileDTO.getUsername();
         this.email = userProfileDTO.getEmail();

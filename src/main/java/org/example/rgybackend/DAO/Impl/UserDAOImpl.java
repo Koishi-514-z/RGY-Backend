@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.example.rgybackend.DAO.UserDAO;
-import org.example.rgybackend.Entity.Profile;
-import org.example.rgybackend.Entity.SimplifiedProfile;
-import org.example.rgybackend.Entity.DTO.UserProfileDTO;
+import org.example.rgybackend.Entity.UserProfile;
+import org.example.rgybackend.Model.Profile;
+import org.example.rgybackend.Model.SimplifiedProfile;
 import org.example.rgybackend.Repository.UserRepository;
 import org.example.rgybackend.Utils.NotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +30,9 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public List<Profile> getAll() {
-        List<UserProfileDTO> userProfileDTOs = userRepository.findAll();
+        List<UserProfile> userProfileDTOs = userRepository.findAll();
         List<Profile> profiles = new ArrayList<>();
-        for(UserProfileDTO userProfileDTO : userProfileDTOs) {
+        for(UserProfile userProfileDTO : userProfileDTOs) {
             profiles.add(new Profile(userProfileDTO));
         }
         return profiles;
@@ -40,25 +40,25 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public Profile get(String userid) {
-        Optional<UserProfileDTO> profileOptional = userRepository.findById(userid);
+        Optional<UserProfile> profileOptional = userRepository.findById(userid);
         if(profileOptional.isEmpty()) {
             throw new NotExistException("User not exists, userid: " + userid);
         }
-        UserProfileDTO userProfileDTO = profileOptional.get();
+        UserProfile userProfileDTO = profileOptional.get();
         Profile profile = new Profile(userProfileDTO);
         return profile;
     }
 
     @Override
     public Profile getByName(String username) {
-        List<UserProfileDTO> userProfileDTOs = userRepository.findByUsername(username);
+        List<UserProfile> userProfileDTOs = userRepository.findByUsername(username);
         if(userProfileDTOs.size() == 0) {
             throw new NotExistException("User not exists, username: " + username);
         }
         if(userProfileDTOs.size() > 1) {
             throw new RuntimeException("Duplicate user, username: " + username);
         }
-        UserProfileDTO userProfileDTO = userProfileDTOs.get(0);
+        UserProfile userProfileDTO = userProfileDTOs.get(0);
         return new Profile(userProfileDTO);
     }
 
@@ -73,7 +73,7 @@ public class UserDAOImpl implements UserDAO {
         if(existed(userid)) {
             throw new RuntimeException("Duplicate user, userid: " + userid);
         }
-        UserProfileDTO userProfileDTO = new UserProfileDTO(profile);
+        UserProfile userProfileDTO = new UserProfile(profile);
         userRepository.save(userProfileDTO);
         return true;
     }
@@ -84,7 +84,7 @@ public class UserDAOImpl implements UserDAO {
         if(!existed(userid)) {
             throw new NotExistException("User not exists, userid: " + userid);
         }
-        UserProfileDTO userProfileDTO = new UserProfileDTO(profile);
+        UserProfile userProfileDTO = new UserProfile(profile);
         userRepository.save(userProfileDTO);
         return true;
     }

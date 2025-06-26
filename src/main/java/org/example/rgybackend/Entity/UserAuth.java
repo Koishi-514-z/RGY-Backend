@@ -1,4 +1,4 @@
-package org.example.rgybackend.Entity.DTO;
+package org.example.rgybackend.Entity;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAuthDTO {
+public class UserAuth {
     @Id
     @Column(name = "userid")
     private String userid;

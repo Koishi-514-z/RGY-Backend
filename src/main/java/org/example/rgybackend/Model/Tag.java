@@ -1,4 +1,4 @@
-package org.example.rgybackend.Entity.DTO;
+package org.example.rgybackend.Model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StringDTO {
-    private String str;
+public class Tag {
+    private Long id;
+    private String content;
 }

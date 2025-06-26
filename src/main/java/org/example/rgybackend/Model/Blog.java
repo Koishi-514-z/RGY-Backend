@@ -1,4 +1,4 @@
-package org.example.rgybackend.Entity;
+package org.example.rgybackend.Model;
 
 import java.util.List;
 

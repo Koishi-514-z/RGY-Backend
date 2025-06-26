@@ -3,11 +3,11 @@ package org.example.rgybackend.Controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.example.rgybackend.Entity.Diary;
-import org.example.rgybackend.Entity.Emotion;
-import org.example.rgybackend.Entity.EmotionData;
-import org.example.rgybackend.Entity.Tag;
-import org.example.rgybackend.Entity.UrlData;
+import org.example.rgybackend.Model.Diary;
+import org.example.rgybackend.Model.Emotion;
+import org.example.rgybackend.Model.EmotionData;
+import org.example.rgybackend.Model.Tag;
+import org.example.rgybackend.Model.UrlData;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;

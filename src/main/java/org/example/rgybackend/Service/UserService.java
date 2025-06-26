@@ -2,9 +2,9 @@ package org.example.rgybackend.Service;
 
 import java.util.List;
 
-import org.example.rgybackend.Entity.Profile;
-import org.example.rgybackend.Entity.SimplifiedProfile;
-import org.example.rgybackend.Entity.User;
+import org.example.rgybackend.Model.Profile;
+import org.example.rgybackend.Model.SimplifiedProfile;
+import org.example.rgybackend.Model.User;
 
 public interface UserService {
     boolean verifyPasswordByName(String username, String password);

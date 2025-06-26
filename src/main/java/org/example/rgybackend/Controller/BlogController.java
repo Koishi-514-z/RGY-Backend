@@ -3,7 +3,7 @@ package org.example.rgybackend.Controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.example.rgybackend.Entity.Blog;
+import org.example.rgybackend.Model.Blog;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

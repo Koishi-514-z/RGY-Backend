@@ -1,6 +1,6 @@
-package org.example.rgybackend.Entity.DTO;
+package org.example.rgybackend.Entity;
 
-import org.example.rgybackend.Entity.Profile;
+import org.example.rgybackend.Model.Profile;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileDTO {
+public class UserProfile {
     @Id
     @Column(name = "userid")
     private String userid;
@@ -37,7 +37,7 @@ public class UserProfileDTO {
     @Column(name = "note")
     private String note;
 
-    public UserProfileDTO(Profile profile) {
+    public UserProfile(Profile profile) {
         this.userid = profile.getUserid();
         this.username = profile.getUsername();
         this.email = profile.getEmail();

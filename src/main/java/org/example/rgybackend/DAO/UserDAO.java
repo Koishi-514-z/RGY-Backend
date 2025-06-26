@@ -2,8 +2,8 @@ package org.example.rgybackend.DAO;
 
 import java.util.List;
 
-import org.example.rgybackend.Entity.Profile;
-import org.example.rgybackend.Entity.SimplifiedProfile;
+import org.example.rgybackend.Model.Profile;
+import org.example.rgybackend.Model.SimplifiedProfile;
 
 public interface UserDAO {
     boolean existed(String userid);

@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.example.rgybackend.DAO.UserAuthDAO;
 import org.example.rgybackend.DAO.UserDAO;
-import org.example.rgybackend.Entity.Profile;
-import org.example.rgybackend.Entity.SimplifiedProfile;
-import org.example.rgybackend.Entity.User;
+import org.example.rgybackend.Model.Profile;
+import org.example.rgybackend.Model.SimplifiedProfile;
+import org.example.rgybackend.Model.User;
 import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.NotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
