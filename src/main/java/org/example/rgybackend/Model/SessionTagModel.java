@@ -12,4 +12,5 @@ public class SessionTagModel {
     private SimplifiedProfileModel myself;
     private SimplifiedProfileModel other;
     private Long timestamp;
+    private Long unread;
 }

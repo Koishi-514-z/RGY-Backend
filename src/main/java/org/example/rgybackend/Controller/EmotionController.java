@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpSession;
@@ -42,6 +43,18 @@ public class EmotionController {
         datas.add(new UrlDataModel(1L, "music", "SSSSSS", null, "oqeuirouhyb", "https://github.com/Koishi-514-z/RGY-Frontend"));
         datas.add(new UrlDataModel(2L, "article", "DDDDDD", null, "oqeuirouhyb", "https://github.com/Koishi-514-z/RGY-Frontend"));
         datas.add(new UrlDataModel(3L, "music", "AAAAAA", null, "oqeuirouhyb", "https://github.com/Koishi-514-z/RGY-Frontend"));
+        return datas;
+    }
+
+    @GetMapping("/url/getall")
+    public List<UrlDataModel> getAllUrlDatas() {
+        List<UrlDataModel> datas = new ArrayList<>();
+        datas.add(new UrlDataModel(1L, "music", "SSSSSS", null, "oqeuirouhyb", "https://github.com/Koishi-514-z/RGY-Frontend"));
+        datas.add(new UrlDataModel(2L, "article", "DDDDDD", null, "oqeuirouhyb", "https://github.com/Koishi-514-z/RGY-Frontend"));
+        datas.add(new UrlDataModel(3L, "music", "AAAAAA", null, "oqeuirouhyb", "https://github.com/Koishi-514-z/RGY-Frontend"));
+        datas.add(new UrlDataModel(4L, "music", "SSSSSS", null, "oqeuirouhyb", "https://github.com/Koishi-514-z/RGY-Frontend"));
+        datas.add(new UrlDataModel(5L, "article", "DDDDDD", null, "oqeuirouhyb", "https://github.com/Koishi-514-z/RGY-Frontend"));
+        datas.add(new UrlDataModel(6L, "music", "AAAAAA", null, "oqeuirouhyb", "https://github.com/Koishi-514-z/RGY-Frontend"));
         return datas;
     }
 
@@ -78,7 +91,35 @@ public class EmotionController {
         datas.add(new EmotionDataModel(5L, 5L));
         datas.add(new EmotionDataModel(6L, 3L));
         datas.add(new EmotionDataModel(7L, 2L));
+        datas.add(new EmotionDataModel(8L, 1L));
+        datas.add(new EmotionDataModel(9L, 2L));
+        datas.add(new EmotionDataModel(10L, 3L));
+        datas.add(new EmotionDataModel(11L, 4L));
+        datas.add(new EmotionDataModel(12L, 5L));
+        datas.add(new EmotionDataModel(13L, 3L));
+        datas.add(new EmotionDataModel(14L, 2L));
+        datas.add(new EmotionDataModel(15L, 1L));
+        datas.add(new EmotionDataModel(16L, 2L));
+        datas.add(new EmotionDataModel(17L, 3L));
+        datas.add(new EmotionDataModel(18L, 4L));
+        datas.add(new EmotionDataModel(19L, 5L));
+        datas.add(new EmotionDataModel(20L, 3L));
+        datas.add(new EmotionDataModel(21L, 2L));
+        datas.add(new EmotionDataModel(22L, 1L));
+        datas.add(new EmotionDataModel(23L, 2L));
+        datas.add(new EmotionDataModel(24L, 3L));
+        datas.add(new EmotionDataModel(25L, 4L));
+        datas.add(new EmotionDataModel(26L, 5L));
+        datas.add(new EmotionDataModel(27L, 3L));
+        datas.add(new EmotionDataModel(28L, 2L));
+        datas.add(new EmotionDataModel(29L, 1L));
+        datas.add(new EmotionDataModel(30L, 2L));
         return datas;
+    }
+
+    @GetMapping("/book")
+    public boolean BookCounseling(@RequestParam Long timestamp) {
+        return true;
     }
 
     @PutMapping("/tag/update")

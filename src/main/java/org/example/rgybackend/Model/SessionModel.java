@@ -14,5 +14,6 @@ public class SessionModel {
     private SimplifiedProfileModel myself;
     private SimplifiedProfileModel other;
     private Long timestamp;
+    private Long unread;
     private List<MessageModel> messages;
 }

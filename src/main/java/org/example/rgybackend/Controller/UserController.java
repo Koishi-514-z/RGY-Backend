@@ -52,7 +52,7 @@ public class UserController {
     public ProfileModel getUserProfile(HttpSession session) {
         // String userid = (String)session.getAttribute("user");
         // return userService.getUserProfile(userid);
-        return new ProfileModel("123456789", "Koishi", "zsb_sjtu@sjtu.edu.cn", null, null);
+        return new ProfileModel("123456789", "Koishi", "zsb_sjtu@sjtu.edu.cn", null, null, 0L);
     }
 
     @GetMapping("/getsim")
@@ -75,6 +75,13 @@ public class UserController {
 
     @GetMapping("/verify/pwd")
     public boolean verifyPassword(@RequestParam String password, HttpSession session) {
+        // String userid = (String)session.getAttribute("user");
+        // return userService.verifyPassword(userid, password);
+        return true;
+    }
+
+    @GetMapping("/verify/admin")
+    public boolean adminVerify(@RequestParam String verifyKey, HttpSession session) {
         // String userid = (String)session.getAttribute("user");
         // return userService.verifyPassword(userid, password);
         return true;

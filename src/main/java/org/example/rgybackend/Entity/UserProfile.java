@@ -37,11 +37,16 @@ public class UserProfile {
     @Column(name = "note")
     private String note;
 
+    @Basic
+    @Column(name = "role")
+    private Long role;
+
     public UserProfile(ProfileModel profile) {
         this.userid = profile.getUserid();
         this.username = profile.getUsername();
         this.email = profile.getEmail();
         this.avatar = profile.getAvatar();
         this.note = profile.getNote();
+        this.role = profile.getRole();
     }
 }

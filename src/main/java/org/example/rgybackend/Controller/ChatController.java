@@ -33,15 +33,15 @@ public class ChatController {
         messages.add(new MessageModel(2L, 1L, 9851296581L, "Koishi_Plus"));
         messages.add(new MessageModel(1L, 0L, 9851296581L, "Koishi"));
         messages.add(new MessageModel(2L, 1L, 9851296581L, "Koishi_Plus"));
-        return new SessionModel(1L, new SimplifiedProfileModel("123456789", "Koishi", null, null), new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null), 6871685741L, messages);
+        return new SessionModel(1L, new SimplifiedProfileModel("123456789", "Koishi", null, null), new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null), 6871685741L, 1L, messages);
     }
 
     @GetMapping("/gettags")
     public List<SessionTagModel> getSessionTags() {
         List<SessionTagModel> tags = new ArrayList<>();
-        tags.add(new SessionTagModel(1L, new SimplifiedProfileModel("123456789", "Koishi", null, null), new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null), 6871685741L));
-        tags.add(new SessionTagModel(2L, new SimplifiedProfileModel("123456789", "Koishi", null, null), new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null), 6871685741L));
-        tags.add(new SessionTagModel(3L, new SimplifiedProfileModel("123456789", "Koishi", null, null), new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null), 6871685741L));
+        tags.add(new SessionTagModel(1L, new SimplifiedProfileModel("123456789", "Koishi", null, null), new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null), 6871685741L, 1L));
+        tags.add(new SessionTagModel(2L, new SimplifiedProfileModel("123456789", "Koishi", null, null), new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null), 6871685741L, 0L));
+        tags.add(new SessionTagModel(3L, new SimplifiedProfileModel("123456789", "Koishi", null, null), new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null), 6871685741L, 2L));
         return tags;
     }
 
@@ -52,6 +52,11 @@ public class ChatController {
     
     @PutMapping("/post")
     public boolean postMessage(@RequestParam String sessionid, @RequestBody StringDTO content) {
+        return true;
+    }
+
+    @PutMapping("/read")
+    public boolean updateRead(@RequestParam String sessionid) {
         return true;
     }
 

@@ -15,6 +15,7 @@ public class ProfileModel {
     private String email;
     private String avatar;
     private String note;
+    private Long role;
 
     public ProfileModel(UserProfile userProfileDTO) {
         this.userid = userProfileDTO.getUserid();
@@ -22,5 +23,6 @@ public class ProfileModel {
         this.email = userProfileDTO.getEmail();
         this.avatar = userProfileDTO.getAvatar();
         this.note = userProfileDTO.getNote();
+        this.role = userProfileDTO.getRole();
     }
 }
