@@ -7,6 +7,8 @@ import org.example.rgybackend.Model.SimplifiedProfileModel;
 import org.example.rgybackend.Model.UserModel;
 
 public interface UserService {
+    boolean isAdmin(String userid);
+
     boolean verifyPasswordByName(String username, String password);
 
     boolean userExisted(String username);
@@ -20,6 +22,8 @@ public interface UserService {
     List<SimplifiedProfileModel> getIntimateUsers(String userid);
 
     boolean verifyPassword(String userid, String password);
+
+    boolean verifyAdmin(String verifyKey);
 
     boolean addUser(UserModel user);
 

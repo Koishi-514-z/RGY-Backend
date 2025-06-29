@@ -1,5 +1,7 @@
 package org.example.rgybackend.Entity;
 
+import org.example.rgybackend.Model.TagModel;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,4 +24,9 @@ public class Tag {
     @Basic
     @Column(name = "content")
     private String content;
+
+    public Tag(TagModel tagModel) {
+        this.id = tagModel.getId();
+        this.content = tagModel.getContent();
+    }
 }

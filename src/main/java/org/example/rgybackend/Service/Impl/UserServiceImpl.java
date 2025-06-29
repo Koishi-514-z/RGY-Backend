@@ -11,6 +11,8 @@ import org.example.rgybackend.Model.UserModel;
 import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.NotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +22,18 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserAuthDAO userAuthDAO;
+
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
+    @Value("${verify.admin.key}")
+    private String KEY;
+
+    @Override
+    public boolean isAdmin(String userid) {
+        ProfileModel profile = userDAO.get(userid);
+        return profile.getRole() > 0;
+    }
 
     @Override
     public boolean verifyPasswordByName(String username, String password) {
@@ -65,6 +79,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean verifyPassword(String userid, String password) {
         return userAuthDAO.pwdMatch(userid, password);
+    }
+
+    @Override
+    public boolean verifyAdmin(String verifyKey) {
+        return encoder.matches(verifyKey, KEY);
     }
 
     @Override
