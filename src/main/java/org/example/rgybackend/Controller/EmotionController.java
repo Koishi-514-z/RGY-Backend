@@ -3,6 +3,7 @@ package org.example.rgybackend.Controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.example.rgybackend.DTO.StringDTO;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionModel;
 import org.example.rgybackend.Model.EmotionDataModel;
@@ -128,7 +129,7 @@ public class EmotionController {
     }
 
     @PutMapping("/diary/update")
-    public boolean updateDiary(@RequestBody DiaryModel diary) {
+    public boolean updateDiary(@RequestBody StringDTO content) {
         return true;
     }
 }
