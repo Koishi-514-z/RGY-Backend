@@ -1,6 +1,5 @@
 package org.example.rgybackend.Controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.example.rgybackend.Model.ProfileModel;
@@ -27,86 +26,70 @@ public class UserController {
 
     @GetMapping("/login")
     public boolean login(@RequestParam String username, @RequestParam String password, HttpSession session) {
-        // boolean result = userService.verifyPasswordByName(username, password);
-        // if(result) {
-        //     String userid = userService.getProfileByName(username).getUserid();
-        //     session.setAttribute("user", userid);
-        // }
-        // return result;
-        return true;
+        boolean result = userService.verifyPasswordByName(username, password);
+        if(result) {
+            String userid = userService.getProfileByName(username).getUserid();
+            session.setAttribute("user", userid);
+        }
+        return result;
     }
 
     @GetMapping("/logout")
     public boolean logout(HttpSession session) {
-        // session.invalidate();
+        session.invalidate();
         return true;
     }
 
     @GetMapping("/existed")
     public boolean userExisted(@RequestParam String username) {
-        // return userService.userExisted(username);
-        return false;
+        return userService.userExisted(username);
     }
 
     @GetMapping("/get")
     public ProfileModel getUserProfile(HttpSession session) {
-        // String userid = (String)session.getAttribute("user");
-        // return userService.getUserProfile(userid);
-        return new ProfileModel("123456789", "Koishi", "zsb_sjtu@sjtu.edu.cn", null, null, 0L);
+        String userid = (String)session.getAttribute("user");
+        return userService.getUserProfile(userid);
     }
 
     @GetMapping("/getsim")
     public SimplifiedProfileModel getSimplifiedProfile(@RequestParam String userid) {
-        // return userService.getSimplifiedProfile(userid);
-        return new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null);
+        return userService.getSimplifiedProfile(userid);
     }
 
     @GetMapping("/getintm")
     public List<SimplifiedProfileModel> getIntimateUsers(HttpSession session) {
-        // String userid = (String)session.getAttribute("user");
-        // return userService.getIntimateUsers(userid);
-        List<SimplifiedProfileModel> simplifiedProfiles = new ArrayList<>();
-        simplifiedProfiles.add(new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null));
-        simplifiedProfiles.add(new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null));
-        simplifiedProfiles.add(new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null));
-        simplifiedProfiles.add(new SimplifiedProfileModel("12345678", "Koishi_Plus", null, null));
-        return simplifiedProfiles;
+        String userid = (String)session.getAttribute("user");
+        return userService.getIntimateUsers(userid);
     }
 
     @GetMapping("/verify/pwd")
     public boolean verifyPassword(@RequestParam String password, HttpSession session) {
-        // String userid = (String)session.getAttribute("user");
-        // return userService.verifyPassword(userid, password);
-        return true;
+        String userid = (String)session.getAttribute("user");
+        return userService.verifyPassword(userid, password);
     }
 
     @GetMapping("/verify/admin")
-    public boolean adminVerify(@RequestParam String verifyKey, HttpSession session) {
-        // String userid = (String)session.getAttribute("user");
-        // return userService.verifyPassword(userid, password);
-        return true;
+    public boolean verifyAdmin(@RequestParam String verifyKey) {
+        return userService.verifyAdmin(verifyKey);
     }
 
     @PostMapping("/add")
     public boolean addUser(@RequestBody UserModel user) {
-        // return userService.addUser(user);
-        return true;
+        return userService.addUser(user);
     }
 
     @PutMapping("/profile/update")
     public boolean updateProfile(@RequestBody ProfileModel profile, HttpSession session) {
-        // String userid = (String)session.getAttribute("user");
-        // if(!userid.equals(profile.getUserid())) {
-        //     throw new ForbiddenException("无权修改该用户信息");
-        // }
-        // return userService.updateProfile(profile);
-        return true;
+        String userid = (String)session.getAttribute("user");
+        if(!userid.equals(profile.getUserid())) {
+            throw new ForbiddenException("无权修改该用户信息");
+        }
+        return userService.updateProfile(profile);
     }
 
     @PutMapping("pwd")
     public boolean updatePassword(@RequestParam String password, HttpSession session) {
-        // String userid = (String)session.getAttribute("user");
-        // return userService.updatePassword(userid, password);
-        return true;
+        String userid = (String)session.getAttribute("user");
+        return userService.updatePassword(userid, password);
     }
 }
