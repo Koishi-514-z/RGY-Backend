@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReplyModel {
-    private Long replyid;
-    private Long blogid;
-    private String fromuserid;
-    private String touserid;
+public class CounselingModel {
+    private Long counselingid;
+    private String userid;
+    private String psyid;
     private Long timestamp;
-    private String content;
 }

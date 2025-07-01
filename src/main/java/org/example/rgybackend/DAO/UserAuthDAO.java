@@ -8,4 +8,8 @@ public interface UserAuthDAO {
     boolean updatePassword(String userid, String password);
 
     boolean removeAuth(String userid);
+
+    boolean isDisabled(String userid);
+
+    boolean setDisabled(String userid, boolean disabled);
 }

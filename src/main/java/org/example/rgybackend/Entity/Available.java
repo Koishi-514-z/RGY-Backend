@@ -3,6 +3,8 @@ package org.example.rgybackend.Entity;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -10,24 +12,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "user_auth")
+@Table(name = "available")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAuth {
+public class Available {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "userid")
-    private String userid;
+    @Column(name = "availableid")
+    private Long availableid;
 
     @Basic
-    @Column(name = "stuid")
-    private String stuid;
+    @Column(name = "psyid")
+    private String psyid;
 
     @Basic
-    @Column(name = "password")
-    private String password;
-
-    @Basic 
-    @Column(name = "disabled")
-    private boolean disabled;
+    @Column(name = "timestamp")
+    private Long timestamp;
 }

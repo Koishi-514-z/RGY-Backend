@@ -1,4 +1,4 @@
-package org.example.rgybackend.Model;
+package org.example.rgybackend.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,11 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReplyModel {
+public class ReplyData {
     private Long replyid;
-    private Long blogid;
-    private String fromuserid;
     private String touserid;
     private Long timestamp;
-    private String content;
 }
