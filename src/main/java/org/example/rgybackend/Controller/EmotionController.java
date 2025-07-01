@@ -73,12 +73,6 @@ public class EmotionController {
         }
         return emotionService.scanAdminData(start, end);
     }
-    
-
-    @GetMapping("/book")
-    public boolean BookCounseling(@RequestParam Long timestamp) {
-        return emotionService.BookCounseling(timestamp);
-    }
 
     @PutMapping("/tag/update")
     public boolean setEmotion(@RequestBody EmotionModel emotion, HttpSession session) {

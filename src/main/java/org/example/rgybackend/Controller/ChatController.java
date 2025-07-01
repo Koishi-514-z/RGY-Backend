@@ -5,14 +5,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpSession;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.example.rgybackend.DTO.StringDTO;
-import org.example.rgybackend.Model.MessageModel;
 import org.example.rgybackend.Model.SessionModel;
 import org.example.rgybackend.Model.SessionTagModel;
-import org.example.rgybackend.Model.SimplifiedProfileModel;
 import org.example.rgybackend.Service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +26,7 @@ public class ChatController {
     private ChatService chatService;
     
     @GetMapping("/getsession")
-    public SessionModel getSession(@RequestParam String sessionid, HttpSession session) {
+    public SessionModel getSession(@RequestParam Long sessionid, HttpSession session) {
         String userid = (String)session.getAttribute("user");
         return chatService.getSession(userid, sessionid);
     }
@@ -47,12 +44,13 @@ public class ChatController {
     }
     
     @PutMapping("/post")
-    public boolean postMessage(@RequestParam String sessionid, @RequestBody StringDTO content) {
-        return chatService.postMessage(sessionid, content);
+    public boolean postMessage(@RequestParam Long sessionid, @RequestBody StringDTO content, HttpSession session) {
+        String fromuserid = (String)session.getAttribute("user");
+        return chatService.postMessage(sessionid, content.getStr(), fromuserid);
     }
 
     @PutMapping("/read")
-    public boolean updateRead(@RequestParam String sessionid) {
+    public boolean updateRead(@RequestParam Long sessionid) {
         return chatService.updateRead(sessionid);
     }
 

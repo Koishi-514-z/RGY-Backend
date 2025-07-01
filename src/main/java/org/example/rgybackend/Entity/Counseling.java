@@ -1,5 +1,7 @@
 package org.example.rgybackend.Entity;
 
+import org.example.rgybackend.Model.CounselingModel;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,4 +35,11 @@ public class Counseling {
     @Basic
     @Column(name = "timestamp")
     private Long timestamp;
+
+    public Counseling(CounselingModel counselingModel) {
+        this.counselingid = counselingModel.getCounselingid();
+        this.userid = counselingModel.getUserid();
+        this.psyid = counselingModel.getPsyid();
+        this.timestamp = counselingModel.getTimestamp();
+    }
 }
