@@ -55,7 +55,7 @@ public class ChatController {
         return chatService.updateRead(sessionid, userid);
     }
 
-    @PostMapping("/post")
+    @PostMapping("/create")
     public Long createSession(@RequestParam String userid, HttpSession session) {
         String fromuserid = (String)session.getAttribute("user");
         return chatService.createSession(fromuserid, userid);

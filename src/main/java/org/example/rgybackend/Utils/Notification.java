@@ -7,13 +7,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class Notification {
     @Autowired
-    private static SimpMessagingTemplate messagingTemplate;
+    private SimpMessagingTemplate messagingTemplate;
 
-    public static void pushToAllClients(ChatMessage message) {
+    public void pushToAllClients(ChatMessage message) {
         messagingTemplate.convertAndSend("/topic/messages", message);
     }
 
-    public static void pushToUser(ChatMessage message) {
+    public void pushToUser(ChatMessage message) {
         messagingTemplate.convertAndSendToUser(message.getTouserid(), "/queue/notifications", message);
     }
 

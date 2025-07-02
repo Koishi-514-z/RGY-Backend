@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "like")
+@Table(name = "user_like")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

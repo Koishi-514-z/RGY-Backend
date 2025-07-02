@@ -10,9 +10,9 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class BERTModel {
     @Autowired
-    private static RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
-    public static ModelResponse checkEmotion(String text) {
+    public ModelResponse checkEmotion(String text) {
         String url = "http://localhost:8000/api/check/emotion";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("text", text);
@@ -23,7 +23,7 @@ public class BERTModel {
         return response;
     }
 
-    public static ModelResponse checkDanger(String text) {
+    public ModelResponse checkDanger(String text) {
         String url = "http://localhost:8000/api/check/danger";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("text", text);

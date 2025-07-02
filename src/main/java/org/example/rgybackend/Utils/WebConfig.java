@@ -20,8 +20,11 @@ public class WebConfig implements WebMvcConfigurer {
             .addPathPatterns("/**") 
             .excludePathPatterns(
                 "/api/user/login",
+                "/api/user/existed",
                 "/api/user/add",    
-                "/api/user/verify/pwd"
+                "/api/user/verify/pwd",
+                "/api/user/verify/admin",
+                "/api/user/disabled/get"
             ); 
     }
 

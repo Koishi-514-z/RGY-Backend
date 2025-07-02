@@ -15,7 +15,6 @@ import org.example.rgybackend.Model.EmotionModel;
 import org.example.rgybackend.Model.TagModel;
 import org.example.rgybackend.Repository.EmotionRepository;
 import org.example.rgybackend.Repository.TagRepository;
-import org.example.rgybackend.Utils.NotExistException;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -40,7 +39,7 @@ public class EmotionDAOImpl implements EmotionDAO {
         Long timestamp = TimeUtil.getStartOfDayTimestamp(date);
         List<Emotion> emotions = emotionRepository.scanEmotion(userid, timestamp, timestamp + TimeUtil.DAY);
         if(emotions.size() == 0) {
-            throw new NotExistException("Emotion not exists");
+            return new EmotionModel(userid, timestamp, null, null);
         }
         if(emotions.size() > 1) {
             throw new RuntimeException("Duplicate emotion");
@@ -72,6 +71,10 @@ public class EmotionDAOImpl implements EmotionDAO {
         Long start = TimeUtil.getStartOfDayTimestamp(startDate);
         Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
         List<EmotionDataModel> emotionDataModels = emotionRepository.scanEmotionData(userid, start, end);
+
+        if(emotionDataModels.isEmpty()) {
+            return emotionDataModels;
+        }
 
         Long minTimestamp = emotionDataModels.get(0).getTime();
         for(EmotionDataModel emotionDataModel : emotionDataModels) {

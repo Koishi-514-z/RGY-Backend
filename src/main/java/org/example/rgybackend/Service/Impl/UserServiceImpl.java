@@ -126,14 +126,17 @@ public class UserServiceImpl implements UserService {
         for(ReplyData replyData : replyDatas) {
             LocalDate date = TimeUtil.getLocalDate(replyData.getTimestamp());
             int timeClass;
-            if(date.compareTo(prevWeek) >= 0) {
-                timeClass = 2;
+            if(date.compareTo(yesterday) >= 0) {
+                timeClass = 0;
             }
-            else if(date.compareTo(prevMonth) >= 0) {
+            else if(date.compareTo(prevWeek) >= 0) {
                 timeClass = 1;
             }
+            else if(date.compareTo(prevMonth) >= 0) {
+                timeClass = 2;
+            }
             else {
-                timeClass = 0;
+                timeClass = 3;
             }
             Double score = (1 - likeWeight) * timeWeight[timeClass];
             Double originScore = intimateScores.get(replyData.getUserid());

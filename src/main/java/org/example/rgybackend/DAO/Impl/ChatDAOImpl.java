@@ -35,7 +35,7 @@ public class ChatDAOImpl implements ChatDAO {
     public Long getSessionid(String fromuserid, String touserid) {
         List<Session> sessions = sessionRepository.findSession(fromuserid, touserid);
         if(sessions.size() == 0) {
-            throw new NotExistException("Session not exists");
+            return null;
         }
         if(sessions.size() > 1) {
             throw new RuntimeException("Duplicate Session");

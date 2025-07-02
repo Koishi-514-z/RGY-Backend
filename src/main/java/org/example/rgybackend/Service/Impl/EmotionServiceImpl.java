@@ -30,6 +30,9 @@ public class EmotionServiceImpl implements EmotionService {
     @Autowired
     private DiaryDAO diaryDAO;
 
+    @Autowired
+    private BERTModel bertModel;
+
     @Override
     public EmotionModel getEmotion(String userid) {
         return emotionDAO.getEmotion(userid, TimeUtil.today());
@@ -107,7 +110,7 @@ public class EmotionServiceImpl implements EmotionService {
 
     @Override
     public boolean updateDiary(String userid, String content) {
-        ModelResponse response = BERTModel.checkEmotion(content);
+        ModelResponse response = bertModel.checkEmotion(content);
         DiaryModel diaryModel = new DiaryModel(userid, TimeUtil.now(), response.getPredicted_class(), content);
         return diaryDAO.setDiary(diaryModel);
     }

@@ -26,6 +26,9 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     private UserDAO userDAO;
 
+    @Autowired
+    private Notification notification;
+
     @Override
     public SessionModel getSession(String fromuserid, Long sessionid) {
         Session session = chatDAO.getById(sessionid);
@@ -117,7 +120,7 @@ public class ChatServiceImpl implements ChatService {
             return false;
         }
         ChatMessage chatMessage = new ChatMessage("System", sessionid, fromuserid, touserid, TimeUtil.now(), content);
-        Notification.pushToUser(chatMessage);
+        notification.pushToUser(chatMessage);
         return true;
     }
 

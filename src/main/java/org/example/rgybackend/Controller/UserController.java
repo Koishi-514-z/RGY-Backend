@@ -101,8 +101,11 @@ public class UserController {
     }
 
     @PutMapping("disabled/set")
-    public boolean setDisabled(@RequestParam boolean disabled, HttpSession session) {
-        String userid = (String)session.getAttribute("user");
+    public boolean setDisabled(@RequestParam String userid, @RequestParam boolean disabled, HttpSession session) {
+        String adminid = (String)session.getAttribute("user");
+        if(!userService.isAdmin(adminid)) {
+            throw new ForbiddenException("只有管理员允许进行此操作");
+        }
         return userService.setDisabled(userid, disabled);
     }
 }

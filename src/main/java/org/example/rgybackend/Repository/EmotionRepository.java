@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface EmotionRepository extends JpaRepository<Emotion, Long> {
     List<Emotion> findByUserid(String userid);
 
-    @Query("SELECT new org.example.rgybackend.Entity.Emotion(e.emotionid, e.userid, e.timestamp, e.tag, e.score) FROM Emotion e WHERE e.userid = :userid AND e.timestamp >= :start AND e.timestamp < :end")
+    @Query("SELECT e FROM Emotion e WHERE e.userid = :userid AND e.timestamp >= :start AND e.timestamp < :end")
     List<Emotion> scanEmotion(String userid, Long start, Long end);
 
     @Query("SELECT new org.example.rgybackend.Model.EmotionDataModel(e.timestamp, e.score) FROM Emotion e WHERE e.userid = :userid")
@@ -20,6 +20,6 @@ public interface EmotionRepository extends JpaRepository<Emotion, Long> {
     @Query("SELECT new org.example.rgybackend.Model.EmotionDataModel(e.timestamp, e.score) FROM Emotion e WHERE e.userid = :userid AND e.timestamp >= :start AND e.timestamp < :end")
     List<EmotionDataModel> scanEmotionData(String userid, Long start, Long end);
 
-    @Query("SELECT new org.example.rgybackend.DTO.AdminDataDTO(e.score, e.tag.id) FROM Emotion e WHERE e.timestamp >= :start AND e.timestamp < :end")
+    @Query("SELECT new org.example.rgybackend.DTO.AdminDataDTO(e.score, e.tagid) FROM Emotion e WHERE e.timestamp >= :start AND e.timestamp < :end")
     List<AdminDataDTO> scanAdminData(Long start, Long end);
 }

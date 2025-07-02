@@ -8,7 +8,6 @@ import org.example.rgybackend.DAO.DiaryDAO;
 import org.example.rgybackend.Entity.Diary;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Repository.DiaryRepository;
-import org.example.rgybackend.Utils.NotExistException;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -30,7 +29,7 @@ public class DiaryDAOImpl implements DiaryDAO {
         Long timestamp = TimeUtil.getStartOfDayTimestamp(date);
         List<Diary> diaries = diaryRepository.scanDiary(userid, timestamp, timestamp + TimeUtil.DAY);
         if(diaries.isEmpty()) {
-            throw new NotExistException("Diary not exists");
+            return new DiaryModel(userid, timestamp, null, null);
         }
         else if(diaries.size() > 1) {
             throw new RuntimeException("Duplicate diary");
