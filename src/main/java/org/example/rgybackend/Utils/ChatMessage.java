@@ -1,4 +1,4 @@
-package org.example.rgybackend.DTO;
+package org.example.rgybackend.Utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SessionTagDTO {
+public class ChatMessage {
+    private String sender;
     private Long sessionid;
-    private String userAid;
-    private String userBid;
+    private String fromuserid;
+    private String touserid;
     private Long timestamp;
-    private Long unreadA;
-    private Long unreadB;
+    private String content;
 }

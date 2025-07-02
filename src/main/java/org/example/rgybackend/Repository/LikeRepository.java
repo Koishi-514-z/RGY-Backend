@@ -9,5 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface LikeRepository extends JpaRepository<Like, Long> {
     @Query("SELECT new org.example.rgybackend.DTO.LikeData(l.likeid, l.touserid, l.timestamp) FROM Like l WHERE l.fromuserid = :fromuserid")
-    List<LikeData> findOppositeUser(String fromuserid);
+    List<LikeData> findToUser(String fromuserid);
+
+    @Query("SELECT new org.example.rgybackend.DTO.LikeData(l.likeid, l.fromuserid, l.timestamp) FROM Like l WHERE l.touserid = :touserid")
+    List<LikeData> findFromUser(String touserid);
 }

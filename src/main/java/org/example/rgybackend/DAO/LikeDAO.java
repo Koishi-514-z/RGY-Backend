@@ -5,5 +5,5 @@ import java.util.List;
 import org.example.rgybackend.DTO.LikeData;
 
 public interface LikeDAO {
-    List<LikeData> findOppositeUser(String fromuserid);
+    List<LikeData> findOppositeUser(String userid);
 }

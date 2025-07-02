@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LikeData {
     private Long likeid;
-    private String touserid;
+    private String userid;
     private Long timestamp;
 }

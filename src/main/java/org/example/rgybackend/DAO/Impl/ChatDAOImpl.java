@@ -50,19 +50,36 @@ public class ChatDAOImpl implements ChatDAO {
             throw new NotExistException("Session not exists, sessionid: " + sessionid);
         }
         Session session = sessOptional.get();
+        if(message.getTouserid().equals(session.getUserAid())) {
+            session.setUnreadA(session.getUnreadA() + 1);
+        }
+        else if(message.getTouserid().equals(session.getUserBid())){
+            session.setUnreadB(session.getUnreadB() + 1);
+        }
+        else {
+            throw new RuntimeException("Session does not contain this message");
+        }
         session.getMessages().add(message);
         sessionRepository.save(session);
         return true;
     }
 
     @Override
-    public boolean updateRead(Long sessionid) {
+    public boolean updateRead(Long sessionid, String userid) {
         Optional<Session> sessOptional = sessionRepository.findById(sessionid);
         if(sessOptional.isEmpty()) {
             throw new NotExistException("Session not exists, sessionid: " + sessionid);
         }
         Session session = sessOptional.get();
-        session.setUnread(0L);
+        if(session.getUserAid().equals(userid)) {
+            session.setUnreadA(0L);
+        }
+        else if(session.getUserBid().equals(userid)) {
+            session.setUnreadB(0L);
+        }
+        else {
+            throw new RuntimeException("Session does not contain such user");
+        }
         sessionRepository.save(session);
         return true;
     }

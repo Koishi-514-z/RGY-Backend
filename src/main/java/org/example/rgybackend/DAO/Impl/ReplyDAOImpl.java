@@ -14,7 +14,10 @@ public class ReplyDAOImpl implements ReplyDAO {
     private ReplyRepository replyRepository;
 
     @Override
-    public List<ReplyData> findOppositeUser(String fromuserid) {
-        return replyRepository.findOppositeUser(fromuserid);
+    public List<ReplyData> findOppositeUser(String userid) {
+        List<ReplyData> fromDatas = replyRepository.findFromUser(userid);
+        List<ReplyData> toDatas = replyRepository.findToUser(userid);
+        fromDatas.addAll(toDatas);
+        return fromDatas;
     }
 }

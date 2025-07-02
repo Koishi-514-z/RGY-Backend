@@ -39,8 +39,12 @@ public class Session {
     private Long timestamp;
 
     @Basic
-    @Column(name = "unread")
-    private Long unread;
+    @Column(name = "unreadA")
+    private Long unreadA;
+
+    @Basic
+    @Column(name = "unreadB")
+    private Long unreadB;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Message> messages;

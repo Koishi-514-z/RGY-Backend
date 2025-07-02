@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReplyData {
     private Long replyid;
-    private String touserid;
+    private String userid;
     private Long timestamp;
 }

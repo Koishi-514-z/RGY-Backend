@@ -15,7 +15,7 @@ public interface ChatDAO {
 
     boolean postMessage(Long sessionid, Message message);
 
-    boolean updateRead(Long sessionid);
+    boolean updateRead(Long sessionid, String userid);
 
     Long createSession(Session session);
 }

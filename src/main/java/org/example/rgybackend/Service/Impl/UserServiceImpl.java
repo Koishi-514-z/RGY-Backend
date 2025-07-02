@@ -86,37 +86,41 @@ public class UserServiceImpl implements UserService {
         List<IntimateDTO> intimateUsers = new ArrayList<>();
         final int total = 4;
         final double likeWeight = 0.5;   
-        final double timeWeight[] = {9.0, 3.0, 1.0};
+        final double timeWeight[] = {27.0, 9.0, 3.0, 1.0};
         List<LikeData> likeDatas = likeDAO.findOppositeUser(userid);
         List<ReplyData> replyDatas = replyDAO.findOppositeUser(userid);
 
         LocalDate today = TimeUtil.today();
+        LocalDate yesterday = today.minusDays(1);
         LocalDate prevWeek = today.minusDays(7);
         LocalDate prevMonth = today.minusDays(30);
 
         Map<String, Double> intimateScores = new HashMap<>();
         for(LikeData likeData : likeDatas) {
-            intimateScores.put(likeData.getTouserid(), 0.0);
+            intimateScores.put(likeData.getUserid(), 0.0);
         }
         for(ReplyData replyData : replyDatas) {
-            intimateScores.put(replyData.getTouserid(), 0.0);
+            intimateScores.put(replyData.getUserid(), 0.0);
         }
 
         for(LikeData likeData : likeDatas) {
             LocalDate date = TimeUtil.getLocalDate(likeData.getTimestamp());
             int timeClass;
-            if(date.compareTo(prevWeek) >= 0) {
-                timeClass = 2;
-            }
-            else if(date.compareTo(prevMonth) >= 0) {
-                timeClass = 1;
-            }
-            else {
+            if(date.compareTo(yesterday) >= 0) {
                 timeClass = 0;
             }
+            else if(date.compareTo(prevWeek) >= 0) {
+                timeClass = 1;
+            }
+            else if(date.compareTo(prevMonth) >= 0) {
+                timeClass = 2;
+            }
+            else {
+                timeClass = 3;
+            }
             Double score = likeWeight * timeWeight[timeClass];
-            Double originScore = intimateScores.get(likeData.getTouserid());
-            intimateScores.put(likeData.getTouserid(), originScore + score);
+            Double originScore = intimateScores.get(likeData.getUserid());
+            intimateScores.put(likeData.getUserid(), originScore + score);
         }
 
         for(ReplyData replyData : replyDatas) {
@@ -132,8 +136,8 @@ public class UserServiceImpl implements UserService {
                 timeClass = 0;
             }
             Double score = (1 - likeWeight) * timeWeight[timeClass];
-            Double originScore = intimateScores.get(replyData.getTouserid());
-            intimateScores.put(replyData.getTouserid(), originScore + score);
+            Double originScore = intimateScores.get(replyData.getUserid());
+            intimateScores.put(replyData.getUserid(), originScore + score);
         }
 
         for(int i = 0; i < Math.min(total, intimateScores.size()); ++i) {

@@ -14,7 +14,10 @@ public class LikeDAOImpl implements LikeDAO {
     private LikeRepository likeRepository;
 
     @Override
-    public List<LikeData> findOppositeUser(String fromuserid) {
-        return likeRepository.findOppositeUser(fromuserid);
+    public List<LikeData> findOppositeUser(String userid) {
+        List<LikeData> fromDatas = likeRepository.findFromUser(userid);
+        List<LikeData> toDatas = likeRepository.findToUser(userid);
+        fromDatas.addAll(toDatas);
+        return fromDatas;
     }
 }

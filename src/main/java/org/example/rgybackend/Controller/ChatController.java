@@ -50,8 +50,9 @@ public class ChatController {
     }
 
     @PutMapping("/read")
-    public boolean updateRead(@RequestParam Long sessionid) {
-        return chatService.updateRead(sessionid);
+    public boolean updateRead(@RequestParam Long sessionid, HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return chatService.updateRead(sessionid, userid);
     }
 
     @PostMapping("/post")

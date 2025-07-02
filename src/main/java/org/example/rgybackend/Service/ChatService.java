@@ -14,7 +14,7 @@ public interface ChatService {
 
     boolean postMessage(Long sessionid, String content, String fromuserid);
 
-    boolean updateRead(Long sessionid);
+    boolean updateRead(Long sessionid, String userid);
 
     Long createSession(String fromuserid, String touserid);
 }
