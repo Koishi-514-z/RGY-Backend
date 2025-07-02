@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class ReplyModel {
     private Long replyid;
     private Long blogid;
-    private String userid;
+    private  SimplifiedProfileModel user;
     private Long timestamp;
     private String content;
 }

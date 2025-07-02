@@ -14,3 +14,6 @@ public class DiaryModel {
     private Long label;
     private String content;
 }
+
+
+
