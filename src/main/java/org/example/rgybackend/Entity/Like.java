@@ -23,11 +23,11 @@ public class Like {
     private Long likeid;
 
     @Basic
-    @Column(name = "userid")
+    @Column(name = "fromuserid")
     private String fromuserid;
 
     @Basic
-    @Column(name = "userid")
+    @Column(name = "touserid")
     private String touserid;
 
     @Basic

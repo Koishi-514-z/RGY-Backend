@@ -26,7 +26,7 @@ public class CounselingController {
         return counselingService.getCounseling(psyid);
     }
 
-    @GetMapping("/get")
+    @GetMapping("/getcounsel")
     public List<CounselingModel> getDateCounseling(@RequestParam String psyid, @RequestParam Long timestamp) {
         return counselingService.getDateCounseling(psyid, timestamp);
     }

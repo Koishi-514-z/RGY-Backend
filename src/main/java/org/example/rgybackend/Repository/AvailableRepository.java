@@ -15,6 +15,6 @@ public interface AvailableRepository extends JpaRepository<Available, Long> {
 
     boolean existsByPsyidAndTimestamp(String psyid, Long timestamp);
 
-    @Query("SELECT new Long(a.timestamp) FROM Available a WHERE a.psyid = :psyid")
+    @Query("SELECT a.timestamp FROM Available a WHERE a.psyid = :psyid")
     List<Long> findAvailableTimes(String psyid);
 }
