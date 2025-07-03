@@ -45,7 +45,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public void addReply(Long blogid, String content, SimplifiedProfileModel author) {
         Long timestamp = System.currentTimeMillis();
-        ReplyModel replyModel = new ReplyModel(null, blogid, author, timestamp, content);
+        ReplyModel replyModel = new ReplyModel(null, blogid, author.getUserid(), getBlogById(blogid).getUser().getUserid(),timestamp, content,author);
         blogDAO.addReply(replyModel);
     }
 
@@ -148,7 +148,9 @@ public class BlogServiceImpl implements BlogService {
             ReplyModel replyModel = new ReplyModel();
             replyModel.setReplyid(reply.getReplyid());
             replyModel.setBlogid(reply.getBlogid());
-            replyModel.setUser(userDAO.getSimplified(reply.getUserid()));
+            replyModel.setUser(userDAO.getSimplified(reply.getFromuserid()));
+            replyModel.setFromuserid(reply.getFromuserid());
+            replyModel.setTouserid(reply.getTouserid());
             replyModel.setTimestamp(reply.getTimestamp());
             replyModel.setContent(reply.getContent());
             replyModels.add(replyModel);
