@@ -16,5 +16,5 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
     List<Reply> findAllByBlogid(Long blogid);
 
-    List<Reply> findAllByFromuserid(String userid);
+    List<Reply> findAllByFromuserid(String fromuserid);
 }
