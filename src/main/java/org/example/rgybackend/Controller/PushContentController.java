@@ -1,10 +1,10 @@
 package org.example.rgybackend.Controller;
 
-import org.example.rgybackend.Entity.PushContent;
+import java.util.List;
+
 import org.example.rgybackend.Model.UrlDataModel;
 import org.example.rgybackend.Service.PushContentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,12 +14,32 @@ public class PushContentController {
     PushContentService pushContentService;
 
     @PostMapping("/push")
-    public void pushContent(@RequestBody UrlDataModel urlDataModel) {
-        pushContentService.pushContent(urlDataModel);
+    public boolean pushContent(@RequestBody UrlDataModel urlDataModel) {
+        return pushContentService.pushContent(urlDataModel);
     }
 
     @GetMapping("/getbytag")
-    public Page<PushContent> getContentByTag(@RequestParam Integer emotagid, @RequestParam Integer pageIndex, @RequestParam Integer pageSize) {
-        return pushContentService.getContentByTag(emotagid, pageIndex, pageSize);
+    public List<UrlDataModel> getContentByTag(@RequestParam Integer tagid, @RequestParam Integer pageIndex, @RequestParam Integer pageSize) {
+        return pushContentService.getContentByTag(tagid, pageIndex, pageSize);
+    }
+
+    @GetMapping("/get")
+    public List<UrlDataModel> getContent(@RequestParam Integer pageIndex, @RequestParam Integer pageSize) {
+        return pushContentService.getContent(pageIndex, pageSize);
+    }
+
+    @GetMapping("/getnum")
+    public Long getDataNum(@RequestParam Integer tagid) {
+        return pushContentService.getDataNum(tagid);
+    }
+
+    @GetMapping("/getallnum")
+    public Long getAllDataNum() {
+        return pushContentService.getAllDataNum();
+    }
+
+    @DeleteMapping("/del")
+    public boolean deleteUrlData(@RequestParam Long urlid) {
+        return pushContentService.deleteUrlData(urlid);
     }
 }

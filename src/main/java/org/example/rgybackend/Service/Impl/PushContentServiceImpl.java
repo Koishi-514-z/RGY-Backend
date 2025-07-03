@@ -1,11 +1,11 @@
 package org.example.rgybackend.Service.Impl;
 
+import java.util.List;
+
 import org.example.rgybackend.DAO.PushContentDAO;
-import org.example.rgybackend.Entity.PushContent;
 import org.example.rgybackend.Model.UrlDataModel;
 import org.example.rgybackend.Service.PushContentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,11 +14,32 @@ public class PushContentServiceImpl implements PushContentService {
     private PushContentDAO pushContentDAO;
 
     @Override
-    public void pushContent(UrlDataModel urlDataModel){
-        pushContentDAO.pushContent(urlDataModel);
+    public boolean pushContent(UrlDataModel urlDataModel){
+        return pushContentDAO.pushContent(urlDataModel);
     }
+
     @Override
-    public Page<PushContent> getContentByTag(Integer emotagid, Integer pageIndex, Integer pageSize){
+    public List<UrlDataModel> getContentByTag(Integer emotagid, Integer pageIndex, Integer pageSize){
         return pushContentDAO.getContentByTag(emotagid, pageIndex, pageSize);
+    }
+
+    @Override
+    public List<UrlDataModel> getContent(Integer pageIndex, Integer pageSize) {
+        return pushContentDAO.getContent(pageIndex, pageSize);
+    }
+
+    @Override
+    public Long getDataNum(Integer tagid) {
+        return pushContentDAO.getDataNum(tagid);
+    }
+
+    @Override
+    public Long getAllDataNum() {
+        return pushContentDAO.getAllDataNum();
+    }
+
+    @Override
+    public boolean deleteUrlData(Long dataid) {
+        return pushContentDAO.deleteUrlData(dataid);
     }
 }

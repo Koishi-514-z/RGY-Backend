@@ -1,10 +1,19 @@
 package org.example.rgybackend.Service;
 
-import org.example.rgybackend.Entity.PushContent;
+import java.util.List;
+
 import org.example.rgybackend.Model.UrlDataModel;
-import org.springframework.data.domain.Page;
 
 public interface PushContentService {
-    void pushContent(UrlDataModel urlDataModel);
-    Page<PushContent> getContentByTag(Integer emotagid, Integer pageIndex, Integer pageSize);
+    boolean pushContent(UrlDataModel urlDataModel);
+
+    List<UrlDataModel> getContentByTag(Integer emotagid, Integer pageIndex, Integer pageSize);
+
+    List<UrlDataModel> getContent(Integer pageIndex, Integer pageSize);
+
+    Long getDataNum(Integer tagid);
+
+    Long getAllDataNum();
+
+    boolean deleteUrlData(Long dataid);
 }

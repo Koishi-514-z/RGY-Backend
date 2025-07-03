@@ -1,5 +1,7 @@
 package org.example.rgybackend.Model;
 
+import org.example.rgybackend.Entity.PushContent;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,4 +16,13 @@ public class UrlDataModel {
     private String description;
     private String url;
     private Integer emotagid;
+
+    public UrlDataModel(PushContent pushContent) {
+        this.type = pushContent.getType();
+        this.title = pushContent.getTitle();
+        this.img = pushContent.getImg();
+        this.description = pushContent.getDescription();
+        this.url = pushContent.getUrl();
+        this.emotagid = pushContent.getEmotagid();
+    }
 }
