@@ -16,5 +16,5 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 
     void deleteByFromuseridAndBlogid(String fromuserid, Long blogid);
 
-    List<Like> findAllByFromuserid(String userid);
+    List<Like> findAllByFromuserid(String fromuserid);
 }

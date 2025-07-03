@@ -25,7 +25,7 @@ public class Reply {
     private Long replyid;
 
     @Basic
-    @Column(name = "userid")
+    @Column(name = "blogid")
     private Long blogid;
 
     @Basic
