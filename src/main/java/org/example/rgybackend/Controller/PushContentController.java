@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/pushContent")
+@RequestMapping("/api/pushcontent")
 public class PushContentController {
     @Autowired
     PushContentService pushContentService;
@@ -18,8 +18,8 @@ public class PushContentController {
         pushContentService.pushContent(urlDataModel);
     }
 
-    @GetMapping("/getContentByTag")
-    public Page<PushContent> getContentByTag(@RequestParam Integer emotagid) {
-        return pushContentService.getContentByTag(emotagid);
+    @GetMapping("/getbytag")
+    public Page<PushContent> getContentByTag(@RequestParam Integer emotagid, @RequestParam Integer pageIndex, @RequestParam Integer pageSize) {
+        return pushContentService.getContentByTag(emotagid, pageIndex, pageSize);
     }
 }

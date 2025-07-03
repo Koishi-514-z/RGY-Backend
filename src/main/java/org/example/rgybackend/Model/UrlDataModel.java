@@ -8,11 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UrlDataModel {
-//    private Long urlid;
     private String type;
     private String title;
     private String img;
     private String description;
     private String url;
-    private Integer emotagid ;
+    private Integer emotagid;
 }

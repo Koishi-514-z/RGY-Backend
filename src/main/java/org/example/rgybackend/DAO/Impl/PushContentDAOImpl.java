@@ -10,9 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
-import java.util.List;
-
 @Repository
 public class PushContentDAOImpl implements PushContentDAO {
     @Autowired
@@ -28,13 +25,14 @@ public class PushContentDAOImpl implements PushContentDAO {
                 urlDataModel.getDescription(),
                 urlDataModel.getUrl(),
                 urlDataModel.getEmotagid(),
-                new Timestamp(System.currentTimeMillis())
+                System.currentTimeMillis()
         );
         pushContentRepository.save(pushContent);
     }
+
     @Override
-    public Page<PushContent> getContentByTag(Integer emotagid, Integer pageIndex, Integer pageSize){
+    public Page<PushContent> getContentByTag(Integer emotagid, Integer pageIndex, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        return pushContentRepository.findAllByEmotagidOrderByCreatedAtDesc(emotagid,pageable);
+        return pushContentRepository.findAllByEmotagidOrderByCreatedAtDesc(emotagid, pageable);
     }
 }
