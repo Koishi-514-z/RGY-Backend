@@ -2,9 +2,12 @@ package org.example.rgybackend.DAO.Impl;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.example.rgybackend.DAO.EmotionDAO;
+import org.example.rgybackend.DTO.AdminDataDTO;
 import org.example.rgybackend.Entity.Emotion;
 import org.example.rgybackend.Entity.Tag;
 import org.example.rgybackend.Model.EmotionDataModel;
@@ -12,7 +15,6 @@ import org.example.rgybackend.Model.EmotionModel;
 import org.example.rgybackend.Model.TagModel;
 import org.example.rgybackend.Repository.EmotionRepository;
 import org.example.rgybackend.Repository.TagRepository;
-import org.example.rgybackend.Utils.NotExistException;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -37,7 +39,7 @@ public class EmotionDAOImpl implements EmotionDAO {
         Long timestamp = TimeUtil.getStartOfDayTimestamp(date);
         List<Emotion> emotions = emotionRepository.scanEmotion(userid, timestamp, timestamp + TimeUtil.DAY);
         if(emotions.size() == 0) {
-            throw new NotExistException("Emotion not exists");
+            return new EmotionModel(userid, timestamp, null, null);
         }
         if(emotions.size() > 1) {
             throw new RuntimeException("Duplicate emotion");
@@ -65,10 +67,14 @@ public class EmotionDAOImpl implements EmotionDAO {
     }
 
     @Override
-    public List<EmotionDataModel> getEmotionData(String userid, LocalDate startDate, LocalDate endDate) {
+    public List<EmotionDataModel> scanEmotionData(String userid, LocalDate startDate, LocalDate endDate) {
         Long start = TimeUtil.getStartOfDayTimestamp(startDate);
         Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
         List<EmotionDataModel> emotionDataModels = emotionRepository.scanEmotionData(userid, start, end);
+
+        if(emotionDataModels.isEmpty()) {
+            return emotionDataModels;
+        }
 
         Long minTimestamp = emotionDataModels.get(0).getTime();
         for(EmotionDataModel emotionDataModel : emotionDataModels) {
@@ -87,6 +93,14 @@ public class EmotionDAOImpl implements EmotionDAO {
     }
 
     @Override
+    public List<AdminDataDTO> scanAdminData(LocalDate startDate, LocalDate endDate) {
+        Long start = TimeUtil.getStartOfDayTimestamp(startDate);
+        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
+        List<AdminDataDTO> datas = emotionRepository.scanAdminData(start, end);
+        return datas;
+    }
+
+    @Override
     public List<TagModel> getTags() {
         List<Tag> tags = tagRepository.findAll();
         List<TagModel> tagModels = new ArrayList<>();
@@ -94,5 +108,15 @@ public class EmotionDAOImpl implements EmotionDAO {
             tagModels.add(new TagModel(tag));
         }
         return tagModels;
+    }
+
+    @Override
+    public Map<Long, String> getTagMap() {
+        List<TagModel> tagModels = getTags();
+        Map<Long, String> tagMap = new HashMap<>();
+        for(TagModel tagModel : tagModels) {
+            tagMap.put(tagModel.getId(), tagModel.getContent());
+        }
+        return tagMap;
     }
 }

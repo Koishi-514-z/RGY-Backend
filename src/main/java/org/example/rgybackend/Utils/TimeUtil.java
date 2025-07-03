@@ -8,6 +8,7 @@ import java.time.temporal.TemporalAdjusters;
 
 public class TimeUtil {
     public static Long DAY = 24 * 60 * 60 * 1000L;
+    public static Long HOUR = 60 * 60 * 1000L;
 
     public static boolean isSameDay(Long timestamp1, Long timestamp2) {
         ZoneId zone = ZoneId.systemDefault(); 

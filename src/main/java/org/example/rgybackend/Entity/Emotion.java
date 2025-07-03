@@ -37,20 +37,25 @@ public class Emotion {
     @Column(name = "timestamp")
     private Long timestamp;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "tagid", referencedColumnName = "id", insertable=false, updatable=false) 
-    private Tag tag;
+    @Basic
+    @Column(name = "tagid")
+    private Long tagid;
 
     @Basic
     @Column(name = "score")
     private Long score;
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tagid", referencedColumnName = "id", insertable=false, updatable=false) 
+    private Tag tag;
+
     public Emotion(EmotionModel emotionModel) {
         this.emotionid = null;
         this.userid = emotionModel.getUserid();
         this.timestamp = emotionModel.getTimestamp();
-        this.tag = new Tag(emotionModel.getTag());
+        this.tagid = emotionModel.getTag().getId();
         this.score = emotionModel.getScore();
+        this.tag = null;
     }
 }

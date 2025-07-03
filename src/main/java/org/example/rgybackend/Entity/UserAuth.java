@@ -26,4 +26,8 @@ public class UserAuth {
     @Basic
     @Column(name = "password")
     private String password;
+
+    @Basic 
+    @Column(name = "disabled")
+    private boolean disabled;
 }

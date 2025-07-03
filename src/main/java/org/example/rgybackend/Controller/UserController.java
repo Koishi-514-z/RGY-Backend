@@ -2,6 +2,7 @@ package org.example.rgybackend.Controller;
 
 import java.util.List;
 
+import org.example.rgybackend.DTO.IntimateDTO;
 import org.example.rgybackend.Model.ProfileModel;
 import org.example.rgybackend.Model.SimplifiedProfileModel;
 import org.example.rgybackend.Model.UserModel;
@@ -57,7 +58,7 @@ public class UserController {
     }
 
     @GetMapping("/getintm")
-    public List<SimplifiedProfileModel> getIntimateUsers(HttpSession session) {
+    public List<IntimateDTO> getIntimateUsers(HttpSession session) {
         String userid = (String)session.getAttribute("user");
         return userService.getIntimateUsers(userid);
     }
@@ -71,6 +72,12 @@ public class UserController {
     @GetMapping("/verify/admin")
     public boolean verifyAdmin(@RequestParam String verifyKey) {
         return userService.verifyAdmin(verifyKey);
+    }
+
+    @GetMapping("/disabled/get")
+    public boolean isDisabled(HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return userService.isDisabled(userid);
     }
 
     @PostMapping("/add")
@@ -91,5 +98,14 @@ public class UserController {
     public boolean updatePassword(@RequestParam String password, HttpSession session) {
         String userid = (String)session.getAttribute("user");
         return userService.updatePassword(userid, password);
+    }
+
+    @PutMapping("disabled/set")
+    public boolean setDisabled(@RequestParam String userid, @RequestParam boolean disabled, HttpSession session) {
+        String adminid = (String)session.getAttribute("user");
+        if(!userService.isAdmin(adminid)) {
+            throw new ForbiddenException("只有管理员允许进行此操作");
+        }
+        return userService.setDisabled(userid, disabled);
     }
 }

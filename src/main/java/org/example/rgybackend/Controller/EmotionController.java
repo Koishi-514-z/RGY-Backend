@@ -2,12 +2,12 @@ package org.example.rgybackend.Controller;
 
 import java.util.List;
 
+import org.example.rgybackend.DTO.EmotionAdminData;
 import org.example.rgybackend.DTO.StringDTO;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionModel;
 import org.example.rgybackend.Model.EmotionDataModel;
 import org.example.rgybackend.Model.TagModel;
-import org.example.rgybackend.Model.UrlDataModel;
 import org.example.rgybackend.Service.EmotionService;
 import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.ForbiddenException;
@@ -41,21 +41,6 @@ public class EmotionController {
         return emotionService.getTags();
     }
 
-    @GetMapping("/url/get")
-    public List<UrlDataModel> getUrlDatas(HttpSession session) {
-        String userid = (String)session.getAttribute("user");
-        return emotionService.getUrlDatas(userid);
-    }
-
-    @GetMapping("/url/getall")
-    public List<UrlDataModel> getAllUrlDatas(HttpSession session) {
-        String userid = (String)session.getAttribute("user");
-        if(!userService.isAdmin(userid)) {
-            throw new ForbiddenException("Only Administration can do this operation");
-        }
-        return emotionService.getAllUrlDatas();
-    }
-
     @GetMapping("/negative")
     public boolean checkNegative(HttpSession session) {
         String userid = (String)session.getAttribute("user");
@@ -80,9 +65,13 @@ public class EmotionController {
         return emotionService.getMonthData(userid);
     }
 
-    @GetMapping("/book")
-    public boolean BookCounseling(@RequestParam Long timestamp) {
-        return emotionService.BookCounseling(timestamp);
+    @GetMapping("/data/admin/scan")
+    public EmotionAdminData scanAdminData(@RequestParam Long start, @RequestParam Long end, HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        if(!userService.isAdmin(userid)) {
+            throw new ForbiddenException("只有管理员允许进行该操作");
+        }
+        return emotionService.scanAdminData(start, end);
     }
 
     @PutMapping("/tag/update")

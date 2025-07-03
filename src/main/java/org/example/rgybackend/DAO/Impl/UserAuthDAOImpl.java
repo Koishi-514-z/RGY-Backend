@@ -34,8 +34,9 @@ public class UserAuthDAOImpl implements UserAuthDAO {
             throw new RuntimeException("Duplicate user, userid: " + userid);
         }
         String encodedPassword = passwordEncoder.encode(password);
-        UserAuth userAuthDTO = new UserAuth(userid, stuid, encodedPassword);
-        userAuthRepository.save(userAuthDTO);
+        String encodedStuid = passwordEncoder.encode(stuid);
+        UserAuth userAuth = new UserAuth(userid, encodedStuid, encodedPassword, false);
+        userAuthRepository.save(userAuth);
         return true;
     }
 
@@ -48,15 +49,37 @@ public class UserAuthDAOImpl implements UserAuthDAO {
         if(userAuthOptional.isEmpty()) {
             return false;
         }
-        UserAuth userAuthDTO = userAuthOptional.get();
-        userAuthDTO.setPassword(password);
-        userAuthRepository.save(userAuthDTO);
+        UserAuth userAuth = userAuthOptional.get();
+        userAuth.setPassword(password);
+        userAuthRepository.save(userAuth);
         return true;
     }
 
     @Override
     public boolean removeAuth(String userid) {
         userAuthRepository.deleteById(userid);
+        return true;
+    }
+
+    @Override
+    public boolean isDisabled(String userid) {
+        Optional<UserAuth> userAuthOptional = userAuthRepository.findById(userid);
+        if(userAuthOptional.isEmpty()) {
+            throw new NotExistException("User not exists, userid: " + userid);
+        }
+        UserAuth userAuth = userAuthOptional.get();
+        return userAuth.isDisabled();
+    }
+
+    @Override
+    public boolean setDisabled(String userid, boolean disabled) {
+        Optional<UserAuth> userAuthOptional = userAuthRepository.findById(userid);
+        if(userAuthOptional.isEmpty()) {
+            throw new NotExistException("User not exists, userid: " + userid);
+        }
+        UserAuth userAuth = userAuthOptional.get();
+        userAuth.setDisabled(disabled);
+        userAuthRepository.save(userAuth);
         return true;
     }
 }
