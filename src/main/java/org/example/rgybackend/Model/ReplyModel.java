@@ -14,4 +14,5 @@ public class ReplyModel {
     private String touserid;
     private Long timestamp;
     private String content;
+    private SimplifiedProfileModel user;
 }

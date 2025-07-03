@@ -13,4 +13,8 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
     @Query("SELECT new org.example.rgybackend.DTO.ReplyData(r.replyid, r.fromuserid, r.timestamp) FROM Reply r WHERE r.touserid = :touserid")
     List<ReplyData> findFromUser(String touserid);
+
+    List<Reply> findAllByBlogid(Long blogid);
+
+    List<Reply> findAllByFromuserid(String userid);
 }

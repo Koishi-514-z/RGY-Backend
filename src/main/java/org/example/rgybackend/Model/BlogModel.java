@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BlogModel {
     private Long blogid;
-    private String userid;
+    private SimplifiedProfileModel user;
     private Long timestamp;
     private Long likeNum;
     private String title;
-    private String cover;
     private String content;
     private List<String> tags;
     private List<ReplyModel> replies;
+    private int emotion;
 }

@@ -1,5 +1,7 @@
 package org.example.rgybackend.Entity;
 
+import org.example.rgybackend.Model.ReplyModel;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,4 +43,18 @@ public class Reply {
     @Basic
     @Column(name = "content")
     private String content;
+
+    @Basic
+    @Column(name = "valid")
+    private Integer valid;
+
+    public Reply(ReplyModel replyModel) {
+        this.replyid = replyModel.getReplyid();
+        this.blogid = replyModel.getBlogid();
+        this.fromuserid = replyModel.getFromuserid();
+        this.touserid = replyModel.getTouserid();
+        this.timestamp = replyModel.getTimestamp();
+        this.content = replyModel.getContent();
+        this.valid = 1;
+    }
 }

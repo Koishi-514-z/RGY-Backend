@@ -37,4 +37,12 @@ public class Like {
     @Basic
     @Column(name = "timestamp")
     private Long timestamp;
+
+    public Like(String fromuserid, String touserid, Long blogid, Long timestamp) {
+        this.likeid = null;
+        this.fromuserid = fromuserid;
+        this.touserid = touserid;
+        this.blogid = blogid;
+        this.timestamp = timestamp;
+    }
 }
