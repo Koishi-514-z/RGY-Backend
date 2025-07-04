@@ -2,6 +2,7 @@ package org.example.rgybackend.Service;
 
 import java.util.List;
 
+import org.example.rgybackend.Model.QuoteModel;
 import org.example.rgybackend.Model.UrlDataModel;
 
 public interface PushContentService {
@@ -16,4 +17,8 @@ public interface PushContentService {
     Long getAllDataNum();
 
     boolean deleteUrlData(Long dataid);
+
+    QuoteModel getQuote();
+
+    boolean addQuote(QuoteModel quoteModel);
 }

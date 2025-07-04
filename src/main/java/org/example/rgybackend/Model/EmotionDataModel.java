@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmotionDataModel {
-    private Long time;
+    private Long timestamp;
     private Long score;
+    private Long time;
 }

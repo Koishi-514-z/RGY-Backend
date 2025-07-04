@@ -14,10 +14,10 @@ public interface EmotionRepository extends JpaRepository<Emotion, Long> {
     @Query("SELECT e FROM Emotion e WHERE e.userid = :userid AND e.timestamp >= :start AND e.timestamp < :end")
     List<Emotion> scanEmotion(String userid, Long start, Long end);
 
-    @Query("SELECT new org.example.rgybackend.Model.EmotionDataModel(e.timestamp, e.score) FROM Emotion e WHERE e.userid = :userid")
+    @Query("SELECT new org.example.rgybackend.Model.EmotionDataModel(e.timestamp, e.score, null) FROM Emotion e WHERE e.userid = :userid")
     List<EmotionDataModel> findEmotionData(String userid);
 
-    @Query("SELECT new org.example.rgybackend.Model.EmotionDataModel(e.timestamp, e.score) FROM Emotion e WHERE e.userid = :userid AND e.timestamp >= :start AND e.timestamp < :end")
+    @Query("SELECT new org.example.rgybackend.Model.EmotionDataModel(e.timestamp, e.score, null) FROM Emotion e WHERE e.userid = :userid AND e.timestamp >= :start AND e.timestamp < :end")
     List<EmotionDataModel> scanEmotionData(String userid, Long start, Long end);
 
     @Query("SELECT new org.example.rgybackend.DTO.AdminDataDTO(e.score, e.tagid) FROM Emotion e WHERE e.timestamp >= :start AND e.timestamp < :end")

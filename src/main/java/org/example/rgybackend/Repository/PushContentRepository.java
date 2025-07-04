@@ -8,7 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PushContentRepository extends JpaRepository<PushContent, Long> {
     Page<PushContent> findAllByEmotagidOrderByCreatedAtDesc(Integer emotagid, Pageable pageable);
 
-    Page<PushContent> findAllOrderByCreatedAtDesc(Pageable pageable);
-
     Long countByEmotagid(Integer emotagid);
 }

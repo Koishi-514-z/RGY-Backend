@@ -76,16 +76,16 @@ public class EmotionDAOImpl implements EmotionDAO {
             return emotionDataModels;
         }
 
-        Long minTimestamp = emotionDataModels.get(0).getTime();
+        Long minTimestamp = emotionDataModels.get(0).getTimestamp();
         for(EmotionDataModel emotionDataModel : emotionDataModels) {
-            if(emotionDataModel.getTime() < minTimestamp) {
-                minTimestamp = emotionDataModel.getTime();
+            if(emotionDataModel.getTimestamp() < minTimestamp) {
+                minTimestamp = emotionDataModel.getTimestamp();
             }
         }
         minTimestamp = TimeUtil.getStartOfDayTimestamp(minTimestamp);
 
         for(EmotionDataModel emotionDataModel : emotionDataModels) {
-            Long diffDays = (emotionDataModel.getTime() - minTimestamp) / TimeUtil.DAY;
+            Long diffDays = (emotionDataModel.getTimestamp() - minTimestamp) / TimeUtil.DAY;
             emotionDataModel.setTime(diffDays + 1);
         }
 

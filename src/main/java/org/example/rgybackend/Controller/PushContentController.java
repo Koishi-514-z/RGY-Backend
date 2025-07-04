@@ -2,6 +2,7 @@ package org.example.rgybackend.Controller;
 
 import java.util.List;
 
+import org.example.rgybackend.Model.QuoteModel;
 import org.example.rgybackend.Model.UrlDataModel;
 import org.example.rgybackend.Service.PushContentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class PushContentController {
     @Autowired
     PushContentService pushContentService;
-
-    @PostMapping("/push")
-    public boolean pushContent(@RequestBody UrlDataModel urlDataModel) {
-        return pushContentService.pushContent(urlDataModel);
-    }
 
     @GetMapping("/getbytag")
     public List<UrlDataModel> getContentByTag(@RequestParam Integer tagid, @RequestParam Integer pageIndex, @RequestParam Integer pageSize) {
@@ -36,6 +32,21 @@ public class PushContentController {
     @GetMapping("/getallnum")
     public Long getAllDataNum() {
         return pushContentService.getAllDataNum();
+    }
+
+    @GetMapping("/quote/get")
+    public QuoteModel getQuote() {
+        return pushContentService.getQuote();
+    }
+
+    @PostMapping("/push")
+    public boolean pushContent(@RequestBody UrlDataModel urlDataModel) {
+        return pushContentService.pushContent(urlDataModel);
+    }
+
+    @PostMapping("/quote/add")
+    public boolean AddQuote(@RequestBody QuoteModel quoteModel) {
+        return pushContentService.addQuote(quoteModel);
     }
 
     @DeleteMapping("/del")

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -48,8 +49,8 @@ public class PushContentDAOImpl implements PushContentDAO {
 
     @Override
     public List<UrlDataModel> getContent(Integer pageIndex, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        Page<PushContent> pushContents = pushContentRepository.findAllOrderByCreatedAtDesc(pageable);
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<PushContent> pushContents = pushContentRepository.findAll(pageable);
         List<UrlDataModel> urlDataModels = new ArrayList<>();
         for(PushContent pushContent : pushContents) {
             urlDataModels.add(new UrlDataModel(pushContent));
