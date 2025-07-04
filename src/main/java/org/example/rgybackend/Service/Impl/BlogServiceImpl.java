@@ -1,13 +1,19 @@
 package org.example.rgybackend.Service.Impl;
 
 import org.example.rgybackend.DAO.BlogDAO;
+import org.example.rgybackend.DAO.CrisisAuditingDAO;
 import org.example.rgybackend.DAO.EmotionDAO;
+import org.example.rgybackend.DAO.NotificationPrivateDAO;
 import org.example.rgybackend.DAO.UserDAO;
 import org.example.rgybackend.Entity.Blog;
 import org.example.rgybackend.Entity.Like;
 import org.example.rgybackend.Entity.Reply;
 import org.example.rgybackend.Model.*;
 import org.example.rgybackend.Service.BlogService;
+import org.example.rgybackend.Utils.BERTModel;
+import org.example.rgybackend.Utils.ModelResponse;
+import org.example.rgybackend.Utils.NotificationUtil;
+import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +31,34 @@ public class BlogServiceImpl implements BlogService {
     @Autowired
     private EmotionDAO emotionDAO;
 
+    @Autowired
+    private BERTModel bertModel;
+
+    @Autowired
+    private NotificationPrivateDAO notificationPrivateDAO;
+
+    @Autowired
+    private CrisisAuditingDAO crisisAuditingDAO;
+
     @Override
     public void addBlog(String title, String content, List<String> tags, SimplifiedProfileModel author) {
+        ModelResponse crisisResponse = bertModel.checkCrisis(content);
+        if(crisisResponse.getPredicted_class() == 1) {
+            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);
+            notification.setAdminid("System");
+            notification.setUserid(author.getUserid());
+            notificationPrivateDAO.addNotification(notification);
+        }
+        else if(crisisResponse.getPredicted_class() == 2) {
+            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
+            notification.setAdminid("System");
+            notification.setUserid(author.getUserid());
+            notificationPrivateDAO.addNotification(notification);
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), content, TimeUtil.now());
+            crisisAuditingDAO.addCrisis(crisisAuditingModel);
+            return;
+        }
+
         Long timestamp = System.currentTimeMillis();
         Long likeNum = 0L;
         int emotion = 0;
@@ -44,6 +76,23 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public ReplyModel addReply(Long blogid, String content, SimplifiedProfileModel author) {
+        ModelResponse crisisResponse = bertModel.checkCrisis(content);
+        if(crisisResponse.getPredicted_class() == 1) {
+            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);
+            notification.setAdminid("System");
+            notification.setUserid(author.getUserid());
+            notificationPrivateDAO.addNotification(notification);
+        }
+        else if(crisisResponse.getPredicted_class() == 2) {
+            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
+            notification.setAdminid("System");
+            notification.setUserid(author.getUserid());
+            notificationPrivateDAO.addNotification(notification);
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), content, TimeUtil.now());
+            crisisAuditingDAO.addCrisis(crisisAuditingModel);
+            return new ReplyModel();
+        }
+
         Long timestamp = System.currentTimeMillis();
         ReplyModel replyModel = new ReplyModel(null, blogid, author.getUserid(), getBlogById(blogid).getUser().getUserid(),timestamp, content,author);
         blogDAO.addReply(replyModel);
@@ -139,6 +188,7 @@ public class BlogServiceImpl implements BlogService {
         }
         return result;
     }
+
     @Override
     public BlogModel getBlogById(Long blogid) {
         Blog blog = blogDAO.getBlogById(blogid);
@@ -170,6 +220,7 @@ public class BlogServiceImpl implements BlogService {
         return blogModel;
 
     }
+
     @Override
     public void likeBlog(Long blogid,String userid) {
         // TODO: Implement likeBlog method
@@ -182,6 +233,7 @@ public class BlogServiceImpl implements BlogService {
             blogDAO.unlikeBlog(blogid,userid);
 
     }
+
     @Override
     public List<BlogModel> getBlogsByUserid(String userid){
         List<Blog> blogss = blogDAO.getBlogsByUserid(userid);
@@ -216,6 +268,7 @@ public class BlogServiceImpl implements BlogService {
         }
         return blogs;
     }
+
     @Override
     public List<BlogModel> getBlogRepliedByUserid(String userid){
         List<Reply> replies = blogDAO.getRepliesByUserid(userid);
