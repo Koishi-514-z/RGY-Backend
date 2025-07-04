@@ -8,9 +8,10 @@ public class EmotionSimilarity {
     private List<List<Integer>> emotion1;
 
     public EmotionSimilarity() {
-        for (int i = 0; i < 5; i++) {
+        emotion1 = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
             emotion1.add(new ArrayList<>());
-            for (int j = 0; j < 5; j++) {
+            for (int j = 0; j < 6; j++) {
                 emotion1.get(i).add(0);
             }
         }

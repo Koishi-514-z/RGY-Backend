@@ -2,12 +2,16 @@ package org.example.rgybackend.Controller;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.servlet.http.HttpSession;
 import org.example.rgybackend.DAO.EmotionDAO;
 import org.example.rgybackend.Entity.Like;
 import org.example.rgybackend.Model.BlogModel;
+import org.example.rgybackend.Model.BlogsRet;
+import org.example.rgybackend.Model.ReplyModel;
 import org.example.rgybackend.Model.SimplifiedProfileModel;
 import org.example.rgybackend.Service.BlogService;
 import org.example.rgybackend.Service.UserService;
@@ -42,10 +46,12 @@ public class BlogController {
         List<BlogModel> result = new ArrayList<>();
         String userid = (String)session.getAttribute("user");
         List<Like> userLikes = blogService.getBlogLikedByUserid(userid);
+        Map<Long, BlogModel> blogMap = new HashMap<>();
         for (Like userLike : userLikes) {
             BlogModel blogModel = blogService.getBlogById(userLike.getBlogid());
-            result.add(blogModel);
+            blogMap.put(blogModel.getBlogid(), blogModel);
         }
+        result = new ArrayList<>(blogMap.values());
         return result;
     }
 
@@ -58,79 +64,112 @@ public class BlogController {
     }
 
     @PostMapping ("/get")
-    public List<BlogModel> getAllBlogs(@RequestBody String params, HttpSession session) {
-        List<BlogModel> result = new ArrayList<>();
+    public BlogsRet getAllBlogs(@RequestBody String params, HttpSession session) {
+        BlogsRet result = new BlogsRet();
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         int pageSize = json.getIntValue("pageSize");
         int currentPage = json.getIntValue("currentPage");
         String titleOrAuthor = json.getString("searchText");
         List<String> tags = json.getJSONArray("tags").toJavaList(String.class);
-        int emotion = emotionDAO.getEmotion(session.getAttribute("user").toString(), LocalDate.now()).getTag().getId().intValue();
-        result = blogService.getRequestedBlogs(pageSize,currentPage,titleOrAuthor, tags, emotion);
+        int emotion = 0;
+        if (emotionDAO.getEmotion(session.getAttribute("user").toString(), LocalDate.now()).getTag() == null)
+            emotion = 0;
+        else
+            emotion = emotionDAO.getEmotion(session.getAttribute("user").toString(), LocalDate.now()).getTag().getId().intValue();
+        result =  blogService.getRequestedBlogs(pageSize, currentPage, titleOrAuthor, tags, emotion);
         return result;
     }
 
     @GetMapping ("/getById/{id}")
     public BlogModel getBlogById(@PathVariable String id) {
+        System.out.println(id);
         Long idLong = Long.parseLong(id);
+        System.out.println(idLong);
         BlogModel blogModel = blogService.getBlogById(idLong);
         return blogModel;
     }
 
+
     @PostMapping ("/add")
-    public void addBlog(@RequestBody String params, HttpSession session) {
+    public boolean addBlog(@RequestBody String params, HttpSession session) {
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         String title = json.getString("title");
         String content = json.getString("content");
         List<String> tags = json.getJSONArray("tags").toJavaList(String.class);
+        //输出tags内容
+        System.out.println(tags);
         SimplifiedProfileModel author = userService.getSimplifiedProfile(session.getAttribute("user").toString());
         blogService.addBlog(title, content, tags, author);
+        return true;
     }
 
     @PostMapping ("/delete")
-    public void deleteBlog(@RequestBody String params, HttpSession session) {
+    public boolean deleteBlog(@RequestBody String params, HttpSession session) {
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         Long blogid = json.getLongValue("blogid");
         blogService.deleteBlog(blogid);
+        return true;
     }
 
     @PostMapping ("/addReply")
-    public void addReply(@RequestBody String params, HttpSession session) {
+    public ReplyModel addReply(@RequestBody String params, HttpSession session) {
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         Long blogid = json.getLongValue("blogid");
         String content = json.getString("content");
         SimplifiedProfileModel author = userService.getSimplifiedProfile(session.getAttribute("user").toString());
-        blogService.addReply(blogid, content, author);
+        return blogService.addReply(blogid, content, author);
+
     }
 
     @PostMapping ("/deleteReply")
-    public void deleteReply(@RequestBody String params, HttpSession session) {
+    public boolean deleteReply(@RequestBody String params, HttpSession session) {
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         Long replyid = json.getLongValue("replyid");
         blogService.deleteReply(replyid);
+        return true;
     }
-
-    @PostMapping ("/like")
-    public void likeBlog(@RequestBody String params, HttpSession session) {
+    @PostMapping ("/getIfLiked")
+    public boolean getIfLiked(@RequestBody String params, HttpSession session) {
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         Long blogid = json.getLongValue("blogid");
         String userid = (String)session.getAttribute("user");
+        //判断是否已经点过赞
+        if (blogService.getBlogLikedByUserid(userid).stream().anyMatch(like -> like.getBlogid().equals(blogid))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @PostMapping ("/like")
+    public boolean likeBlog(@RequestBody String params, HttpSession session) {
+        JSONObject json = new JSONObject();
+        json = JSON.parseObject(params);
+        Long blogid = json.getLongValue("blogid");
+        String userid = (String)session.getAttribute("user");
+        //判断是否已经点过赞
+        if (blogService.getBlogLikedByUserid(userid).stream().anyMatch(like -> like.getBlogid().equals(blogid))) {
+            blogService.unlikeBlog(blogid, userid);
+        } else {
         blogService.likeBlog(blogid, userid);
+        }
+        return true;
     }
 
     @PostMapping ("/cancellike")
-    public void unlikeBlog(@RequestBody String params, HttpSession session) {
+    public boolean unlikeBlog(@RequestBody String params, HttpSession session) {
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         Long blogid = json.getLongValue("blogid");
         String userid = (String)session.getAttribute("user");
         blogService.unlikeBlog(blogid,userid);
+        return true;
     }
 
 }

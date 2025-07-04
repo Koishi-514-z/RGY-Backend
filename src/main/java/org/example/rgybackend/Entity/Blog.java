@@ -54,6 +54,7 @@ public class Blog {
         this.title = blogModel.getTitle();
         this.content = blogModel.getContent();
         this.blogid = blogModel.getBlogid();
+        this.tags = "";
         for (String tag : blogModel.getTags()) {
             this.tags += tag + ",";
         }
