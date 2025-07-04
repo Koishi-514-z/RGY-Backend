@@ -196,7 +196,21 @@ public class BlogServiceImpl implements BlogService {
             blogModel.setTitle(blog.getTitle());
             blogModel.setContent(blog.getContent());
             blogModel.setTags(Arrays.asList(blog.getTags().split(",")));
-            //获得blog的reply
+            List<Reply> replies = blogDAO.getRepliesByBlogid(blog.getBlogid());
+            List<ReplyModel> replyModels = new ArrayList<>();
+            for (Reply reply : replies) {
+                if (reply.getValid() == 0) continue;
+                ReplyModel replyModel = new ReplyModel();
+                replyModel.setReplyid(reply.getReplyid());
+                replyModel.setBlogid(reply.getBlogid());
+                replyModel.setUser(userDAO.getSimplified(reply.getFromuserid()));
+                replyModel.setFromuserid(reply.getFromuserid());
+                replyModel.setTouserid(reply.getTouserid());
+                replyModel.setTimestamp(reply.getTimestamp());
+                replyModel.setContent(reply.getContent());
+                replyModels.add(replyModel);
+            }
+            blogModel.setReplies(replyModels);
             blogModel.setEmotion(blog.getEmotion());
             blogs.add(blogModel);
         }
