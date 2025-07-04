@@ -2,6 +2,8 @@ package org.example.rgybackend.Service;
 
 import org.example.rgybackend.Entity.Like;
 import org.example.rgybackend.Model.BlogModel;
+import org.example.rgybackend.Model.BlogsRet;
+import org.example.rgybackend.Model.ReplyModel;
 import org.example.rgybackend.Model.SimplifiedProfileModel;
 
 import java.util.List;
@@ -11,11 +13,11 @@ public interface BlogService {
 
     void deleteBlog(Long blogid);
 
-    public void addReply(Long blogid, String content, SimplifiedProfileModel author);
+    public ReplyModel addReply(Long blogid, String content, SimplifiedProfileModel author);
 
     public void deleteReply(Long replyid);
 
-    List<BlogModel> getRequestedBlogs(int pageSize, int currentPage, String titleOrAuthor, List<String> tags, int emotion);
+    BlogsRet getRequestedBlogs(int pageSize, int currentPage, String titleOrAuthor, List<String> tags, int emotion);
 
     BlogModel getBlogById(Long blogId);
 

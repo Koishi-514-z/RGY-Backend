@@ -6,10 +6,7 @@ import org.example.rgybackend.DAO.UserDAO;
 import org.example.rgybackend.Entity.Blog;
 import org.example.rgybackend.Entity.Like;
 import org.example.rgybackend.Entity.Reply;
-import org.example.rgybackend.Model.BlogModel;
-import org.example.rgybackend.Model.EmotionSimilarity;
-import org.example.rgybackend.Model.ReplyModel;
-import org.example.rgybackend.Model.SimplifiedProfileModel;
+import org.example.rgybackend.Model.*;
 import org.example.rgybackend.Service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +29,10 @@ public class BlogServiceImpl implements BlogService {
     public void addBlog(String title, String content, List<String> tags, SimplifiedProfileModel author) {
         Long timestamp = System.currentTimeMillis();
         Long likeNum = 0L;
-        int emotion = emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag().getId().intValue();
+        int emotion = 0;
+        if (emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag() == null)
+            emotion = 0;
+        else emotion = emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag().getId().intValue();
         BlogModel blogModel = new BlogModel(null, author, timestamp,likeNum, title, content, tags, new ArrayList<>(), emotion);
         blogDAO.addBlog(blogModel);
     }
@@ -43,10 +43,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void addReply(Long blogid, String content, SimplifiedProfileModel author) {
+    public ReplyModel addReply(Long blogid, String content, SimplifiedProfileModel author) {
         Long timestamp = System.currentTimeMillis();
-        ReplyModel replyModel = new ReplyModel(null, blogid, author, timestamp, content);
+        ReplyModel replyModel = new ReplyModel(null, blogid, author.getUserid(), getBlogById(blogid).getUser().getUserid(),timestamp, content,author);
         blogDAO.addReply(replyModel);
+        return replyModel;
     }
 
     @Override
@@ -55,8 +56,9 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<BlogModel> getRequestedBlogs(int pageSize, int currentPage, String titleOrAuthor, List<String> tags, int emotion) {
+    public BlogsRet getRequestedBlogs(int pageSize, int currentPage, String titleOrAuthor, List<String> tags, int emotion) {
         List<Blog> blogss = blogDAO.getAllBlogs();
+        BlogsRet blogsRet = new BlogsRet();
         List<BlogModel> blogs = new ArrayList<>();
         for (Blog blog : blogss) {
             if(blog.getValid() == 0) continue;
@@ -74,15 +76,23 @@ public class BlogServiceImpl implements BlogService {
         EmotionSimilarity emotionSimilarity = new EmotionSimilarity();
         //对所有blogs进行筛选，只选择blog的标题或作者包含titleOrAuthor的博客，且标签包含tags中的所有标签的博客
         List<BlogModel> filteredBlogs = filterBlogs(blogs, titleOrAuthor, tags);
+        int total = filteredBlogs.size();
+        blogsRet.setTotal(total);
         //对筛选后的blogs进行排序
         List<BlogModel> sortedBlogs = sortBlogs(filteredBlogs, emotionSimilarity, emotion);
         //分页
         int start = (currentPage - 1) * pageSize;
         int end = start + pageSize;
+        if (start >= sortedBlogs.size()) {
+            blogsRet.setBlogs(new ArrayList<>());
+            return blogsRet;
+        }
         if (end > sortedBlogs.size()) {
             end = sortedBlogs.size();
         }
-        return sortedBlogs.subList(start, end);
+
+        blogsRet.setBlogs(sortedBlogs.subList(start, end));
+        return blogsRet;
     }
 
     private List<BlogModel> sortBlogs(List<BlogModel> filteredBlogs, EmotionSimilarity emotionSimilarity, int emotion) {
@@ -101,7 +111,7 @@ public class BlogServiceImpl implements BlogService {
 //            } else if (emotion == 4) {
 //                similarity = emotionSimilarity.getEmotion1().get(4).get(blog.getEmotion());
 //            }
-            similarity = emotionSimilarity.getEmotion1().get(emotion-1).get(blog.getEmotion()-1);
+            similarity = emotionSimilarity.getEmotion1().get(emotion).get(blog.getEmotion());
             similarityMap.put(blog.getBlogid(), (long) similarity * blog.getLikeNum());
         }
 
@@ -148,7 +158,9 @@ public class BlogServiceImpl implements BlogService {
             ReplyModel replyModel = new ReplyModel();
             replyModel.setReplyid(reply.getReplyid());
             replyModel.setBlogid(reply.getBlogid());
-            replyModel.setUser(userDAO.getSimplified(reply.getUserid()));
+            replyModel.setUser(userDAO.getSimplified(reply.getFromuserid()));
+            replyModel.setFromuserid(reply.getFromuserid());
+            replyModel.setTouserid(reply.getTouserid());
             replyModel.setTimestamp(reply.getTimestamp());
             replyModel.setContent(reply.getContent());
             replyModels.add(replyModel);

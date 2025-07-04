@@ -31,7 +31,7 @@ public class Like {
     private String touserid;
 
     @Basic
-    @Column(name = "userid")
+    @Column(name = "blogid")
     private Long blogid;
 
     @Basic
