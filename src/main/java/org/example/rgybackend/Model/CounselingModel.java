@@ -11,14 +11,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CounselingModel {
     private Long counselingid;
-    private String userid;
     private String psyid;
     private Long timestamp;
+    private Long status;
+    private String type;
 
     public CounselingModel(Counseling counseling) {
         this.counselingid = counseling.getCounselingid();
-        this.userid = counseling.getUserid();
         this.psyid = counseling.getPsyid();
         this.timestamp = counseling.getTimestamp();
+        this.status = counseling.getStatus();
+        this.type = counseling.getType();
     }
 }

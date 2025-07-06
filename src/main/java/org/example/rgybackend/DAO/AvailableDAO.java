@@ -1,17 +1,11 @@
 package org.example.rgybackend.DAO;
 
-import java.util.List;
+import org.example.rgybackend.Model.AvailableTimeModel;
 
 public interface AvailableDAO {
-    boolean isAvailable(String psyid, Long timestamp);
+    boolean isAvailable(String psyid, String date, Long hour);
 
-    List<Long> getAvailableTime(String psyid);
+    AvailableTimeModel getAvailableTime(String psyid);
 
-    boolean setAvailableTimes(String psyid, List<Long> timestamps);
-
-    boolean addAvailableTime(String psyid, Long timestamp);
-
-    boolean removeAvailableTime(String psyid, Long timestamp);
-
-    boolean removeAll(String psyid);
+    boolean setAvailableTimes(AvailableTimeModel availableTimeModel);
 }

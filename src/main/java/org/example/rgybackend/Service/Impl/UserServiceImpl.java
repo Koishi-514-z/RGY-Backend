@@ -7,13 +7,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.example.rgybackend.DAO.LikeDAO;
+import org.example.rgybackend.DAO.PsyExtraDAO;
 import org.example.rgybackend.DAO.ReplyDAO;
 import org.example.rgybackend.DAO.UserAuthDAO;
 import org.example.rgybackend.DAO.UserDAO;
 import org.example.rgybackend.DTO.IntimateDTO;
 import org.example.rgybackend.DTO.LikeData;
 import org.example.rgybackend.DTO.ReplyData;
+import org.example.rgybackend.Entity.PsyProfileExtra;
 import org.example.rgybackend.Model.ProfileModel;
+import org.example.rgybackend.Model.PsyProfileModel;
 import org.example.rgybackend.Model.SimplifiedProfileModel;
 import org.example.rgybackend.Model.UserModel;
 import org.example.rgybackend.Service.UserService;
@@ -28,6 +31,9 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private PsyExtraDAO psyExtraDAO;
 
     @Autowired
     private UserAuthDAO userAuthDAO;
@@ -72,6 +78,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public PsyProfileModel getPsyProfile(String psyid) {
+        ProfileModel profileModel = userDAO.get(psyid);
+        PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);
+        PsyProfileModel psyProfileModel = new PsyProfileModel(profileExtra);
+        psyProfileModel.setUsername(profileModel.getUsername());
+        psyProfileModel.setEmail(profileModel.getEmail());
+        psyProfileModel.setAvatar(profileModel.getAvatar());
+        return psyProfileModel;
+    }
+
+    @Override
     public ProfileModel getProfileByName(String username) {
         return userDAO.getByName(username);
     }
@@ -97,9 +114,15 @@ public class UserServiceImpl implements UserService {
 
         Map<String, Double> intimateScores = new HashMap<>();
         for(LikeData likeData : likeDatas) {
+            if(likeData.getUserid().equals(userid)) {
+                continue;
+            }
             intimateScores.put(likeData.getUserid(), 0.0);
         }
         for(ReplyData replyData : replyDatas) {
+            if(replyData.getUserid().equals(userid)) {
+                continue;
+            }
             intimateScores.put(replyData.getUserid(), 0.0);
         }
 
@@ -179,15 +202,43 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean addUser(UserModel user) {
-        boolean result = true;
-        result = result && userDAO.add(user.getProfile());
-        result = result && userAuthDAO.addAuth(user.getProfile().getUserid(), user.getStuid(), user.getPassword());
-        return result;
+        boolean result = userDAO.add(user.getProfile());
+        boolean resultAuth = userAuthDAO.addAuth(user.getProfile().getUserid(), user.getStuid(), user.getPassword());
+        if(user.getProfile().getRole() != 2) {
+            return result && resultAuth;
+        }
+        PsyProfileExtra profileExtra = new PsyProfileExtra(user.getProfile().getUserid());
+        boolean resultExtra = psyExtraDAO.setPsyProfileExtra(profileExtra);
+        return result && resultAuth && resultExtra;
     }
 
     @Override
     public boolean updateProfile(ProfileModel profile) {
         return userDAO.update(profile);
+    }
+
+    @Override
+    public boolean updatePsyProfile(PsyProfileModel psyProfileModel) {
+        String psyid = psyProfileModel.getUserid();
+
+        ProfileModel newProfileModel = new ProfileModel();
+        newProfileModel.setUserid(psyid);
+        newProfileModel.setUsername(psyProfileModel.getUsername());
+        newProfileModel.setEmail(psyProfileModel.getEmail());
+        newProfileModel.setAvatar(psyProfileModel.getAvatar());
+        newProfileModel.setNote("");
+        newProfileModel.setRole(2L);
+        boolean result = userDAO.update(newProfileModel);
+
+        PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);
+        PsyProfileExtra newProfileExtra = new PsyProfileExtra(psyProfileModel);
+        newProfileExtra.setTotalClients(profileExtra.getTotalClients());
+        newProfileExtra.setTotalScore(profileExtra.getTotalScore());
+        newProfileExtra.setCommentNum(profileExtra.getCommentNum());
+        newProfileExtra.setSuccessNum(profileExtra.getSuccessNum());
+        boolean resultExtra = psyExtraDAO.setPsyProfileExtra(newProfileExtra);
+
+        return result && resultExtra;
     }
 
     @Override

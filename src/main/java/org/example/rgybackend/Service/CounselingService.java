@@ -2,6 +2,7 @@ package org.example.rgybackend.Service;
 
 import java.util.List;
 
+import org.example.rgybackend.Model.AvailableTimeModel;
 import org.example.rgybackend.Model.CounselingModel;
 
 public interface CounselingService {
@@ -11,13 +12,11 @@ public interface CounselingService {
 
     boolean addCounseling(String userid, String psyid, Long timestamp);
 
+    boolean setStatus(Long counselingid, Long status);
+
     boolean removeCounseling(Long counselingid);
 
-    List<Long> getAvailableTime(String psyid);
+    AvailableTimeModel getAvailableTime(String psyid);
 
-    boolean setAvailableTimes(String psyid, List<Long> timestamps);
-
-    boolean addAvailableTime(String psyid, Long timestamp);
-
-    boolean removeAvailableTime(String psyid, Long timestamp);
+    boolean setAvailableTimes(AvailableTimeModel availableTimeModel);
 }

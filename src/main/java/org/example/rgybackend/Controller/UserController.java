@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.example.rgybackend.DTO.IntimateDTO;
 import org.example.rgybackend.Model.ProfileModel;
+import org.example.rgybackend.Model.PsyProfileModel;
 import org.example.rgybackend.Model.SimplifiedProfileModel;
 import org.example.rgybackend.Model.UserModel;
 import org.example.rgybackend.Service.UserService;
@@ -52,6 +53,12 @@ public class UserController {
         return userService.getUserProfile(userid);
     }
 
+    @GetMapping("/getpsy")
+    public PsyProfileModel getPsyProfile(HttpSession session) {
+        String psyid = (String)session.getAttribute("user");
+        return userService.getPsyProfile(psyid);
+    }
+
     @GetMapping("/getsim")
     public SimplifiedProfileModel getSimplifiedProfile(@RequestParam String userid) {
         return userService.getSimplifiedProfile(userid);
@@ -92,6 +99,15 @@ public class UserController {
             throw new ForbiddenException("无权修改该用户信息");
         }
         return userService.updateProfile(profile);
+    }
+
+    @PutMapping("/profile/updatepsy")
+    public boolean updatePsyProfile(@RequestBody PsyProfileModel profile, HttpSession session) {
+        String psyid = (String)session.getAttribute("user");
+        if(!psyid.equals(profile.getUserid())) {
+            throw new ForbiddenException("无权修改该用户信息");
+        }
+        return userService.updatePsyProfile(profile);
     }
 
     @PutMapping("pwd")

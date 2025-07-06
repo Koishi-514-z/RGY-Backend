@@ -2,11 +2,13 @@ package org.example.rgybackend.DAO.Impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.example.rgybackend.DAO.NotificationPrivateDAO;
 import org.example.rgybackend.Entity.NotificationPrivate;
 import org.example.rgybackend.Model.NotificationPrivateModel;
 import org.example.rgybackend.Repository.NotificationPrivateRepository;
+import org.example.rgybackend.Utils.NotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,6 +33,34 @@ public class NotificationPrivateDAOImpl implements NotificationPrivateDAO {
     public boolean addNotification(NotificationPrivateModel notification) {
         NotificationPrivate notificationPrivate = new NotificationPrivate(notification);
         notificationPrivateRepository.save(notificationPrivate);
+        return true;
+    }
+
+    @Override
+    public boolean markRead(Long notificationid) {
+        Optional<NotificationPrivate> notificationOptional = notificationPrivateRepository.findById(notificationid);
+        if(notificationOptional.isEmpty()) {
+            throw new NotExistException("Notification not exists, notificationid: " + notificationid);
+        }
+        NotificationPrivate notificationPrivate = notificationOptional.get();
+        notificationPrivate.setUnread(0L);
+        notificationPrivateRepository.save(notificationPrivate);
+        return true;
+    }
+
+    @Override
+    public boolean markAllRead(String userid) {
+        List<NotificationPrivate> notificationPrivates = notificationPrivateRepository.findByUserid(userid);
+        for(NotificationPrivate notificationPrivate : notificationPrivates) {
+            notificationPrivate.setUnread(0L);
+            notificationPrivateRepository.save(notificationPrivate);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean deleteNotification(Long notificationid) {
+        notificationPrivateRepository.deleteById(notificationid);
         return true;
     }
 }

@@ -8,4 +8,10 @@ public interface NotificationService {
     List<NotificationPrivateModel> getPrivateNotification(String userid);
 
     boolean addPrivateNotification(NotificationPrivateModel notification);
+
+    boolean markRead(Long notificationid);
+
+    boolean markAllRead(String userid);
+
+    boolean deleteNotification(Long notificationid);
 }

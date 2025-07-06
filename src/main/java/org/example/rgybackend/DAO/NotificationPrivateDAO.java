@@ -8,4 +8,10 @@ public interface NotificationPrivateDAO {
     List<NotificationPrivateModel> getUserNotification(String userid);
 
     boolean addNotification(NotificationPrivateModel notification);
+
+    boolean markRead(Long notificationid);
+
+    boolean markAllRead(String userid);
+
+    boolean deleteNotification(Long notificationid);
 }

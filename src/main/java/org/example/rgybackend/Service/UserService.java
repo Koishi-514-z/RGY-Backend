@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.example.rgybackend.DTO.IntimateDTO;
 import org.example.rgybackend.Model.ProfileModel;
+import org.example.rgybackend.Model.PsyProfileModel;
 import org.example.rgybackend.Model.SimplifiedProfileModel;
 import org.example.rgybackend.Model.UserModel;
 
@@ -15,6 +16,8 @@ public interface UserService {
     boolean userExisted(String username);
 
     ProfileModel getUserProfile(String userid);
+
+    PsyProfileModel getPsyProfile(String psyid);
 
     ProfileModel getProfileByName(String username);
 
@@ -31,6 +34,8 @@ public interface UserService {
     boolean addUser(UserModel user);
 
     boolean updateProfile(ProfileModel profile);
+
+    boolean updatePsyProfile(PsyProfileModel psyProfileModel);
 
     boolean updatePassword(String userid, String password);
 

@@ -1,6 +1,6 @@
 package org.example.rgybackend.Entity;
 
-import org.example.rgybackend.Model.CounselingModel;
+import org.example.rgybackend.Model.CrisisModel;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -14,42 +14,42 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "counseling")
+@Table(name = "crisis")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Counseling {
+public class Crisis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "counselingid")
-    private Long counselingid;
+    @Column(name = "crisisid")
+    private Long crisisid;
 
     @Basic
     @Column(name = "userid")
     private String userid;
 
     @Basic
-    @Column(name = "psyid")
-    private String psyid;
+    @Column(name = "content")
+    private String content;
 
     @Basic
     @Column(name = "timestamp")
     private Long timestamp;
 
     @Basic
+    @Column(name = "urgencyLevel")
+    private Long urgencyLevel;
+
+    @Basic
     @Column(name = "status")
     private Long status;
 
-    @Basic
-    @Column(name = "type")
-    private String type;
-
-    public Counseling(CounselingModel counselingModel, String userid) {
-        this.counselingid = counselingModel.getCounselingid();
-        this.userid = userid;
-        this.psyid = counselingModel.getPsyid();
-        this.timestamp = counselingModel.getTimestamp();
-        this.status = counselingModel.getStatus();
-        this.type = counselingModel.getType();
+    public Crisis(CrisisModel model) {
+        this.crisisid = model.getCrisisid();
+        this.userid = model.getUserid();
+        this.content = model.getContent();
+        this.timestamp = model.getTimestamp();
+        this.urgencyLevel = model.getUrgencyLevel();
+        this.status = model.getStatus();
     }
 }

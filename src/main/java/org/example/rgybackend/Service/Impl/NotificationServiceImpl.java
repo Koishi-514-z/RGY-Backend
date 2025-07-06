@@ -22,4 +22,19 @@ public class NotificationServiceImpl implements NotificationService {
     public boolean addPrivateNotification(NotificationPrivateModel notification) {
         return notificationPrivateDAO.addNotification(notification);
     }
+
+    @Override
+    public boolean markRead(Long notificationid) {
+        return notificationPrivateDAO.markRead(notificationid);
+    }
+
+    @Override
+    public boolean markAllRead(String userid) {
+        return notificationPrivateDAO.markAllRead(userid);
+    }
+
+    @Override
+    public boolean deleteNotification(Long notificationid) {
+        return notificationPrivateDAO.deleteNotification(notificationid);
+    }
 }
