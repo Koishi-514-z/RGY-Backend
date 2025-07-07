@@ -1,7 +1,6 @@
 package org.example.rgybackend.Entity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.rgybackend.Model.BlogModel;
 
 @Entity
 @Table(name = "illegal")

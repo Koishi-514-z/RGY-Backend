@@ -6,8 +6,6 @@ import org.example.rgybackend.Model.CrisisModel;
 import org.example.rgybackend.Entity.Crisis;
 import org.example.rgybackend.Entity.CrisisAuditing;
 
-import java.util.List;
-
 public interface CrisisDAO {
     void saveCrisis(String content, Long timestamp, String userid);
 
@@ -29,5 +27,5 @@ public interface CrisisDAO {
 
     boolean addCrisis(CrisisModel crisisModel);
 
-    boolean updateStatus(Long crisisid, Long status);
+    boolean updateStatus(Integer crisisid, Long status);
 }

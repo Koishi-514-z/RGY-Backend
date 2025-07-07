@@ -3,7 +3,6 @@ package org.example.rgybackend.Service.Impl;
 import org.example.rgybackend.DAO.BlogDAO;
 import org.example.rgybackend.DAO.CrisisAuditingDAO;
 import org.example.rgybackend.DAO.EmotionDAO;
-import org.example.rgybackend.DAO.PushContentDAO;
 import org.example.rgybackend.DAO.NotificationPrivateDAO;
 import org.example.rgybackend.DAO.UserDAO;
 import org.example.rgybackend.Entity.Blog;
@@ -147,6 +146,7 @@ public class BlogServiceImpl implements BlogService {
         blogsRet.setBlogs(sortedBlogs.subList(start, end));
         return blogsRet;
     }
+
     public BlogsRet getLatestBlogs(int pageSize, int currentPage, String titleOrAuthor, List<String> tags){
         List<Blog> blogss = blogDAO.getAllBlogs();
         BlogsRet blogsRet = new BlogsRet();
@@ -166,7 +166,6 @@ public class BlogServiceImpl implements BlogService {
             blogModel.setLastreply(blog.getLastreply());
             blogs.add(blogModel);
         }
-        EmotionSimilarity emotionSimilarity = new EmotionSimilarity();
         //对所有blogs进行筛选，只选择blog的标题或作者包含titleOrAuthor的博客，且标签包含tags中的所有标签的博客
         List<BlogModel> filteredBlogs = filterBlogs(blogs, titleOrAuthor, tags);
         int total = filteredBlogs.size();

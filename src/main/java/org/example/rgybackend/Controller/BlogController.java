@@ -82,7 +82,6 @@ public class BlogController {
 
     @PostMapping ("/getLatest")
     public BlogsRet getLatestBlogs(@RequestBody String params, HttpSession session) {
-        BlogsRet result = new BlogsRet();
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         int pageSize = json.getIntValue("pageSize");

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CrisisAuditingModel {
-    private Long crisisid;
+    private Integer crisisid;
     private String userid;
     private String content;
     private Long timestamp;

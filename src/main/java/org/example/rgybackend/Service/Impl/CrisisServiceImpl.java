@@ -89,7 +89,7 @@ public class CrisisServiceImpl implements CrisisService {
   
     // 0-->pending, 1-->processing, 2-->resolved
     @Override
-    public boolean updateStatus(Long crisisid, Long status) {
+    public boolean updateStatus(Integer crisisid, Long status) {
         return crisisDAO.updateStatus(crisisid, status);
     }
 }

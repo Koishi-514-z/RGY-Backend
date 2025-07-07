@@ -22,7 +22,7 @@ public class CrisisAuditing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "crisisid")
-    private Long crisisid;
+    private Integer crisisid;
 
     @Basic
     @Column(name = "userid")

@@ -9,7 +9,10 @@ import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.ForbiddenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,7 +62,7 @@ public class CrisisController {
     }
 
     @PutMapping("update")
-    public boolean updateCrisisStatus(@RequestParam Long crisisid, @RequestParam Long status, HttpSession session) {
+    public boolean updateCrisisStatus(@RequestParam Integer crisisid, @RequestParam Long status, HttpSession session) {
         String userid = (String)session.getAttribute("user");
         if(!userService.isAdmin(userid)) {
             throw new ForbiddenException("只有管理员允许进行该操作");

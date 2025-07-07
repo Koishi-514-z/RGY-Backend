@@ -1,6 +1,5 @@
 package org.example.rgybackend.Entity;
 
-import org.example.rgybackend.Model.BlogModel;
 import org.example.rgybackend.Model.CrisisModel;
 
 import jakarta.persistence.Basic;
@@ -23,7 +22,7 @@ public class Crisis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "crisisid")
-    private Long crisisid;
+    private Integer crisisid;
 
     @Basic
     @Column(name = "userid")
