@@ -1,6 +1,7 @@
 package org.example.rgybackend.DAO;
 
 import org.example.rgybackend.Entity.Blog;
+import org.example.rgybackend.Entity.Illegal;
 import org.example.rgybackend.Entity.Like;
 import org.example.rgybackend.Entity.Reply;
 import org.example.rgybackend.Model.BlogModel;
@@ -32,4 +33,18 @@ public interface BlogDAO {
     List<Reply> getRepliesByUserid(String userid);
 
     List<Like> getBlogLikedByUserid(String userid);
+
+    void addBrowsenum(Long blogid);
+
+    void reportBlog(Long blogid, String reason);
+
+    void reportReply(Long replyid, String reason);
+
+    List<Illegal> getByType(int type);
+
+    String getReplyContentById(Long contentid);
+
+    void setIllegalStatus(int illegalid, int i);
+
+    void deleteIllegal(int illegalid);
 }

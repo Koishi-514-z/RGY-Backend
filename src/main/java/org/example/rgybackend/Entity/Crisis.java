@@ -1,5 +1,6 @@
 package org.example.rgybackend.Entity;
 
+import org.example.rgybackend.Model.BlogModel;
 import org.example.rgybackend.Model.CrisisModel;
 
 import jakarta.persistence.Basic;
@@ -35,7 +36,7 @@ public class Crisis {
     @Basic
     @Column(name = "timestamp")
     private Long timestamp;
-
+  
     @Basic
     @Column(name = "urgencyLevel")
     private Long urgencyLevel;
@@ -43,6 +44,12 @@ public class Crisis {
     @Basic
     @Column(name = "status")
     private Long status;
+
+    public Crisis(String content, Long timestamp, String userid) {
+        this.content = content;
+        this.timestamp = timestamp;
+        this.userid = userid;
+    }
 
     public Crisis(CrisisModel model) {
         this.crisisid = model.getCrisisid();

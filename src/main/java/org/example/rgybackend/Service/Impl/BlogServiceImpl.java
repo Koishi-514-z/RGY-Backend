@@ -3,9 +3,11 @@ package org.example.rgybackend.Service.Impl;
 import org.example.rgybackend.DAO.BlogDAO;
 import org.example.rgybackend.DAO.CrisisAuditingDAO;
 import org.example.rgybackend.DAO.EmotionDAO;
+import org.example.rgybackend.DAO.PushContentDAO;
 import org.example.rgybackend.DAO.NotificationPrivateDAO;
 import org.example.rgybackend.DAO.UserDAO;
 import org.example.rgybackend.Entity.Blog;
+import org.example.rgybackend.Entity.Illegal;
 import org.example.rgybackend.Entity.Like;
 import org.example.rgybackend.Entity.Reply;
 import org.example.rgybackend.Model.*;
@@ -65,7 +67,7 @@ public class BlogServiceImpl implements BlogService {
         if (emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag() == null)
             emotion = 0;
         else emotion = emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag().getId().intValue();
-        BlogModel blogModel = new BlogModel(null, author, timestamp,likeNum, title, content, tags, new ArrayList<>(), emotion);
+        BlogModel blogModel = new BlogModel(null, author, timestamp,likeNum, title, content, tags, new ArrayList<>(), emotion, timestamp, 0L);
         blogDAO.addBlog(blogModel);
     }
 
@@ -120,6 +122,8 @@ public class BlogServiceImpl implements BlogService {
             blogModel.setContent(blog.getContent());
             blogModel.setTags(Arrays.asList(blog.getTags().split(",")));
             blogModel.setEmotion(blog.getEmotion());
+            blogModel.setBrowsenum(blog.getBrowsenum());
+            blogModel.setLastreply(blog.getLastreply());
             blogs.add(blogModel);
         }
         EmotionSimilarity emotionSimilarity = new EmotionSimilarity();
@@ -143,6 +147,45 @@ public class BlogServiceImpl implements BlogService {
         blogsRet.setBlogs(sortedBlogs.subList(start, end));
         return blogsRet;
     }
+    public BlogsRet getLatestBlogs(int pageSize, int currentPage, String titleOrAuthor, List<String> tags){
+        List<Blog> blogss = blogDAO.getAllBlogs();
+        BlogsRet blogsRet = new BlogsRet();
+        List<BlogModel> blogs = new ArrayList<>();
+        for (Blog blog : blogss) {
+            if(blog.getValid() == 0) continue;
+            BlogModel blogModel = new BlogModel();
+            blogModel.setBlogid(blog.getBlogid());
+            blogModel.setUser(userDAO.getSimplified(blog.getUserid()));
+            blogModel.setTimestamp(blog.getTimestamp());
+            blogModel.setLikeNum(blog.getLikeNum());
+            blogModel.setTitle(blog.getTitle());
+            blogModel.setContent(blog.getContent());
+            blogModel.setTags(Arrays.asList(blog.getTags().split(",")));
+            blogModel.setEmotion(blog.getEmotion());
+            blogModel.setBrowsenum(blog.getBrowsenum());
+            blogModel.setLastreply(blog.getLastreply());
+            blogs.add(blogModel);
+        }
+        EmotionSimilarity emotionSimilarity = new EmotionSimilarity();
+        //对所有blogs进行筛选，只选择blog的标题或作者包含titleOrAuthor的博客，且标签包含tags中的所有标签的博客
+        List<BlogModel> filteredBlogs = filterBlogs(blogs, titleOrAuthor, tags);
+        int total = filteredBlogs.size();
+        blogsRet.setTotal(total);
+        filteredBlogs.sort(Comparator.comparing(BlogModel::getLastreply).reversed());
+        int start = (currentPage - 1) * pageSize;
+        int end = start + pageSize;
+        if (start >= filteredBlogs.size()) {
+            blogsRet.setBlogs(new ArrayList<>());
+            return blogsRet;
+        }
+        if (end > filteredBlogs.size()) {
+            end = filteredBlogs.size();
+        }
+
+        blogsRet.setBlogs(filteredBlogs.subList(start, end));
+        return blogsRet;
+
+    }
 
     private List<BlogModel> sortBlogs(List<BlogModel> filteredBlogs, EmotionSimilarity emotionSimilarity, int emotion) {
         List<BlogModel> result = new ArrayList<>();
@@ -161,7 +204,7 @@ public class BlogServiceImpl implements BlogService {
 //                similarity = emotionSimilarity.getEmotion1().get(4).get(blog.getEmotion());
 //            }
             similarity = emotionSimilarity.getEmotion1().get(emotion).get(blog.getEmotion());
-            similarityMap.put(blog.getBlogid(), (long) similarity * blog.getLikeNum());
+            similarityMap.put(blog.getBlogid(), (long) similarity * (10L + blog.getLikeNum() + blog.getBrowsenum()/10));
         }
 
         List<Map.Entry<Long, Long>> sortedSimilarityMap = new ArrayList<>(similarityMap.entrySet());
@@ -248,6 +291,7 @@ public class BlogServiceImpl implements BlogService {
             blogModel.setTitle(blog.getTitle());
             blogModel.setContent(blog.getContent());
             blogModel.setTags(Arrays.asList(blog.getTags().split(",")));
+          
             List<Reply> replies = blogDAO.getRepliesByBlogid(blog.getBlogid());
             List<ReplyModel> replyModels = new ArrayList<>();
             for (Reply reply : replies) {
@@ -288,4 +332,68 @@ public class BlogServiceImpl implements BlogService {
     public List<Like> getBlogLikedByUserid(String userid){
         return blogDAO.getBlogLikedByUserid(userid);
     }
+
+    @Override
+    public void addBrowsenum(Long blogid){
+        blogDAO.addBrowsenum(blogid);
+    }
+
+    @Override
+    public void reportBlog(Long blogid, String reason){
+        blogDAO.reportBlog(blogid, reason);
+    }
+
+    @Override
+    public List<IllegalModel> getIllegalBlogs(){
+        List<Illegal> illegals = blogDAO.getByType(0);
+        List<IllegalModel> illegalBlogs = new ArrayList<>();
+        for (Illegal illegal : illegals) {
+            IllegalModel illegalModel = new IllegalModel();
+            illegalModel.setIllegalid(illegal.getIllegalid());
+            illegalModel.setType(illegal.getType());
+            illegalModel.setContentid(illegal.getContentid());
+            illegalModel.setUser(userDAO.getSimplified(illegal.getUserid()));
+            illegalModel.setTimestamp(illegal.getTimestamp());
+            illegalModel.setReason(illegal.getReason());
+            illegalModel.setStatus(illegal.getStatus());
+            illegalModel.setContent(getBlogById(illegal.getContentid()).getContent());
+            illegalModel.setTitle(getBlogById(illegal.getContentid()).getTitle());
+            illegalBlogs.add(illegalModel);
+        }
+        //将illegalBlogs按时间排序
+        illegalBlogs.sort(Comparator.comparing(IllegalModel::getTimestamp).reversed());
+        return illegalBlogs;
+    }
+
+    @Override
+    public List<IllegalModel> getIllegalReplies(){
+        List<Illegal> illegals = blogDAO.getByType(1);
+        List<IllegalModel> illegalReplies = new ArrayList<>();
+        for (Illegal illegal : illegals) {
+            IllegalModel illegalModel = new IllegalModel();
+            illegalModel.setIllegalid(illegal.getIllegalid());
+            illegalModel.setType(illegal.getType());
+            illegalModel.setContentid(illegal.getContentid());
+            illegalModel.setUser(userDAO.getSimplified(illegal.getUserid()));
+            illegalModel.setTimestamp(illegal.getTimestamp());
+            illegalModel.setReason(illegal.getReason());
+            illegalModel.setStatus(illegal.getStatus());
+            illegalModel.setContent(blogDAO.getReplyContentById(illegal.getContentid()));
+            illegalReplies.add(illegalModel);
+        }
+        //将illegalReplies按时间排序
+        illegalReplies.sort(Comparator.comparing(IllegalModel::getTimestamp).reversed());
+        return illegalReplies;
+    }
+
+    @Override
+    public void setIllegalStatus(int illegalid, int i){
+        blogDAO.setIllegalStatus(illegalid, i);
+    }
+
+    @Override
+    public void deleteIllegal(int illegalid){
+        blogDAO.deleteIllegal(illegalid);
+    }
+
 }

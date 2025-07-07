@@ -36,6 +36,12 @@ public class CrisisAuditing {
     @Column(name = "timestamp")
     private Long timestamp;
 
+    public CrisisAuditing(String content, Long timestamp, String userid) {
+        this.content = content;
+        this.timestamp = timestamp;
+        this.userid = userid;
+    }
+  
     public CrisisAuditing(CrisisAuditingModel model) {
         this.crisisid = model.getCrisisid();
         this.userid = model.getUserid();

@@ -18,6 +18,9 @@ public class QuoteDAOImpl implements QuoteDAO {
             return new QuoteModel(null, null);
         }
         Quote quote = quoteRepository.findRandomQuote();
+        if (quote == null) {
+            return new QuoteModel(null, null);
+        }
         return new QuoteModel(quote);
     }
 

@@ -2,6 +2,7 @@ package org.example.rgybackend.Controller;
 
 import java.util.List;
 
+import com.alibaba.fastjson2.JSONObject;
 import org.example.rgybackend.Model.CrisisModel;
 import org.example.rgybackend.Service.CrisisService;
 import org.example.rgybackend.Service.UserService;
@@ -20,9 +21,33 @@ import jakarta.servlet.http.HttpSession;
 public class CrisisController {
     @Autowired
     private CrisisService crisisService;
-
+  
     @Autowired
     private UserService userService;
+
+    @GetMapping("/listAuditing")
+    public List<CrisisModel> listCrisisAuditing() {
+        return crisisService.getAllCrisisAuditing();
+    }
+
+    @GetMapping("/listUser/{userid}")
+    public List<CrisisModel> listCrisisByUser(@PathVariable String userid) {
+        return crisisService.getCrisisByUser(userid);
+    }
+
+    @PostMapping("/confirm")
+    public void confirmCrisis(@RequestBody String json) {
+        JSONObject obj = JSONObject.parseObject(json);
+        int crisisid = obj.getIntValue("crisisid");
+        crisisService.saveCrisis(crisisid);
+    }
+
+    @PostMapping("/delete")
+    public void deleteCrisisAuditing(@RequestBody String json) {
+        JSONObject obj = JSONObject.parseObject(json);
+        int crisisid = obj.getIntValue("crisisid");
+        crisisService.deleteCrisisAuditing(crisisid);
+    }
 
     @GetMapping("/getall")
     public List<CrisisModel> getAllCrisis(HttpSession session) {

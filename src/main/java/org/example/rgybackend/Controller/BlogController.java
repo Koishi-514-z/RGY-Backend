@@ -9,10 +9,7 @@ import java.util.Map;
 import jakarta.servlet.http.HttpSession;
 import org.example.rgybackend.DAO.EmotionDAO;
 import org.example.rgybackend.Entity.Like;
-import org.example.rgybackend.Model.BlogModel;
-import org.example.rgybackend.Model.BlogsRet;
-import org.example.rgybackend.Model.ReplyModel;
-import org.example.rgybackend.Model.SimplifiedProfileModel;
+import org.example.rgybackend.Model.*;
 import org.example.rgybackend.Service.BlogService;
 import org.example.rgybackend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +21,8 @@ import com.alibaba.fastjson2.JSONObject;
 @RestController
 @RequestMapping("/api/blogs")
 public class BlogController {
+
+
 
     @Autowired
     private BlogService blogService;
@@ -81,6 +80,17 @@ public class BlogController {
         return result;
     }
 
+    @PostMapping ("/getLatest")
+    public BlogsRet getLatestBlogs(@RequestBody String params, HttpSession session) {
+        BlogsRet result = new BlogsRet();
+        JSONObject json = new JSONObject();
+        json = JSON.parseObject(params);
+        int pageSize = json.getIntValue("pageSize");
+        int currentPage = json.getIntValue("currentPage");
+        String titleOrAuthor = json.getString("searchText");
+        List<String> tags = json.getJSONArray("tags").toJavaList(String.class);
+        return blogService.getLatestBlogs(pageSize, currentPage, titleOrAuthor, tags);
+    }
     @GetMapping ("/getById/{id}")
     public BlogModel getBlogById(@PathVariable String id) {
         Long idLong = Long.parseLong(id);
@@ -168,5 +178,81 @@ public class BlogController {
         blogService.unlikeBlog(blogid,userid);
         return true;
     }
+    @PostMapping ("/addBrowsenum")
+    public boolean addBrowsenum(@RequestBody String params) {
+        JSONObject json = new JSONObject();
+        json = JSON.parseObject(params);
+        Long blogid = json.getLongValue("blogid");
+        blogService.addBrowsenum(blogid);
+        return true;
+    }
+    @PostMapping ("/report")
+    public boolean reportBlog(@RequestBody String params) {
+        JSONObject json = new JSONObject();
+        json = JSON.parseObject(params);
+        Long blogid = json.getLongValue("blogid");
+        String reason = json.getString("reason");
+        blogService.reportBlog(blogid, reason);
+        return true;
+    }
+
+    @GetMapping ("/getIllegalBlogs")
+    public List<IllegalModel> getIllegalBlogs() {
+        List<IllegalModel> result = new ArrayList<>();
+        result = blogService.getIllegalBlogs();
+        return result;
+    }
+
+    @GetMapping ("/getIllegalReplies")
+    public List<IllegalModel> getIllegalReplies() {
+        List<IllegalModel> result = new ArrayList<>();
+        result = blogService.getIllegalReplies();
+        return result;
+    }
+     @PostMapping ("/sheldingBlog")
+     public boolean sheldingBlog(@RequestBody String params) {
+         JSONObject json = new JSONObject();
+         json = JSON.parseObject(params);
+         Long blogid = json.getLongValue("blogid");
+         int illegalid = json.getIntValue("illegalid");
+         //将违规记录标记为已处理
+         blogService.setIllegalStatus(illegalid, 1);
+         //删除博客
+         blogService.deleteBlog(blogid);
+         return true;
+     }
+
+     @PostMapping("sheldingReply")
+     public boolean sheldingReply(@RequestBody String params) {
+         JSONObject json = new JSONObject();
+         json = JSON.parseObject(params);
+         Long replyid = json.getLongValue("replyid");
+         int illegalid = json.getIntValue("illegalid");
+         //将违规记录标记为已处理
+         blogService.setIllegalStatus(illegalid, 1);
+         //删除回复
+         blogService.deleteReply(replyid);
+         return true;
+     }
+     @PostMapping("recoverIllegal")
+     public boolean recoverIllegal(@RequestBody String params) {
+         JSONObject json = new JSONObject();
+         json = JSON.parseObject(params);
+         //Long blogid = json.getLongValue("blogid");
+         int illegalid = json.getIntValue("illegalid");
+         blogService.setIllegalStatus(illegalid, 2);
+         return true;
+     }
+
+     @PostMapping("deleteIllegal")
+     public boolean deleteIllegal(@RequestBody String params) {
+         JSONObject json = new JSONObject();
+         json = JSON.parseObject(params);
+         int illegalid = json.getIntValue("illegalid");
+         blogService.deleteIllegal(illegalid);
+         return true;
+     }
+
+
 
 }
