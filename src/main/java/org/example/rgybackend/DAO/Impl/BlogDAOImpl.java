@@ -2,11 +2,13 @@ package org.example.rgybackend.DAO.Impl;
 
 import org.example.rgybackend.DAO.BlogDAO;
 import org.example.rgybackend.Entity.Blog;
+import org.example.rgybackend.Entity.Illegal;
 import org.example.rgybackend.Entity.Like;
 import org.example.rgybackend.Entity.Reply;
 import org.example.rgybackend.Model.BlogModel;
 import org.example.rgybackend.Model.ReplyModel;
 import org.example.rgybackend.Repository.BlogRepository;
+import org.example.rgybackend.Repository.IllegalRepository;
 import org.example.rgybackend.Repository.LikeRepository;
 import org.example.rgybackend.Repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ public class BlogDAOImpl implements BlogDAO {
 
     @Autowired
     private LikeRepository userLikeRepository;
+    @Autowired
+    private IllegalRepository illegalRepository;
 
     @Override
     public void addBlog(BlogModel blogModel) {
@@ -33,6 +37,9 @@ public class BlogDAOImpl implements BlogDAO {
     @Override
     public void addReply(ReplyModel replyModel) {
         replyRepository.save(new Reply(replyModel));
+        Blog blog = blogRepository.findById(replyModel.getBlogid()).get();
+        blog.setLastreply(replyModel.getTimestamp());
+        blogRepository.save(blog);
     }
 
     @Override
@@ -103,5 +110,49 @@ public class BlogDAOImpl implements BlogDAO {
         List<Like> userLikes = userLikeRepository.findAllByFromuserid(userid);
         return userLikes;
     }
+    @Override
+    public void addBrowsenum(Long blogid){
+        Blog blog = blogRepository.findById(blogid).get();
+        blog.setBrowsenum(blog.getBrowsenum() + 1);
+        blogRepository.save(blog);
+    }
+    @Override
+    public void reportBlog(Long blogid, String reason){
+        Blog blog = blogRepository.findById(blogid).get();
+        Illegal illegal = new Illegal(0,blogid,blog.getUserid(),System.currentTimeMillis(),reason,0);
+        illegalRepository.save(illegal);
+    }
 
+    @Override
+    public void reportReply(Long replyid, String reason){
+        Reply reply = replyRepository.findById(replyid).get();
+        Illegal illegal = new Illegal(1,replyid,reply.getFromuserid(),System.currentTimeMillis(),reason,0);
+        illegalRepository.save(illegal);
+    }
+
+    @Override
+    public List<Illegal> getByType(int type){
+        return illegalRepository.findAllByType(type);
+    }
+
+    @Override
+    public String getReplyContentById(Long contentid){
+        return replyRepository.findById(contentid).get().getContent();
+    }
+
+    @Override
+    public void setIllegalStatus(int illegalid, int i){
+        Illegal illegal = illegalRepository.findByIllegalid(illegalid);
+        illegal.setStatus(i);
+        illegalRepository.save(illegal);
+    }
+
+    @Override
+    public void deleteIllegal(int illegalid){
+        illegalRepository.deleteById(illegalid);
+    }
+
+//    @Override
+//    public void (){
+//        return illegalRepository.findAll();
 }

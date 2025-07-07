@@ -46,7 +46,14 @@ public class Blog {
     @Basic
     @Column(name = "emotion")
     private int emotion;
-    
+
+    @Basic
+    @Column(name = "lastreply")
+    private Long lastreply;
+
+    @Basic
+    @Column(name = "browsenum")
+    private Long browsenum;
     public Blog(BlogModel blogModel) {
         this.userid = blogModel.getUser().getUserid();
         this.timestamp = blogModel.getTimestamp();
@@ -61,5 +68,7 @@ public class Blog {
         this.tags = this.tags.substring(0, this.tags.length() - 1);
         this.valid = 1;
         this.emotion = blogModel.getEmotion();
+        this.lastreply = blogModel.getTimestamp();
+        this.browsenum = 0L;
     }
 }
