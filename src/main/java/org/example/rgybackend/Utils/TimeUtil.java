@@ -3,6 +3,7 @@ package org.example.rgybackend.Utils;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 
@@ -27,6 +28,19 @@ public class TimeUtil {
         ZoneId zone = ZoneId.systemDefault();
         LocalDate date = Instant.ofEpochMilli(timestamp).atZone(zone).toLocalDate();
         return date;
+    }
+
+    public static LocalDateTime getLocalDateTime(LocalDate date, Long hour) {
+        return date.atTime(hour.intValue(), 0);
+    }
+
+    public static Long getTimestamp(LocalDateTime localDateTime) {
+        ZoneId zoneId = ZoneId.systemDefault();
+        Long timestamp = localDateTime
+                .atZone(zoneId)
+                .toInstant()
+                .toEpochMilli();
+        return timestamp;
     }
 
     public static Long getStartOfDayTimestamp(LocalDate date) {

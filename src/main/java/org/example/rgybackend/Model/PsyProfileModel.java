@@ -19,6 +19,7 @@ public class PsyProfileModel {
     private String email;
     private String avatar;
     private Long role;
+    private Long jointime;
     private String phone;
     private String title;
     private String license;
@@ -41,7 +42,7 @@ public class PsyProfileModel {
     private String introduction;
     private List<String> achievements;
 
-    public final static List<TagModel> specialtyTags = new ArrayList<>(
+    public final List<TagModel> specialtyTags = new ArrayList<>(
         Arrays.asList(
             new TagModel(1L, "情感咨询"),
             new TagModel(2L, "焦虑抑郁"),
@@ -61,7 +62,7 @@ public class PsyProfileModel {
         )
     );
 
-    public final static List<TagModel> certificationTags = new ArrayList<>(
+    public final List<TagModel> certificationTags = new ArrayList<>(
         Arrays.asList(
             new TagModel(1L, "国家二级心理咨询师"),
             new TagModel(2L, "国家三级心理咨询师"),
@@ -80,7 +81,7 @@ public class PsyProfileModel {
         if(str == null || str.isEmpty()) {
             return new ArrayList<>();
         }
-        return Arrays.asList(str.split("|"));
+        return Arrays.asList(str.split("\\|"));
     }
 
     public PsyProfileModel(PsyProfileExtra entity) {

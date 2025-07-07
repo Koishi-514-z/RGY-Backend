@@ -13,9 +13,13 @@ public interface CounselingDAO {
 
     List<CounselingModel> getCounseling(String psyid);
 
+    List<CounselingModel> getUserCounseling(String userid);
+
     List<CounselingModel> getDateCounseling(String psyid, LocalDate date);
     
     boolean addCounseling(CounselingModel counselingModel, String userid);
+
+    boolean removeCounseling(Long counselingid);
 
     boolean setStatus(Long counselingid, Long status);
 

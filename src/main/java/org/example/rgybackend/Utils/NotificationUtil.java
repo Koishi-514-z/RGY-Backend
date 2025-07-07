@@ -72,4 +72,16 @@ public class NotificationUtil {
         1L,
         "medium"
     );
+
+    public final static NotificationPrivateModel counselingCanceled = new NotificationPrivateModel(
+        null, 
+        442L, 
+        null,
+        null,
+        "用户取消咨询预约",
+        "有用户取消了咨询预约。\n\n📋 预约详情：\n• 取消时间：刚刚\n• 原因：用户主动取消\n\n💡 处理建议：\n• 该时段现已空出，可接受其他预约\n• 如需了解详情可查看预约记录\n• 保持专业态度，理解用户需求变化\n\n感谢您的理解与配合！",
+        TimeUtil.now(),
+        1L,
+        "low"
+    );
 }

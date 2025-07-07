@@ -41,6 +41,10 @@ public class UserProfile {
     @Column(name = "role")
     private Long role;
 
+    @Basic
+    @Column(name = "jointime")
+    private Long jointime;
+
     public UserProfile(ProfileModel profile) {
         this.userid = profile.getUserid();
         this.username = profile.getUsername();
@@ -48,5 +52,6 @@ public class UserProfile {
         this.avatar = profile.getAvatar();
         this.note = profile.getNote();
         this.role = profile.getRole();
+        this.jointime = profile.getJointime();
     }
 }

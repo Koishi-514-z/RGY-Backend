@@ -42,7 +42,7 @@ public class Counseling {
 
     @Basic
     @Column(name = "type")
-    private String type;
+    private Long type;
 
     public Counseling(CounselingModel counselingModel, String userid) {
         this.counselingid = counselingModel.getCounselingid();
@@ -50,6 +50,6 @@ public class Counseling {
         this.psyid = counselingModel.getPsyid();
         this.timestamp = counselingModel.getTimestamp();
         this.status = counselingModel.getStatus();
-        this.type = counselingModel.getType();
+        this.type = counselingModel.getType().getId();
     }
 }

@@ -2,7 +2,6 @@ package org.example.rgybackend.Controller;
 
 import java.util.List;
 
-import org.example.rgybackend.DTO.EmotionAdminData;
 import org.example.rgybackend.DTO.StringDTO;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionModel;
@@ -65,13 +64,13 @@ public class EmotionController {
         return emotionService.getMonthData(userid);
     }
 
-    @GetMapping("/data/admin/scan")
-    public EmotionAdminData scanAdminData(@RequestParam Long start, @RequestParam Long end, HttpSession session) {
+    @GetMapping("/data/scan")
+    public List<EmotionDataModel> scanEmotionData(@RequestParam Long start, @RequestParam Long end, HttpSession session) {
         String userid = (String)session.getAttribute("user");
         if(!userService.isAdmin(userid)) {
             throw new ForbiddenException("只有管理员允许进行该操作");
         }
-        return emotionService.scanAdminData(start, end);
+        return emotionService.scanEmotionData(start, end);
     }
 
     @PutMapping("/tag/update")

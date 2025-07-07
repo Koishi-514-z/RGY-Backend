@@ -19,6 +19,8 @@ public interface UserService {
 
     PsyProfileModel getPsyProfile(String psyid);
 
+    List<PsyProfileModel> getPsyProfiles();
+
     ProfileModel getProfileByName(String username);
 
     SimplifiedProfileModel getSimplifiedProfile(String userid);

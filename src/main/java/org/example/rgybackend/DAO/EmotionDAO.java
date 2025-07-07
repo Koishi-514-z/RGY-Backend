@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import org.example.rgybackend.DTO.AdminDataDTO;
 import org.example.rgybackend.Model.EmotionDataModel;
 import org.example.rgybackend.Model.EmotionModel;
 import org.example.rgybackend.Model.TagModel;
@@ -18,7 +17,7 @@ public interface EmotionDAO {
 
     List<EmotionDataModel> scanEmotionData(String userid, LocalDate startDate, LocalDate endDate);
 
-    List<AdminDataDTO> scanAdminData(LocalDate startDate, LocalDate endDate);
+    List<EmotionDataModel> scanAllData(LocalDate startDate, LocalDate endDate);
 
     List<TagModel> getTags();
 

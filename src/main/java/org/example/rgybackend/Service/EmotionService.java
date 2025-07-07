@@ -2,7 +2,6 @@ package org.example.rgybackend.Service;
 
 import java.util.List;
 
-import org.example.rgybackend.DTO.EmotionAdminData;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionDataModel;
 import org.example.rgybackend.Model.EmotionModel;
@@ -21,7 +20,7 @@ public interface EmotionService {
 
     List<EmotionDataModel> getMonthData(String userid);
 
-    EmotionAdminData scanAdminData(Long start, Long end);
+    List<EmotionDataModel> scanEmotionData(Long start, Long end);
 
     boolean setEmotion(EmotionModel emotionModel);
 

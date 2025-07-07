@@ -13,8 +13,10 @@ import org.example.rgybackend.Utils.NotExistException;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
+@Transactional
 public class CounselingDAOImpl implements CounselingDAO {
     @Autowired
     private CounselingRepository counselingRepository;
@@ -44,6 +46,16 @@ public class CounselingDAOImpl implements CounselingDAO {
     }
 
     @Override
+    public List<CounselingModel> getUserCounseling(String userid) {
+        List<CounselingModel> counselingModels = new ArrayList<>();
+        List<Counseling> counselings = counselingRepository.findByUserid(userid);
+        for(Counseling counseling : counselings) {
+            counselingModels.add(new CounselingModel(counseling));
+        }
+        return counselingModels;
+    }
+
+    @Override
     public List<CounselingModel> getDateCounseling(String psyid, LocalDate date) {
         List<CounselingModel> counselingModels = new ArrayList<>();
         Long timestamp = TimeUtil.getStartOfDayTimestamp(date);
@@ -57,6 +69,12 @@ public class CounselingDAOImpl implements CounselingDAO {
     @Override
     public boolean addCounseling(CounselingModel counselingModel, String userid) {
         counselingRepository.save(new Counseling(counselingModel, userid));
+        return true;
+    }
+
+    @Override
+    public boolean removeCounseling(Long counselingid) {
+        counselingRepository.deleteById(counselingid);
         return true;
     }
 

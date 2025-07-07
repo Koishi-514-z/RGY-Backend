@@ -1,18 +1,12 @@
 package org.example.rgybackend.Service.Impl;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.example.rgybackend.DAO.CrisisAuditingDAO;
 import org.example.rgybackend.DAO.DiaryDAO;
 import org.example.rgybackend.DAO.EmotionDAO;
 import org.example.rgybackend.DAO.NotificationPrivateDAO;
-import org.example.rgybackend.DTO.AdminDataDTO;
-import org.example.rgybackend.DTO.EmotionAdminData;
-import org.example.rgybackend.DTO.MoodData;
 import org.example.rgybackend.Model.CrisisAuditingModel;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionDataModel;
@@ -58,9 +52,6 @@ public class EmotionServiceImpl implements EmotionService {
     public boolean checkNegative(String userid) {
         LocalDate today = TimeUtil.today();
         List<Long> labels = diaryDAO.scanLabel(userid, today.minusDays(2), today);
-        if(labels.size() > 3) {
-            throw new RuntimeException("Duplicate diary");
-        }
         if(labels.size() < 3) {
             return false;
         }
@@ -87,30 +78,8 @@ public class EmotionServiceImpl implements EmotionService {
     }
 
     @Override
-    public EmotionAdminData scanAdminData(Long start, Long end) {
-        List<AdminDataDTO> adminDatas = emotionDAO.scanAdminData(TimeUtil.getLocalDate(start), TimeUtil.getLocalDate(end));
-        Double averageScore = 0.0;
-        List<MoodData> moodDatas = new ArrayList<>();
-
-        List<TagModel> tagModels = getTags();
-        Map<Long, Long> datas = new HashMap<>();
-        for(TagModel tagModel : tagModels) {
-            datas.put(tagModel.getId(), 0L);
-        }
-
-        for(AdminDataDTO adminData : adminDatas) {
-            averageScore += adminData.getScore();
-            Long num = datas.get(adminData.getTagid());
-            datas.put(adminData.getTagid(), num + 1);
-        }
-
-        averageScore /= adminDatas.size();
-        for(TagModel tagModel : tagModels) {
-            MoodData moodData = new MoodData(tagModel.getContent(), (double)datas.get(tagModel.getId()) / adminDatas.size());
-            moodDatas.add(moodData);
-        }
-
-        return new EmotionAdminData(averageScore, moodDatas);
+    public List<EmotionDataModel> scanEmotionData(Long start, Long end) {
+        return emotionDAO.scanAllData(TimeUtil.getLocalDate(start), TimeUtil.getLocalDate(end));
     }
 
     @Override

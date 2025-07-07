@@ -52,8 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isAdmin(String userid) {
-        ProfileModel profile = userDAO.get(userid);
-        return profile.getRole() > 0;
+        return userDAO.getRole(userid) > 0;
     }
 
     @Override
@@ -85,7 +84,25 @@ public class UserServiceImpl implements UserService {
         psyProfileModel.setUsername(profileModel.getUsername());
         psyProfileModel.setEmail(profileModel.getEmail());
         psyProfileModel.setAvatar(profileModel.getAvatar());
+        psyProfileModel.setJointime(profileModel.getJointime());
         return psyProfileModel;
+    }
+
+    @Override
+    public List<PsyProfileModel> getPsyProfiles() {
+        List<ProfileModel> profileModels = userDAO.getAllPsys();
+        List<PsyProfileModel> psyProfileModels = new ArrayList<>();
+        for(ProfileModel profileModel : profileModels) {
+            String psyid = profileModel.getUserid();
+            PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);
+            PsyProfileModel psyProfileModel = new PsyProfileModel(profileExtra);
+            psyProfileModel.setUsername(profileModel.getUsername());
+            psyProfileModel.setEmail(profileModel.getEmail());
+            psyProfileModel.setAvatar(profileModel.getAvatar());
+            psyProfileModel.setJointime(profileModel.getJointime());
+            psyProfileModels.add(psyProfileModel);
+        }
+        return psyProfileModels;
     }
 
     @Override
@@ -202,6 +219,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean addUser(UserModel user) {
+        user.getProfile().setJointime(TimeUtil.now());
         boolean result = userDAO.add(user.getProfile());
         boolean resultAuth = userAuthDAO.addAuth(user.getProfile().getUserid(), user.getStuid(), user.getPassword());
         if(user.getProfile().getRole() != 2) {
