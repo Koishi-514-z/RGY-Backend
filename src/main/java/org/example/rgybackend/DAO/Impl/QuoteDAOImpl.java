@@ -14,6 +14,9 @@ public class QuoteDAOImpl implements QuoteDAO {
 
     @Override
     public QuoteModel getQuote() {
+        if(quoteRepository.count() == 0) {
+            return new QuoteModel(null, null);
+        }
         Quote quote = quoteRepository.findRandomQuote();
         if (quote == null) {
             return new QuoteModel(null, null);

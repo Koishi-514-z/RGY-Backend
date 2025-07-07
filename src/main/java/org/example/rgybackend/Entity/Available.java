@@ -27,6 +27,10 @@ public class Available {
     private String psyid;
 
     @Basic
-    @Column(name = "timestamp")
-    private Long timestamp;
+    @Column(name = "date")
+    private String date;
+
+    @Basic
+    @Column(name = "hour")
+    private Long hour;
 }

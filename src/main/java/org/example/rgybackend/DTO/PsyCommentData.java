@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminDataDTO {
+public class PsyCommentData {
+    private String userid;
+    private String psyid;
+    private boolean success;
     private Long score;
-    private Long tagid;
 }

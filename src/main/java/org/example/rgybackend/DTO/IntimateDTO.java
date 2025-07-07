@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IntimateDTO {
-    Double intimateScre;
+    Double intimateScore;
     SimplifiedProfileModel intimateProfile;
 }

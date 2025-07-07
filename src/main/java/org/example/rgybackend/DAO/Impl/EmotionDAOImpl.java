@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.example.rgybackend.DAO.EmotionDAO;
-import org.example.rgybackend.DTO.AdminDataDTO;
 import org.example.rgybackend.Entity.Emotion;
 import org.example.rgybackend.Entity.Tag;
 import org.example.rgybackend.Model.EmotionDataModel;
@@ -76,13 +75,8 @@ public class EmotionDAOImpl implements EmotionDAO {
             return emotionDataModels;
         }
 
-        Long minTimestamp = emotionDataModels.get(0).getTimestamp();
-        for(EmotionDataModel emotionDataModel : emotionDataModels) {
-            if(emotionDataModel.getTimestamp() < minTimestamp) {
-                minTimestamp = emotionDataModel.getTimestamp();
-            }
-        }
-        minTimestamp = TimeUtil.getStartOfDayTimestamp(minTimestamp);
+        emotionDataModels.sort((e1, e2) -> e1.getTimestamp().compareTo(e2.getTimestamp()));
+        Long minTimestamp = TimeUtil.getStartOfDayTimestamp(emotionDataModels.get(0).getTimestamp());
 
         for(EmotionDataModel emotionDataModel : emotionDataModels) {
             Long diffDays = (emotionDataModel.getTimestamp() - minTimestamp) / TimeUtil.DAY;
@@ -93,11 +87,24 @@ public class EmotionDAOImpl implements EmotionDAO {
     }
 
     @Override
-    public List<AdminDataDTO> scanAdminData(LocalDate startDate, LocalDate endDate) {
+    public List<EmotionDataModel> scanAllData(LocalDate startDate, LocalDate endDate) {
         Long start = TimeUtil.getStartOfDayTimestamp(startDate);
         Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
-        List<AdminDataDTO> datas = emotionRepository.scanAdminData(start, end);
-        return datas;
+        List<EmotionDataModel> emotionDataModels = emotionRepository.scanData(start, end);
+
+        if(emotionDataModels.isEmpty()) {
+            return emotionDataModels;
+        }
+
+        emotionDataModels.sort((e1, e2) -> e1.getTimestamp().compareTo(e2.getTimestamp()));
+        Long minTimestamp = TimeUtil.getStartOfDayTimestamp(emotionDataModels.get(0).getTimestamp());
+
+        for(EmotionDataModel emotionDataModel : emotionDataModels) {
+            Long diffDays = (emotionDataModel.getTimestamp() - minTimestamp) / TimeUtil.DAY;
+            emotionDataModel.setTime(diffDays + 1);
+        }
+
+        return emotionDataModels;
     }
 
     @Override

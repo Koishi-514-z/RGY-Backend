@@ -1,9 +1,18 @@
 package org.example.rgybackend.Entity;
 
-
-import jakarta.persistence.*;
-import lombok.*;
 import org.example.rgybackend.Model.BlogModel;
+import org.example.rgybackend.Model.CrisisModel;
+
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "crisis")
@@ -11,10 +20,14 @@ import org.example.rgybackend.Model.BlogModel;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Crisis {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "crisisid")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int crisisid;
+    private Long crisisid;
+
+    @Basic
+    @Column(name = "userid")
+    private String userid;
 
     @Basic
     @Column(name = "content")
@@ -23,10 +36,14 @@ public class Crisis {
     @Basic
     @Column(name = "timestamp")
     private Long timestamp;
+  
+    @Basic
+    @Column(name = "urgencyLevel")
+    private Long urgencyLevel;
 
     @Basic
-    @Column(name = "userid")
-    private String userid;
+    @Column(name = "status")
+    private Long status;
 
     public Crisis(String content, Long timestamp, String userid) {
         this.content = content;
@@ -34,4 +51,12 @@ public class Crisis {
         this.userid = userid;
     }
 
+    public Crisis(CrisisModel model) {
+        this.crisisid = model.getCrisisid();
+        this.userid = model.getUserid();
+        this.content = model.getContent();
+        this.timestamp = model.getTimestamp();
+        this.urgencyLevel = model.getUrgencyLevel();
+        this.status = model.getStatus();
+    }
 }

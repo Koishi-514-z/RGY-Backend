@@ -12,6 +12,8 @@ public interface UserDAO {
 
     List<ProfileModel> getAll();
 
+    List<ProfileModel> getAllPsys();
+
     ProfileModel get(String userid);
 
     ProfileModel getByName(String username);
@@ -23,4 +25,6 @@ public interface UserDAO {
     boolean update(ProfileModel profile);
 
     boolean remove(String userid);
+
+    Long getRole(String userid);
 }

@@ -23,8 +23,8 @@ public class BERTModel {
         return response;
     }
 
-    public ModelResponse checkDanger(String text) {
-        String url = "http://localhost:8000/api/check/danger";
+    public ModelResponse checkCrisis(String text) {
+        String url = "http://localhost:8000/api/check/crisis";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("text", text);
         ModelResponse response = restTemplate.postForObject(url, requestBody, ModelResponse.class);

@@ -19,4 +19,6 @@ public interface CrisisService {
     List<CrisisModel> getAllCrisisAuditing();
 
     List<CrisisModel> getCrisisByUser(String userid);
+  
+    boolean updateStatus(Long crisisid, Long status);
 }

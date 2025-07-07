@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface UserRepository extends JpaRepository<UserProfile, String> {
     List<UserProfile> findByUsername(String username);
 
+    List<UserProfile> findByRole(Long role);
+
     boolean existsByUsername(String username);
 
     @Query("SELECT new org.example.rgybackend.Model.SimplifiedProfileModel(p.userid, p.username, p.avatar, p.note) FROM UserProfile p")
@@ -17,4 +19,7 @@ public interface UserRepository extends JpaRepository<UserProfile, String> {
 
     @Query("SELECT new org.example.rgybackend.Model.SimplifiedProfileModel(p.userid, p.username, p.avatar, p.note) FROM UserProfile p WHERE p.userid = :userid")
     SimplifiedProfileModel findSimplifiedById(String userid);
+
+    @Query("SELECT p.role FROM FROM UserProfile p WHERE p.userid = :userid")
+    Long getRole(String userid);
 }

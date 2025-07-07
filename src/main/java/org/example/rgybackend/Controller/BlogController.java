@@ -93,9 +93,7 @@ public class BlogController {
     }
     @GetMapping ("/getById/{id}")
     public BlogModel getBlogById(@PathVariable String id) {
-        System.out.println(id);
         Long idLong = Long.parseLong(id);
-        System.out.println(idLong);
         BlogModel blogModel = blogService.getBlogById(idLong);
         return blogModel;
     }
@@ -109,7 +107,6 @@ public class BlogController {
         String content = json.getString("content");
         List<String> tags = json.getJSONArray("tags").toJavaList(String.class);
         //输出tags内容
-        System.out.println(tags);
         SimplifiedProfileModel author = userService.getSimplifiedProfile(session.getAttribute("user").toString());
         blogService.addBlog(title, content, tags, author);
         return true;

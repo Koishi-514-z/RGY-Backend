@@ -1,5 +1,8 @@
 package org.example.rgybackend.DAO;
 
+import java.util.List;
+
+import org.example.rgybackend.Model.CrisisModel;
 import org.example.rgybackend.Entity.Crisis;
 import org.example.rgybackend.Entity.CrisisAuditing;
 
@@ -21,4 +24,10 @@ public interface CrisisDAO {
     CrisisAuditing findById(int crisisid);
 
     List<Crisis> findAllCrisisByUser(String userid);
+
+    List<CrisisModel> getAllCrisis();
+
+    boolean addCrisis(CrisisModel crisisModel);
+
+    boolean updateStatus(Long crisisid, Long status);
 }

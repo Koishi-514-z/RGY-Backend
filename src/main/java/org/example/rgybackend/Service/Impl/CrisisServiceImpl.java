@@ -12,17 +12,13 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Service
 public class CrisisServiceImpl implements CrisisService {
-
     @Autowired
     private CrisisDAO crisisDAO;
 
     @Autowired
     private UserDAO userDAO;
-
-
 
     @Override
     public void saveCrisis(int crisisid) {
@@ -90,5 +86,10 @@ public class CrisisServiceImpl implements CrisisService {
         }
         return crisisModelList;
     }
-
+  
+    // 0-->pending, 1-->processing, 2-->resolved
+    @Override
+    public boolean updateStatus(Long crisisid, Long status) {
+        return crisisDAO.updateStatus(crisisid, status);
+    }
 }

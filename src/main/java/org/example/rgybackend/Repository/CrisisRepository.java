@@ -9,6 +9,5 @@ import java.util.List;
 
 @Repository
 public interface CrisisRepository extends JpaRepository<Crisis, Integer> {
-
     List<Crisis> findAllByUserid(String userid);
 }

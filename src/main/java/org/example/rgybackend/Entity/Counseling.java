@@ -36,10 +36,20 @@ public class Counseling {
     @Column(name = "timestamp")
     private Long timestamp;
 
-    public Counseling(CounselingModel counselingModel) {
+    @Basic
+    @Column(name = "status")
+    private Long status;
+
+    @Basic
+    @Column(name = "type")
+    private Long type;
+
+    public Counseling(CounselingModel counselingModel, String userid) {
         this.counselingid = counselingModel.getCounselingid();
-        this.userid = counselingModel.getUserid();
+        this.userid = userid;
         this.psyid = counselingModel.getPsyid();
         this.timestamp = counselingModel.getTimestamp();
+        this.status = counselingModel.getStatus();
+        this.type = counselingModel.getType().getId();
     }
 }

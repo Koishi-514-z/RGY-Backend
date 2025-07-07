@@ -16,13 +16,15 @@ public class ProfileModel {
     private String avatar;
     private String note;
     private Long role;
+    private Long jointime;
 
-    public ProfileModel(UserProfile userProfileDTO) {
-        this.userid = userProfileDTO.getUserid();
-        this.username = userProfileDTO.getUsername();
-        this.email = userProfileDTO.getEmail();
-        this.avatar = userProfileDTO.getAvatar();
-        this.note = userProfileDTO.getNote();
-        this.role = userProfileDTO.getRole();
+    public ProfileModel(UserProfile userProfile) {
+        this.userid = userProfile.getUserid();
+        this.username = userProfile.getUsername();
+        this.email = userProfile.getEmail();
+        this.avatar = userProfile.getAvatar();
+        this.note = userProfile.getNote();
+        this.role = userProfile.getRole();
+        this.jointime = userProfile.getJointime();
     }
 }

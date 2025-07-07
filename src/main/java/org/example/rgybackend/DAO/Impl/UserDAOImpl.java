@@ -39,6 +39,16 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public List<ProfileModel> getAllPsys() {
+        List<UserProfile> userProfiles = userRepository.findByRole(2L);
+        List<ProfileModel> profiles = new ArrayList<>();
+        for(UserProfile userProfile : userProfiles) {
+            profiles.add(new ProfileModel(userProfile));
+        }
+        return profiles;
+    }
+
+    @Override
     public ProfileModel get(String userid) {
         Optional<UserProfile> profileOptional = userRepository.findById(userid);
         if(profileOptional.isEmpty()) {
@@ -93,6 +103,11 @@ public class UserDAOImpl implements UserDAO {
     public boolean remove(String userid) {
         userRepository.deleteById(userid);
         return true;
+    }
+
+    @Override
+    public Long getRole(String userid) {
+        return userRepository.getRole(userid);
     }
 
 }
