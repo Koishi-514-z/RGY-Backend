@@ -3,6 +3,7 @@ package org.example.rgybackend.Service.Impl;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +78,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<ProfileModel> getAllProfile() {
+        return userDAO.getAll();
+    }
+
+    @Override
     public PsyProfileModel getPsyProfile(String psyid) {
         ProfileModel profileModel = userDAO.get(psyid);
         PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);
@@ -131,15 +137,9 @@ public class UserServiceImpl implements UserService {
 
         Map<String, Double> intimateScores = new HashMap<>();
         for(LikeData likeData : likeDatas) {
-            if(likeData.getUserid().equals(userid)) {
-                continue;
-            }
             intimateScores.put(likeData.getUserid(), 0.0);
         }
         for(ReplyData replyData : replyDatas) {
-            if(replyData.getUserid().equals(userid)) {
-                continue;
-            }
             intimateScores.put(replyData.getUserid(), 0.0);
         }
 
@@ -183,20 +183,31 @@ public class UserServiceImpl implements UserService {
             intimateScores.put(replyData.getUserid(), originScore + score);
         }
 
-        for(int i = 0; i < Math.min(total, intimateScores.size()); ++i) {
+        Iterator<Map.Entry<String, Double>> iterator = intimateScores.entrySet().iterator();
+        while(iterator.hasNext()) {
+            Map.Entry<String, Double> entry = iterator.next();
+            if(entry.getKey().equals(userid)) {
+                iterator.remove();
+            }
+        }
+        
+        for(int i = 0; i < total; ++i) {
             String maxUserid = null;
             Double maxScore = -1.0;
-            for (Map.Entry<String, Double> data : intimateScores.entrySet()) {
-                String touserid = data.getKey();
+            for(Map.Entry<String, Double> data : intimateScores.entrySet()) {
+                String datauserid = data.getKey();
                 Double score = data.getValue();
                 if(score > maxScore) {
                     maxScore = score;
-                    maxUserid = touserid;
+                    maxUserid = datauserid;
                 }
             }
             SimplifiedProfileModel profile = userDAO.getSimplified(maxUserid);
             intimateUsers.add(new IntimateDTO(maxScore, profile));
             intimateScores.remove(maxUserid);
+            if(intimateScores.isEmpty()) {
+                break;
+            }
         }
 
         return intimateUsers;

@@ -53,6 +53,15 @@ public class UserController {
         return userService.getUserProfile(userid);
     }
 
+    @GetMapping("/getall")
+    public List<ProfileModel> getAllProfile(HttpSession session) {
+        String adminid = (String)session.getAttribute("user");
+        if(!userService.isAdmin(adminid)) {
+            throw new ForbiddenException("只有管理员允许进行此操作");
+        }
+        return userService.getAllProfile();
+    }
+
     @GetMapping("/getpsy")
     public PsyProfileModel getPsyProfile(HttpSession session) {
         String psyid = (String)session.getAttribute("user");

@@ -40,7 +40,7 @@ public class BlogDAOImpl implements BlogDAO {
     public Blog addBlog(BlogModel blogModel , int valid) {
         blogRepository.save(new Blog(blogModel,valid));
         SocketMessage sockMessage = new SocketMessage("System", blogModel.getBlogid(), "System", null, blogModel.getTimestamp(), blogModel.getContent());
-        socket.pushBlogToUser(sockMessage);
+        socket.pushBlogToAllClients(sockMessage);
         return blogRepository.findByTimestampAndUserid(blogModel.getTimestamp(),blogModel.getUser().getUserid());
     }
 
@@ -51,7 +51,7 @@ public class BlogDAOImpl implements BlogDAO {
         blog.setLastreply(replyModel.getTimestamp());
         blogRepository.save(blog);
         SocketMessage sockMessage = new SocketMessage("System", replyModel.getReplyid(), "System", null, replyModel.getTimestamp(), replyModel.getContent());
-        socket.pushBlogToUser(sockMessage);
+        socket.pushBlogToAllClients(sockMessage);
         return replyRepository.findByTimestampAndFromuserid(replyModel.getTimestamp(),replyModel.getFromuserid());
     }
 
@@ -61,7 +61,7 @@ public class BlogDAOImpl implements BlogDAO {
         blog.setValid(0);
         blogRepository.save(blog);
         SocketMessage sockMessage = new SocketMessage("System", blogId, "System", null, blog.getTimestamp(), blog.getContent());
-        socket.pushBlogToUser(sockMessage);
+        socket.pushBlogToAllClients(sockMessage);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class BlogDAOImpl implements BlogDAO {
         reply.setValid(0);
         replyRepository.save(reply);
         SocketMessage sockMessage = new SocketMessage("System", replyId, "System", null, reply.getTimestamp(), reply.getContent());
-        socket.pushBlogToUser(sockMessage);
+        socket.pushBlogToAllClients(sockMessage);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class BlogDAOImpl implements BlogDAO {
         userLikeRepository.save(userLike);
         blogRepository.save(blog);
         SocketMessage sockMessage = new SocketMessage("System", blogid, "System", null, TimeUtil.now(), "like");
-        socket.pushBlogToUser(sockMessage);
+        socket.pushBlogToAllClients(sockMessage);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class BlogDAOImpl implements BlogDAO {
         blogRepository.save(blog);
         userLikeRepository.deleteByFromuseridAndBlogid(userid,blogid);
         SocketMessage sockMessage = new SocketMessage("System", blogid, "System", null, TimeUtil.now(), "unlike");
-        socket.pushBlogToUser(sockMessage);
+        socket.pushBlogToAllClients(sockMessage);
     }
 
     @Override
