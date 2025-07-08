@@ -2,6 +2,7 @@ package org.example.rgybackend.Controller;
 
 import java.util.List;
 
+import org.example.rgybackend.DTO.EmotionData;
 import org.example.rgybackend.DTO.StringDTO;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionModel;
@@ -40,6 +41,11 @@ public class EmotionController {
         return emotionService.getTags();
     }
 
+    @GetMapping("/tag/geturl")
+    public List<TagModel> getUrlTags() {
+        return emotionService.getUrlTags();
+    }
+
     @GetMapping("/negative")
     public boolean checkNegative(HttpSession session) {
         String userid = (String)session.getAttribute("user");
@@ -65,12 +71,12 @@ public class EmotionController {
     }
 
     @GetMapping("/data/scan")
-    public List<EmotionDataModel> scanEmotionData(@RequestParam Long start, @RequestParam Long end, HttpSession session) {
+    public EmotionData scanEmotionData(@RequestParam Long start, @RequestParam Long end, @RequestParam Long interval, HttpSession session) {
         String userid = (String)session.getAttribute("user");
         if(!userService.isAdmin(userid)) {
             throw new ForbiddenException("只有管理员允许进行该操作");
         }
-        return emotionService.scanEmotionData(start, end);
+        return emotionService.scanEmotionData(start, end, interval);
     }
 
     @PutMapping("/tag/update")

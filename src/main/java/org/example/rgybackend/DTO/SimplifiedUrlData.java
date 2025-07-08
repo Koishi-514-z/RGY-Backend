@@ -1,10 +1,10 @@
-package org.example.rgybackend.Model;
+package org.example.rgybackend.DTO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.example.rgybackend.Entity.PushContent;
+import org.example.rgybackend.Model.TagModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,10 +13,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UrlDataModel {
+public class SimplifiedUrlData {
     private String type;
     private String title;
-    private String img;
     private String description;
     private String url;
     private List<TagModel> tags;
@@ -55,10 +54,9 @@ public class UrlDataModel {
         return Arrays.asList(str.split("\\|"));
     }
 
-    public UrlDataModel(PushContent pushContent) {
+    public SimplifiedUrlData(PushContentDTO pushContent) {
         this.type = pushContent.getType();
         this.title = pushContent.getTitle();
-        this.img = pushContent.getImg();
         this.description = pushContent.getDescription();
         this.url = pushContent.getUrl();
         this.tags = new ArrayList<>();

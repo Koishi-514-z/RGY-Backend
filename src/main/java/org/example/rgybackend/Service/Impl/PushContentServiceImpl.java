@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.example.rgybackend.DAO.PushContentDAO;
 import org.example.rgybackend.DAO.QuoteDAO;
+import org.example.rgybackend.DTO.SimplifiedUrlData;
 import org.example.rgybackend.Model.QuoteModel;
 import org.example.rgybackend.Model.UrlDataModel;
 import org.example.rgybackend.Service.PushContentService;
@@ -21,12 +22,18 @@ public class PushContentServiceImpl implements PushContentService {
 
     @Override
     public boolean pushContent(UrlDataModel urlDataModel){
+        urlDataModel.setCreatedAt(TimeUtil.now());
         return pushContentDAO.pushContent(urlDataModel);
     }
 
     @Override
-    public List<UrlDataModel> getContentByTag(Integer emotagid, Integer pageIndex, Integer pageSize){
-        return pushContentDAO.getContentByTag(emotagid, pageIndex, pageSize);
+    public List<SimplifiedUrlData> getSimplifiedContent() {
+        return pushContentDAO.getSimplifiedContent();
+    }
+
+    @Override
+    public List<UrlDataModel> getContentByTag(Long tagid, Integer pageIndex, Integer pageSize){
+        return pushContentDAO.getContentByTag(tagid, pageIndex, pageSize);
     }
 
     @Override
@@ -35,7 +42,7 @@ public class PushContentServiceImpl implements PushContentService {
     }
 
     @Override
-    public Long getDataNum(Integer tagid) {
+    public Long getDataNum(Long tagid) {
         return pushContentDAO.getDataNum(tagid);
     }
 

@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class EmotionDataModel {
     private Long timestamp;
     private Long score;
+    private Long tagid;
     private Long time;
 }

@@ -11,6 +11,9 @@ import org.example.rgybackend.Repository.BlogRepository;
 import org.example.rgybackend.Repository.IllegalRepository;
 import org.example.rgybackend.Repository.LikeRepository;
 import org.example.rgybackend.Repository.ReplyRepository;
+import org.example.rgybackend.Utils.Notification;
+import org.example.rgybackend.Utils.SocketMessage;
+import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -26,12 +29,18 @@ public class BlogDAOImpl implements BlogDAO {
 
     @Autowired
     private LikeRepository userLikeRepository;
+
     @Autowired
     private IllegalRepository illegalRepository;
+
+    @Autowired
+    private Notification socket;
 
     @Override
     public void addBlog(BlogModel blogModel) {
         blogRepository.save(new Blog(blogModel));
+        SocketMessage sockMessage = new SocketMessage("System", blogModel.getBlogid(), "System", null, blogModel.getTimestamp(), blogModel.getContent());
+        socket.pushBlogToUser(sockMessage);
     }
 
     @Override
@@ -40,6 +49,8 @@ public class BlogDAOImpl implements BlogDAO {
         Blog blog = blogRepository.findById(replyModel.getBlogid()).get();
         blog.setLastreply(replyModel.getTimestamp());
         blogRepository.save(blog);
+        SocketMessage sockMessage = new SocketMessage("System", replyModel.getReplyid(), "System", null, replyModel.getTimestamp(), replyModel.getContent());
+        socket.pushBlogToUser(sockMessage);
     }
 
     @Override
@@ -47,6 +58,8 @@ public class BlogDAOImpl implements BlogDAO {
         Blog blog = blogRepository.findById(blogId).get();
         blog.setValid(0);
         blogRepository.save(blog);
+        SocketMessage sockMessage = new SocketMessage("System", blogId, "System", null, blog.getTimestamp(), blog.getContent());
+        socket.pushBlogToUser(sockMessage);
     }
 
     @Override
@@ -54,6 +67,8 @@ public class BlogDAOImpl implements BlogDAO {
         Reply reply = replyRepository.findById(replyId).get();
         reply.setValid(0);
         replyRepository.save(reply);
+        SocketMessage sockMessage = new SocketMessage("System", replyId, "System", null, reply.getTimestamp(), reply.getContent());
+        socket.pushBlogToUser(sockMessage);
     }
 
     @Override
@@ -83,14 +98,18 @@ public class BlogDAOImpl implements BlogDAO {
         Like userLike = new Like(userid,blog.getUserid(),blogid,timestamp);
         userLikeRepository.save(userLike);
         blogRepository.save(blog);
+        SocketMessage sockMessage = new SocketMessage("System", blogid, "System", null, TimeUtil.now(), "like");
+        socket.pushBlogToUser(sockMessage);
     }
 
     @Override
-    public void unlikeBlog(Long blogid,String userid) {
+    public void unlikeBlog(Long blogid, String userid) {
         Blog blog = blogRepository.findById(blogid).get();
         blog.setLikeNum(blog.getLikeNum() - 1);
         blogRepository.save(blog);
         userLikeRepository.deleteByFromuseridAndBlogid(userid,blogid);
+        SocketMessage sockMessage = new SocketMessage("System", blogid, "System", null, TimeUtil.now(), "unlike");
+        socket.pushBlogToUser(sockMessage);
     }
 
     @Override

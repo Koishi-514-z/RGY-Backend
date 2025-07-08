@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatMessage {
+public class SocketMessage {
     private String sender;
-    private Long sessionid;
+    private Long id;
     private String fromuserid;
     private String touserid;
     private Long timestamp;

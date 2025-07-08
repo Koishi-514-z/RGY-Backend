@@ -9,12 +9,24 @@ public class Notification {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    public void pushToAllClients(ChatMessage message) {
+    public void pushToAllClients(SocketMessage message) {
         messagingTemplate.convertAndSend("/topic/messages", message);
     }
 
-    public void pushToUser(ChatMessage message) {
+    public void pushToUser(SocketMessage message) {
         messagingTemplate.convertAndSendToUser(message.getTouserid(), "/queue/notifications", message);
+    }
+
+    public void pushChatToUser(SocketMessage message) {
+        messagingTemplate.convertAndSendToUser(message.getTouserid(), "/queue/notifications/chat", message);
+    }
+
+    public void pushNotificationToUser(SocketMessage message) {
+        messagingTemplate.convertAndSendToUser(message.getTouserid(), "/queue/notifications/notify", message);
+    }
+
+    public void pushBlogToUser(SocketMessage message) {
+        messagingTemplate.convertAndSendToUser(message.getTouserid(), "/queue/notifications/blog", message);
     }
 
 }
