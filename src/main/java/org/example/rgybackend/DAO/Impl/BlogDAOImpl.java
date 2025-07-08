@@ -30,16 +30,19 @@ public class BlogDAOImpl implements BlogDAO {
     private IllegalRepository illegalRepository;
 
     @Override
-    public void addBlog(BlogModel blogModel) {
-        blogRepository.save(new Blog(blogModel));
+    public Blog addBlog(BlogModel blogModel , int valid) {
+        blogRepository.save(new Blog(blogModel,valid));
+        return blogRepository.findByTimestampAndUserid(blogModel.getTimestamp(),blogModel.getUser().getUserid());
     }
 
     @Override
-    public void addReply(ReplyModel replyModel) {
-        replyRepository.save(new Reply(replyModel));
+    public Reply addReply(ReplyModel replyModel,int valid) {
+        replyRepository.save(new Reply(replyModel,valid));
+
         Blog blog = blogRepository.findById(replyModel.getBlogid()).get();
         blog.setLastreply(replyModel.getTimestamp());
         blogRepository.save(blog);
+        return replyRepository.findByTimestampAndFromuserid(replyModel.getTimestamp(),replyModel.getFromuserid());
     }
 
     @Override
@@ -152,6 +155,14 @@ public class BlogDAOImpl implements BlogDAO {
         illegalRepository.deleteById(illegalid);
     }
 
+    @Override
+    public Reply getReplyById(Long replyid) {
+        if (replyRepository.findById(replyid).isPresent()) {
+            return replyRepository.findById(replyid).get();
+        } else {
+            return null;
+        }
+    }
 //    @Override
 //    public void (){
 //        return illegalRepository.findAll();

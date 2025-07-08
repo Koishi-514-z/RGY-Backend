@@ -17,4 +17,6 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     List<Reply> findAllByBlogid(Long blogid);
 
     List<Reply> findAllByFromuserid(String fromuserid);
+
+    Reply findByTimestampAndFromuserid(Long timestamp, String fromuserid);
 }

@@ -17,6 +17,7 @@ public class IllegalModel {
     private String reason;
     private Long timestamp;
     private int status;
+    private Long blogid;
 
 
 }

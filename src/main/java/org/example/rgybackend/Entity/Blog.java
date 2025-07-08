@@ -71,4 +71,23 @@ public class Blog {
         this.lastreply = blogModel.getTimestamp();
         this.browsenum = 0L;
     }
+
+
+    public Blog(BlogModel blogModel,int valid) {
+        this.userid = blogModel.getUser().getUserid();
+        this.timestamp = blogModel.getTimestamp();
+        this.likeNum = blogModel.getLikeNum();
+        this.title = blogModel.getTitle();
+        this.content = blogModel.getContent();
+        this.blogid = blogModel.getBlogid();
+        this.tags = "";
+        for (String tag : blogModel.getTags()) {
+            this.tags += tag + ",";
+        }
+        this.tags = this.tags.substring(0, this.tags.length() - 1);
+        this.valid = valid;
+        this.emotion = blogModel.getEmotion();
+        this.lastreply = blogModel.getTimestamp();
+        this.browsenum = 0L;
+    }
 }

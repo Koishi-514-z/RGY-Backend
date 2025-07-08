@@ -44,6 +44,10 @@ public class Crisis {
     @Column(name = "status")
     private Long status;
 
+    @Basic
+    @Column(name = "contentid")
+    private Long contentid;
+
     public Crisis(String content, Long timestamp, String userid) {
         this.content = content;
         this.timestamp = timestamp;
@@ -57,5 +61,8 @@ public class Crisis {
         this.timestamp = model.getTimestamp();
         this.urgencyLevel = model.getUrgencyLevel();
         this.status = model.getStatus();
+
     }
+
+
 }

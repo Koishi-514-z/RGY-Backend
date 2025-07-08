@@ -21,10 +21,11 @@ public class CrisisServiceImpl implements CrisisService {
     private UserDAO userDAO;
 
     @Override
-    public void saveCrisis(int crisisid) {
+    public void saveCrisis(int crisisid,Long urgencyLevel) {
         CrisisAuditing crisisAuditing = crisisDAO.findById(crisisid);
+        System.out.println(crisisAuditing);
+        crisisDAO.saveCrisis(crisisAuditing.getContent(), crisisAuditing.getTimestamp(), crisisAuditing.getUserid(), urgencyLevel, crisisAuditing.getContentid());
         crisisDAO.deleteCrisisAuditing(crisisid);
-        crisisDAO.saveCrisis(crisisAuditing.getContent(), crisisAuditing.getTimestamp(), crisisAuditing.getUserid());
     }
 
     public void deleteCrisis(int crisisid) {
@@ -50,6 +51,9 @@ public class CrisisServiceImpl implements CrisisService {
             crisisModel.setContent(crisis.getContent());
             crisisModel.setTimestamp(crisis.getTimestamp());
             crisisModel.setUser(userDAO.getSimplified(crisis.getUserid()));
+            crisisModel.setUserid(crisis.getUserid());
+            crisisModel.setUrgencyLevel(crisis.getUrgencyLevel());
+            crisisModel.setStatus(crisis.getStatus());
             crisisModelList.add(crisisModel);
         }
         return crisisModelList;
@@ -66,6 +70,7 @@ public class CrisisServiceImpl implements CrisisService {
             crisisModel.setContent(crisisAuditing.getContent());
             crisisModel.setTimestamp(crisisAuditing.getTimestamp());
             crisisModel.setUser(userDAO.getSimplified(crisisAuditing.getUserid()));
+            crisisModel.setUserid(crisisAuditing.getUserid());
             crisisModelList.add(crisisModel);
         }
         return crisisModelList;
