@@ -7,7 +7,7 @@ import org.example.rgybackend.Entity.Crisis;
 import org.example.rgybackend.Entity.CrisisAuditing;
 
 public interface CrisisDAO {
-    void saveCrisis(String content, Long timestamp, String userid);
+    void saveCrisis(String content, Long timestamp, String userid, Long urgencyLevel,Long contentid);
 
     void deleteCrisis(int crisisid);
 

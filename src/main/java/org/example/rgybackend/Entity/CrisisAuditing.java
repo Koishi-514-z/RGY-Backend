@@ -36,10 +36,17 @@ public class CrisisAuditing {
     @Column(name = "timestamp")
     private Long timestamp;
 
-    public CrisisAuditing(String content, Long timestamp, String userid) {
+    @Basic
+    @Column(name = "contentid")
+    private Long contentid;
+
+
+
+    public CrisisAuditing(String content, Long timestamp, String userid, Long contentid) {
         this.content = content;
         this.timestamp = timestamp;
         this.userid = userid;
+        this.contentid = contentid;
     }
   
     public CrisisAuditing(CrisisAuditingModel model) {
@@ -47,6 +54,7 @@ public class CrisisAuditing {
         this.userid = model.getUserid();
         this.content = model.getContent();
         this.timestamp = model.getTimestamp();
+        this.contentid = model.getContentid();
     }
     
     public CrisisAuditing(CrisisAuditing other) {
@@ -54,5 +62,6 @@ public class CrisisAuditing {
         this.userid = other.userid;
         this.content = other.content;
         this.timestamp = other.timestamp;
+        this.contentid = other.contentid;
     }
 }

@@ -10,9 +10,9 @@ import org.example.rgybackend.Model.ReplyModel;
 import java.util.List;
 
 public interface BlogDAO {
-    void addBlog(BlogModel blogModel);
+    Blog addBlog(BlogModel blogModel,int valid);
 
-    void addReply(ReplyModel replyModel);
+    Reply addReply(ReplyModel replyModel, int valid);
 
     void deleteBlog(Long blogId);
 
@@ -47,4 +47,8 @@ public interface BlogDAO {
     void setIllegalStatus(int illegalid, int i);
 
     void deleteIllegal(int illegalid);
+
+
+
+    Reply getReplyById(Long contentid);
 }

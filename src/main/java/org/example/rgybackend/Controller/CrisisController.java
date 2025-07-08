@@ -29,27 +29,43 @@ public class CrisisController {
     private UserService userService;
 
     @GetMapping("/listAuditing")
-    public List<CrisisModel> listCrisisAuditing() {
+    public List<CrisisModel> listCrisisAuditing(HttpSession session) {
+
         return crisisService.getAllCrisisAuditing();
     }
 
     @GetMapping("/listUser/{userid}")
-    public List<CrisisModel> listCrisisByUser(@PathVariable String userid) {
+    public List<CrisisModel> listCrisisByUser(@PathVariable String userid, HttpSession session) {
+        String id = (String)session.getAttribute("user");
+        if(!userService.isAdmin(id)) {
+            throw new ForbiddenException("只有管理员允许进行该操作");
+        }
         return crisisService.getCrisisByUser(userid);
     }
 
     @PostMapping("/confirm")
-    public void confirmCrisis(@RequestBody String json) {
+    public boolean confirmCrisis(@RequestBody String json,HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        if(!userService.isAdmin(userid)) {
+            throw new ForbiddenException("只有管理员允许进行该操作");
+        }
         JSONObject obj = JSONObject.parseObject(json);
         int crisisid = obj.getIntValue("crisisid");
-        crisisService.saveCrisis(crisisid);
+        Long urgencyLevel = obj.getLongValue("urgencyLevel");
+        crisisService.saveCrisis(crisisid, urgencyLevel);
+        return true;
     }
 
     @PostMapping("/delete")
-    public void deleteCrisisAuditing(@RequestBody String json) {
+    public boolean deleteCrisisAuditing(@RequestBody String json,HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        if(!userService.isAdmin(userid)) {
+            throw new ForbiddenException("只有管理员允许进行该操作");
+        }
         JSONObject obj = JSONObject.parseObject(json);
         int crisisid = obj.getIntValue("crisisid");
         crisisService.deleteCrisisAuditing(crisisid);
+        return true;
     }
 
     @GetMapping("/getall")

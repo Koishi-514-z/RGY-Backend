@@ -5,7 +5,7 @@ import org.example.rgybackend.Model.CrisisModel;
 import java.util.List;
 
 public interface CrisisService {
-    void saveCrisis(int crisisid);
+    void saveCrisis(int crisisid,Long urgencyLevel);
 
     void deleteCrisis(int crisisid);
 

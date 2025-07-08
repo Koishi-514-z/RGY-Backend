@@ -23,11 +23,14 @@ public class CrisisDAOImpl implements CrisisDAO {
     private CrisisAuditingRepository crisisAuditingRepository;
 
     @Override
-    public void saveCrisis(String content, Long timestamp, String userid) {
+    public void saveCrisis(String content, Long timestamp, String userid,Long urgencyLevel,Long contentid) {
         Crisis crisis = new Crisis();
         crisis.setContent(content);
         crisis.setTimestamp(timestamp);
         crisis.setUserid(userid);
+        crisis.setUrgencyLevel(urgencyLevel);
+        crisis.setStatus(0L);
+        crisis.setContentid(contentid);
         crisisRepository.save(crisis);
     }
 
@@ -61,6 +64,8 @@ public class CrisisDAOImpl implements CrisisDAO {
     }
     @Override
     public CrisisAuditing findById(int crisisid) {
+        System.out.println(crisisid);
+
         return crisisAuditingRepository.findById(crisisid).orElse(null);
     }
     @Override

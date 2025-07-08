@@ -14,12 +14,14 @@ public class CrisisAuditingModel {
     private String userid;
     private String content;
     private Long timestamp;
+    private Long contentid;
 
     public CrisisAuditingModel(CrisisAuditing entity) {
         this.crisisid = entity.getCrisisid();
         this.userid = entity.getUserid();
         this.content = entity.getContent();
         this.timestamp = entity.getTimestamp();
+        this.contentid = entity.getContentid();
     }
     
     public CrisisAuditingModel(CrisisAuditingModel other) {
@@ -27,5 +29,6 @@ public class CrisisAuditingModel {
         this.userid = other.userid;
         this.content = other.content;
         this.timestamp = other.timestamp;
+        this.contentid = other.contentid;
     }
 }

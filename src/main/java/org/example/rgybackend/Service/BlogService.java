@@ -41,4 +41,10 @@ public interface BlogService {
     void setIllegalStatus(int illegalid, int i);
 
     void deleteIllegal(int illegalid);
+
+    void reportReply(Long replyid, String reason);
+
+
+
+    List<ReplyModel> getRepliesByUserid(String userid);
 }
