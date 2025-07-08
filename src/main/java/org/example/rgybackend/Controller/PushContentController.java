@@ -2,6 +2,7 @@ package org.example.rgybackend.Controller;
 
 import java.util.List;
 
+import org.example.rgybackend.DTO.SimplifiedUrlData;
 import org.example.rgybackend.Model.QuoteModel;
 import org.example.rgybackend.Model.UrlDataModel;
 import org.example.rgybackend.Service.PushContentService;
@@ -14,8 +15,13 @@ public class PushContentController {
     @Autowired
     PushContentService pushContentService;
 
+    @GetMapping("/getsim")
+    public List<SimplifiedUrlData> getSimplifiedContent() {
+        return pushContentService.getSimplifiedContent();
+    }
+
     @GetMapping("/getbytag")
-    public List<UrlDataModel> getContentByTag(@RequestParam Integer tagid, @RequestParam Integer pageIndex, @RequestParam Integer pageSize) {
+    public List<UrlDataModel> getContentByTag(@RequestParam Long tagid, @RequestParam Integer pageIndex, @RequestParam Integer pageSize) {
         return pushContentService.getContentByTag(tagid, pageIndex, pageSize);
     }
 
@@ -25,7 +31,7 @@ public class PushContentController {
     }
 
     @GetMapping("/getnum")
-    public Long getDataNum(@RequestParam Integer tagid) {
+    public Long getDataNum(@RequestParam Long tagid) {
         return pushContentService.getDataNum(tagid);
     }
 

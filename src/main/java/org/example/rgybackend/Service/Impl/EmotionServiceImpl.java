@@ -7,12 +7,14 @@ import org.example.rgybackend.DAO.CrisisAuditingDAO;
 import org.example.rgybackend.DAO.DiaryDAO;
 import org.example.rgybackend.DAO.EmotionDAO;
 import org.example.rgybackend.DAO.NotificationPrivateDAO;
+import org.example.rgybackend.DTO.EmotionData;
 import org.example.rgybackend.Model.CrisisAuditingModel;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionDataModel;
 import org.example.rgybackend.Model.EmotionModel;
 import org.example.rgybackend.Model.NotificationPrivateModel;
 import org.example.rgybackend.Model.TagModel;
+import org.example.rgybackend.Model.UrlDataModel;
 import org.example.rgybackend.Service.EmotionService;
 import org.example.rgybackend.Utils.BERTModel;
 import org.example.rgybackend.Utils.ModelResponse;
@@ -49,6 +51,11 @@ public class EmotionServiceImpl implements EmotionService {
     }
 
     @Override
+    public List<TagModel> getUrlTags() {
+        return new UrlDataModel().typeTags;
+    }
+
+    @Override
     public boolean checkNegative(String userid) {
         LocalDate today = TimeUtil.today();
         List<Long> labels = diaryDAO.scanLabel(userid, today.minusDays(2), today);
@@ -78,8 +85,8 @@ public class EmotionServiceImpl implements EmotionService {
     }
 
     @Override
-    public List<EmotionDataModel> scanEmotionData(Long start, Long end) {
-        return emotionDAO.scanAllData(TimeUtil.getLocalDate(start), TimeUtil.getLocalDate(end));
+    public EmotionData scanEmotionData(Long start, Long end, Long interval) {
+        return emotionDAO.scanAllData(TimeUtil.getLocalDate(start), TimeUtil.getLocalDate(end), interval);
     }
 
     @Override

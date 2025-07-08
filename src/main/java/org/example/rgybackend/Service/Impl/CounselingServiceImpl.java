@@ -58,6 +58,10 @@ public class CounselingServiceImpl implements CounselingService {
 
     @Override
     public boolean addCounseling(CounselingModel counselingModel, String userid) {
+        NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.counselingNewOrder);
+        notification.setAdminid("System");
+        notification.setUserid(counselingModel.getPsyid());
+        notificationPrivateDAO.addNotification(notification);
         return counselingDAO.addCounseling(counselingModel, userid);
     }
 

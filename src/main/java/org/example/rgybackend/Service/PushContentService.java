@@ -2,17 +2,20 @@ package org.example.rgybackend.Service;
 
 import java.util.List;
 
+import org.example.rgybackend.DTO.SimplifiedUrlData;
 import org.example.rgybackend.Model.QuoteModel;
 import org.example.rgybackend.Model.UrlDataModel;
 
 public interface PushContentService {
     boolean pushContent(UrlDataModel urlDataModel);
 
-    List<UrlDataModel> getContentByTag(Integer emotagid, Integer pageIndex, Integer pageSize);
+    List<SimplifiedUrlData> getSimplifiedContent();
+
+    List<UrlDataModel> getContentByTag(Long tagid, Integer pageIndex, Integer pageSize);
 
     List<UrlDataModel> getContent(Integer pageIndex, Integer pageSize);
 
-    Long getDataNum(Integer tagid);
+    Long getDataNum(Long tagid);
 
     Long getAllDataNum();
 

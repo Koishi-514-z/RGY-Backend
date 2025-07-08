@@ -9,6 +9,8 @@ import org.example.rgybackend.Entity.NotificationPrivate;
 import org.example.rgybackend.Model.NotificationPrivateModel;
 import org.example.rgybackend.Repository.NotificationPrivateRepository;
 import org.example.rgybackend.Utils.NotExistException;
+import org.example.rgybackend.Utils.Notification;
+import org.example.rgybackend.Utils.SocketMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +18,9 @@ import org.springframework.stereotype.Repository;
 public class NotificationPrivateDAOImpl implements NotificationPrivateDAO {
     @Autowired
     private NotificationPrivateRepository notificationPrivateRepository;
+
+    @Autowired
+    private Notification socket;
 
     @Override
     public List<NotificationPrivateModel> getUserNotification(String userid) {
@@ -33,6 +38,8 @@ public class NotificationPrivateDAOImpl implements NotificationPrivateDAO {
     public boolean addNotification(NotificationPrivateModel notification) {
         NotificationPrivate notificationPrivate = new NotificationPrivate(notification);
         notificationPrivateRepository.save(notificationPrivate);
+        SocketMessage sockMessage = new SocketMessage("System", notification.getNotificationid(), notification.getAdminid(), notification.getUserid(), notification.getTimestamp(), notification.getContent());
+        socket.pushNotificationToUser(sockMessage);
         return true;
     }
 

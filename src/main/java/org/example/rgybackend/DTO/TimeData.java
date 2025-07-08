@@ -1,7 +1,5 @@
 package org.example.rgybackend.DTO;
 
-import org.example.rgybackend.Model.TagModel;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,8 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MoodData {
-    private TagModel tag;
+public class TimeData {
+    private Long timeIndex;
     private Long total;
-    private Double percent;
+    private Double score;
+    private Long positive;
+    private Long neutral;
+    private Long negative;
 }

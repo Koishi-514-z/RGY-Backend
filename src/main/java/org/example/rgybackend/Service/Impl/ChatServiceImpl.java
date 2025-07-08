@@ -12,7 +12,7 @@ import org.example.rgybackend.Model.MessageModel;
 import org.example.rgybackend.Model.SessionModel;
 import org.example.rgybackend.Model.SessionTagModel;
 import org.example.rgybackend.Service.ChatService;
-import org.example.rgybackend.Utils.ChatMessage;
+import org.example.rgybackend.Utils.SocketMessage;
 import org.example.rgybackend.Utils.Notification;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,8 +119,8 @@ public class ChatServiceImpl implements ChatService {
         if(!result) {
             return false;
         }
-        ChatMessage chatMessage = new ChatMessage("System", sessionid, fromuserid, touserid, TimeUtil.now(), content);
-        notification.pushToUser(chatMessage);
+        SocketMessage sockMessage = new SocketMessage("System", sessionid, fromuserid, touserid, TimeUtil.now(), content);
+        notification.pushChatToUser(sockMessage);
         return true;
     }
 

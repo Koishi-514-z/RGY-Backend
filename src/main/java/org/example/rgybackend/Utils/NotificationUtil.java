@@ -73,6 +73,18 @@ public class NotificationUtil {
         "medium"
     );
 
+    public final static NotificationPrivateModel counselingNewOrder = new NotificationPrivateModel(
+        null,
+        340L,
+        null,
+        null,
+        "您有新的咨询预约",
+        "您收到了一条新的心理咨询预约。\n\n📅 请及时查看预约详情并确认是否接受。\n💡 如有时间冲突，请尽快与用户沟通调整。\n\n感谢您的专业服务！",
+        TimeUtil.now(),
+        1L,
+        "low"
+    );
+
     public final static NotificationPrivateModel counselingCanceled = new NotificationPrivateModel(
         null, 
         442L, 
