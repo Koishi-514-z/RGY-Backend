@@ -16,10 +16,7 @@ import org.example.rgybackend.DTO.IntimateDTO;
 import org.example.rgybackend.DTO.LikeData;
 import org.example.rgybackend.DTO.ReplyData;
 import org.example.rgybackend.Entity.PsyProfileExtra;
-import org.example.rgybackend.Model.ProfileModel;
-import org.example.rgybackend.Model.PsyProfileModel;
-import org.example.rgybackend.Model.SimplifiedProfileModel;
-import org.example.rgybackend.Model.UserModel;
+import org.example.rgybackend.Model.*;
 import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.NotExistException;
 import org.example.rgybackend.Utils.TimeUtil;
@@ -78,8 +75,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<ProfileModel> getAllProfile() {
-        return userDAO.getAll();
+    public List<AdminProfileModel> getAllProfile(String adminid) {
+        List<ProfileModel> profileModels = userDAO.getAll();
+        List<AdminProfileModel> adminProfileModels = new ArrayList<>();
+        for(ProfileModel profileModel : profileModels) {
+            if(profileModel.getRole() == 1 && profileModel.getUserid().equals(adminid)){
+                continue;
+            }
+            AdminProfileModel adminProfileModel = new AdminProfileModel(profileModel, userAuthDAO.isDisabled(profileModel.getUserid())? 1 : 0);
+            adminProfileModels.add(adminProfileModel);
+        }
+        return adminProfileModels;
     }
 
     @Override

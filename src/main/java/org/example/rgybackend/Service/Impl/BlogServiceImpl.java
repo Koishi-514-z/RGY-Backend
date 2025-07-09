@@ -62,7 +62,7 @@ public class BlogServiceImpl implements BlogService {
             else emotion = emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag().getId().intValue();
             BlogModel blogModel = new BlogModel(null, author, timestamp,likeNum, title, content, tags, new ArrayList<>(), emotion, timestamp, 0L);
             Blog blog = blogDAO.addBlog(blogModel,0);
-            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), title + '\n' + content, TimeUtil.now(), blog.getBlogid());
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), title + '\n' + content, TimeUtil.now(), blog.getBlogid(),0L);
             crisisAuditingDAO.addCrisis(crisisAuditingModel);
             return;
         }
@@ -99,7 +99,7 @@ public class BlogServiceImpl implements BlogService {
             Long timestamp = System.currentTimeMillis();
             ReplyModel replyModel = new ReplyModel(null, blogid, author.getUserid(), getBlogById(blogid).getUser().getUserid(),timestamp, content,author);
             Reply reply = blogDAO.addReply(replyModel,0);
-            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), content, TimeUtil.now(),reply.getReplyid());
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), content, TimeUtil.now(),reply.getReplyid(),1L);
             crisisAuditingDAO.addCrisis(crisisAuditingModel);
             return new ReplyModel();
         }

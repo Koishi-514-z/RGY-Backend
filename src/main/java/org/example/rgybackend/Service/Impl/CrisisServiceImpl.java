@@ -1,5 +1,6 @@
 package org.example.rgybackend.Service.Impl;
 
+import org.example.rgybackend.DAO.BlogDAO;
 import org.example.rgybackend.DAO.CrisisDAO;
 import org.example.rgybackend.DAO.UserDAO;
 import org.example.rgybackend.Entity.Crisis;
@@ -20,6 +21,9 @@ public class CrisisServiceImpl implements CrisisService {
     @Autowired
     private UserDAO userDAO;
 
+    @Autowired
+    private BlogDAO blogDAO;
+
     @Override
     public void saveCrisis(int crisisid,Long urgencyLevel) {
         CrisisAuditing crisisAuditing = crisisDAO.findById(crisisid);
@@ -33,6 +37,15 @@ public class CrisisServiceImpl implements CrisisService {
     }
     @Override
     public void deleteCrisisAuditing(int crisisid) {
+        CrisisAuditing crisisAuditing = crisisDAO.findById(crisisid);
+        if(crisisAuditing!= null){
+            if(crisisAuditing.getType() == 0){
+                blogDAO.recoverBlog(crisisAuditing.getContentid());
+            }
+            else if(crisisAuditing.getType() == 1){
+                blogDAO.recoverReply(crisisAuditing.getContentid());
+            }
+        }
         crisisDAO.deleteCrisisAuditing(crisisid);
     }
 

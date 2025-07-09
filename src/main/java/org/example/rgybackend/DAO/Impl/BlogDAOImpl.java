@@ -65,9 +65,26 @@ public class BlogDAOImpl implements BlogDAO {
     }
 
     @Override
+    public void recoverBlog(Long blogId) {
+        Blog blog = blogRepository.findById(blogId).get();
+        blog.setValid(1);
+        blogRepository.save(blog);
+        SocketMessage sockMessage = new SocketMessage("System", blogId, "System", null, blog.getTimestamp(), blog.getContent());
+        socket.pushBlogToAllClients(sockMessage);
+    }
+    @Override
     public void deleteReply(Long replyId) {
         Reply reply = replyRepository.findById(replyId).get();
         reply.setValid(0);
+        replyRepository.save(reply);
+        SocketMessage sockMessage = new SocketMessage("System", replyId, "System", null, reply.getTimestamp(), reply.getContent());
+        socket.pushBlogToAllClients(sockMessage);
+    }
+
+    @Override
+    public void recoverReply(Long replyId) {
+        Reply reply = replyRepository.findById(replyId).get();
+        reply.setValid(1);
         replyRepository.save(reply);
         SocketMessage sockMessage = new SocketMessage("System", replyId, "System", null, reply.getTimestamp(), reply.getContent());
         socket.pushBlogToAllClients(sockMessage);

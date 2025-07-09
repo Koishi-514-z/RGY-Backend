@@ -211,7 +211,7 @@ public class EmotionServiceImpl implements EmotionService {
             notification.setAdminid("System");
             notification.setUserid(userid);
             notificationPrivateDAO.addNotification(notification);
-            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, userid, content, TimeUtil.now(),0L);
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, userid, content, TimeUtil.now(),0L,2L);
             crisisAuditingDAO.addCrisis(crisisAuditingModel);
         }
 
