@@ -14,10 +14,10 @@ public interface UserRepository extends JpaRepository<UserProfile, String> {
 
     boolean existsByUsername(String username);
 
-    @Query("SELECT new org.example.rgybackend.Model.SimplifiedProfileModel(p.userid, p.username, p.avatar, p.note) FROM UserProfile p")
+    @Query("SELECT new org.example.rgybackend.Model.SimplifiedProfileModel(p.userid, p.username, p.avatar, p.note, p.jointime) FROM UserProfile p")
     List<SimplifiedProfileModel> findAllSimplified();
 
-    @Query("SELECT new org.example.rgybackend.Model.SimplifiedProfileModel(p.userid, p.username, p.avatar, p.note) FROM UserProfile p WHERE p.userid = :userid")
+    @Query("SELECT new org.example.rgybackend.Model.SimplifiedProfileModel(p.userid, p.username, p.avatar, p.note, p.jointime) FROM UserProfile p WHERE p.userid = :userid")
     SimplifiedProfileModel findSimplifiedById(String userid);
 
     @Query("SELECT p.role FROM FROM UserProfile p WHERE p.userid = :userid")

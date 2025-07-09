@@ -10,6 +10,8 @@ public interface PushContentDAO {
 
     List<SimplifiedUrlData> getSimplifiedContent();
 
+    List<UrlDataModel> getAllContent();
+
     List<UrlDataModel> getContentByTag(Long tagid, Integer pageIndex, Integer pageSize);
 
     List<UrlDataModel> getContent(Integer pageIndex, Integer pageSize);

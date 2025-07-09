@@ -30,6 +30,16 @@ public class PushContentDAOImpl implements PushContentDAO {
     }
 
     @Override
+    public List<UrlDataModel> getAllContent() {
+        List<PushContent> pushContents = pushContentRepository.findAll();
+        List<UrlDataModel> urlDataModels = new ArrayList<>();
+        for(PushContent pushContent : pushContents) {
+            urlDataModels.add(new UrlDataModel(pushContent));
+        }
+        return urlDataModels;
+    }
+
+    @Override
     public List<SimplifiedUrlData> getSimplifiedContent() {
         List<PushContentDTO> pushContents = pushContentRepository.findSimplifiedDatas();
         List<SimplifiedUrlData> simplifiedUrlDatas = new ArrayList<>();

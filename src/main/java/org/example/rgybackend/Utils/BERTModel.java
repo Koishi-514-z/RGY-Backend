@@ -34,4 +34,27 @@ public class BERTModel {
         return response;
     }
 
+    public Long justify(String text) {
+        ModelResponse emotionResponse = this.checkEmotion(text);
+        ModelResponse crisisResponse = this.checkCrisis(text);
+
+        if(crisisResponse.getPredicted_class() == 1 && emotionResponse.getPredicted_class() == 2) {
+            return 1L;
+        }
+
+        if(crisisResponse.getPredicted_class() == 2 && crisisResponse.getConfidence() >= 0.999) {
+            return 2L;
+        }
+
+        if(crisisResponse.getPredicted_class() == 2 && (crisisResponse.getConfidence() >= 0.99 && crisisResponse.getConfidence() < 0.999)) {
+            return 3L;
+        }
+
+        if(crisisResponse.getPredicted_class() == 2 && crisisResponse.getConfidence() < 0.99) {
+            return 4L;
+        }
+
+        return 0L;
+    }
+
 }

@@ -1,13 +1,18 @@
 package org.example.rgybackend.Service.Impl;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.example.rgybackend.DAO.CrisisAuditingDAO;
 import org.example.rgybackend.DAO.DiaryDAO;
 import org.example.rgybackend.DAO.EmotionDAO;
 import org.example.rgybackend.DAO.NotificationPrivateDAO;
+import org.example.rgybackend.DTO.DiaryLabelData;
 import org.example.rgybackend.DTO.EmotionData;
+import org.example.rgybackend.DTO.MoodData;
+import org.example.rgybackend.DTO.TimeData;
 import org.example.rgybackend.Model.CrisisAuditingModel;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionDataModel;
@@ -58,15 +63,45 @@ public class EmotionServiceImpl implements EmotionService {
     @Override
     public boolean checkNegative(String userid) {
         LocalDate today = TimeUtil.today();
-        List<Long> labels = diaryDAO.scanLabel(userid, today.minusDays(2), today);
-        if(labels.size() < 3) {
-            return false;
+        LocalDate prevThreeDay = today.minusDays(3);
+        LocalDate prevWeek = today.minusDays(7);
+        List<DiaryLabelData> diaryLabelDatas = diaryDAO.scanLabel(userid, prevWeek, today);
+        List<EmotionDataModel> emotionDatas = emotionDAO.scanAllData(prevWeek, today);
+
+        final double labelRate[] = {-2.0, 0.0, 4.0};
+        final double scoreRate[] = {6.0, 3.0, 0.0, -1.0, -3.0}; 
+        final double timeWeight[] = {4.0, 2.0, 1.0};
+        final double boundary[] = {48.0, 64.0};
+        double negativeRate = 0.0;
+
+        for(DiaryLabelData diaryLabelData : diaryLabelDatas) {
+            LocalDate date = TimeUtil.getLocalDate(diaryLabelData.getTimestamp());
+            int label = diaryLabelData.getLabel().intValue();
+            int timeClass = 0;
+            if(date.compareTo(today) >= 0) timeClass = 0;
+            else if(date.compareTo(prevThreeDay) >= 0) timeClass = 1;
+            else timeClass = 2;
+            negativeRate += timeWeight[timeClass] * labelRate[label];
         }
-        boolean negative = true;
-        for(Long label : labels) {
-            negative = negative && (label == 2);
+
+        for(EmotionDataModel emotionDataModel : emotionDatas) {
+            LocalDate date = TimeUtil.getLocalDate(emotionDataModel.getTimestamp());
+            int score = emotionDataModel.getScore().intValue() - 1;
+            int timeClass = 0;
+            if(date.compareTo(today) >= 0) timeClass = 0;
+            else if(date.compareTo(prevWeek) >= 0) timeClass = 1;
+            else timeClass = 2;
+            negativeRate += timeWeight[timeClass] * scoreRate[score];
         }
-        return negative;
+
+        if(negativeRate > boundary[1]) {
+            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);
+            notification.setAdminid("System");
+            notification.setUserid(userid);
+            notificationPrivateDAO.addNotification(notification);
+        }
+
+        return negativeRate > boundary[0];
     }
 
     @Override
@@ -86,7 +121,71 @@ public class EmotionServiceImpl implements EmotionService {
 
     @Override
     public EmotionData scanEmotionData(Long start, Long end, Long interval) {
-        return emotionDAO.scanAllData(TimeUtil.getLocalDate(start), TimeUtil.getLocalDate(end), interval);
+        LocalDate startDate = TimeUtil.getLocalDate(start);
+        LocalDate endDate = TimeUtil.getLocalDate(end);
+        List<EmotionDataModel> emotionDataModels = emotionDAO.scanAllData(startDate, endDate);
+        List<TagModel> tagModels = getTags();
+
+        EmotionData emotionData = new EmotionData(interval);
+        emotionData.setTotalNum((long)emotionDataModels.size());
+
+        if(emotionDataModels.isEmpty()) {
+            return emotionData;
+        }
+
+        emotionDataModels.sort((e1, e2) -> e1.getTimestamp().compareTo(e2.getTimestamp()));
+        Long minTimestamp = TimeUtil.getStartOfDayTimestamp(emotionDataModels.get(0).getTimestamp());
+        Long maxTimestamp = TimeUtil.getStartOfDayTimestamp(emotionDataModels.get(emotionDataModels.size() - 1).getTimestamp()) + TimeUtil.DAY;
+        emotionData.setStartDate(minTimestamp);
+        emotionData.setEndDate(maxTimestamp);
+        emotionData.setTotalDate((maxTimestamp - minTimestamp) / TimeUtil.DAY);
+
+        Long num = 0L, score = 0L, lastSlots = 0L;
+        Long pos = 0L, neu = 0L, neg = 0L;
+        Long totalScore = 0L;
+
+        for(int i = 0; i < emotionDataModels.size(); ++i) {
+            EmotionDataModel emotionDataModel = emotionDataModels.get(i);
+            totalScore += emotionDataModel.getScore();
+            Long diffSlots = (emotionDataModel.getTimestamp() - minTimestamp) / (interval * TimeUtil.DAY);
+            if(diffSlots == lastSlots) {
+                score += emotionDataModel.getScore();
+                num++;
+                if(emotionDataModel.getScore() >= 4) pos++;
+                else if(emotionDataModel.getScore() >= 3) neu++;
+                else neg++;
+            }
+            else {
+                emotionData.getTimeDatas().add(new TimeData(lastSlots, num, score * 1.0 / num, pos, neu, neg));
+                num = 1L;
+                score = emotionDataModel.getScore();
+                pos = neu = neg = 0L;
+                if(emotionDataModel.getScore() >= 4) pos++;
+                else if(emotionDataModel.getScore() >= 3) neu++;
+                else neg++;
+                lastSlots = diffSlots;
+            }
+        }
+        emotionData.getTimeDatas().add(new TimeData(lastSlots, num, score * 1.0 / num, pos, neu, neg));
+        emotionData.setAvgScore(totalScore * 1.0 / emotionDataModels.size());
+
+        Map<Long, Long> radioDataMap = new HashMap<>();
+        for(TagModel tagModel : tagModels) {
+            radioDataMap.put(tagModel.getId(), 0L);
+        }
+
+        for(int i = 0; i < emotionDataModels.size(); ++i) {
+            EmotionDataModel emotionDataModel = emotionDataModels.get(i);
+            Long oldNum = radioDataMap.get(emotionDataModel.getTagid());
+            radioDataMap.put(emotionDataModel.getTagid(), oldNum + 1);
+        }
+
+        for(TagModel tagModel : tagModels) {
+            Long total = radioDataMap.get(tagModel.getId());
+            emotionData.getRatioDatas().add(new MoodData(tagModel, total, total * 100.0 / emotionDataModels.size()));
+        }
+
+        return emotionData;
     }
 
     @Override
@@ -98,16 +197,16 @@ public class EmotionServiceImpl implements EmotionService {
     @Override
     public boolean updateDiary(String userid, String content) {
         ModelResponse emotionResponse = bertModel.checkEmotion(content);
-        ModelResponse crisisResponse = bertModel.checkCrisis(content);
+        Long justify = bertModel.justify(content);
 
-        if(crisisResponse.getPredicted_class() == 1) {
+        if(justify == 1) {
             NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);
             notification.setAdminid("System");
             notification.setUserid(userid);
             notificationPrivateDAO.addNotification(notification);
         }
 
-        else if(crisisResponse.getPredicted_class() == 2) {
+        else if(justify == 2) {
             NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
             notification.setAdminid("System");
             notification.setUserid(userid);

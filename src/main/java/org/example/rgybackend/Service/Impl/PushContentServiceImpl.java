@@ -1,11 +1,18 @@
 package org.example.rgybackend.Service.Impl;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.example.rgybackend.DAO.EmotionDAO;
 import org.example.rgybackend.DAO.PushContentDAO;
 import org.example.rgybackend.DAO.QuoteDAO;
+import org.example.rgybackend.DTO.PushContentSortDTO;
 import org.example.rgybackend.DTO.SimplifiedUrlData;
+import org.example.rgybackend.Model.EmotionDataModel;
+import org.example.rgybackend.Model.PushContentMatrix;
 import org.example.rgybackend.Model.QuoteModel;
+import org.example.rgybackend.Model.TagModel;
 import org.example.rgybackend.Model.UrlDataModel;
 import org.example.rgybackend.Service.PushContentService;
 import org.example.rgybackend.Utils.TimeUtil;
@@ -19,6 +26,9 @@ public class PushContentServiceImpl implements PushContentService {
 
     @Autowired
     private QuoteDAO quoteDAO;
+
+    @Autowired
+    private EmotionDAO emotionDAO;
 
     @Override
     public boolean pushContent(UrlDataModel urlDataModel){
@@ -37,8 +47,36 @@ public class PushContentServiceImpl implements PushContentService {
     }
 
     @Override
-    public List<UrlDataModel> getContent(Integer pageIndex, Integer pageSize) {
-        return pushContentDAO.getContent(pageIndex, pageSize);
+    public List<UrlDataModel> getContent(String userid, Integer pageIndex, Integer pageSize) {
+        List<UrlDataModel> results = new ArrayList<>();
+        List<UrlDataModel> urlDataModels = pushContentDAO.getAllContent();
+        LocalDate today = TimeUtil.today();
+        LocalDate prevThreeDay = today.minusDays(3);
+        List<EmotionDataModel> emotionDataModels = emotionDAO.scanEmotionData(userid, today, prevThreeDay);
+
+        double[] suitabilityArray = PushContentMatrix.getSuitabilityArray(emotionDataModels);
+        List<PushContentSortDTO> pushContentSortDTOs = new ArrayList<>();
+
+        for(UrlDataModel urlDataModel : urlDataModels) {
+            double suitability = 0.0;
+            for(TagModel tagModel : urlDataModel.getTags()) {
+                suitability += suitabilityArray[tagModel.getId().intValue()];
+            }
+            suitability /= urlDataModel.getTags().size();
+
+            int diffDays = (int)((TimeUtil.now() - urlDataModel.getCreatedAt()) / TimeUtil.DAY);
+            double timeWeight = 1 / (diffDays + 1);
+
+            pushContentSortDTOs.add(new PushContentSortDTO(urlDataModel, suitability * timeWeight));
+        }
+
+        pushContentSortDTOs.sort((s1, s2) -> Double.compare(s2.getRate(), s1.getRate()));
+
+        for(int i = pageIndex * pageSize; i < (pageIndex + 1) * pageSize; ++i) {
+            results.add(pushContentSortDTOs.get(i).getUrlDataModel());
+        }
+
+        return results;
     }
 
     @Override

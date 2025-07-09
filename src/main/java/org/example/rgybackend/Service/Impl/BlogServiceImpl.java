@@ -12,7 +12,6 @@ import org.example.rgybackend.Entity.Reply;
 import org.example.rgybackend.Model.*;
 import org.example.rgybackend.Service.BlogService;
 import org.example.rgybackend.Utils.BERTModel;
-import org.example.rgybackend.Utils.ModelResponse;
 import org.example.rgybackend.Utils.NotificationUtil;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,14 +42,14 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public void addBlog(String title, String content, List<String> tags, SimplifiedProfileModel author) {
-        ModelResponse crisisResponse = bertModel.checkCrisis(title + content);
-        if(crisisResponse.getPredicted_class() == 1) {
+        Long justify = bertModel.justify(title + content);
+        if(justify == 1) {
             NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);
             notification.setAdminid("System");
             notification.setUserid(author.getUserid());
             notificationPrivateDAO.addNotification(notification);
         }
-        else if(crisisResponse.getPredicted_class() == 2) {
+        else if(justify == 2) {
             NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
             notification.setAdminid("System");
             notification.setUserid(author.getUserid());
@@ -85,14 +84,14 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public ReplyModel addReply(Long blogid, String content, SimplifiedProfileModel author) {
-        ModelResponse crisisResponse = bertModel.checkCrisis(content);
-        if(crisisResponse.getPredicted_class() == 1) {
+        Long justify = bertModel.justify(content);
+        if(justify == 1) {
             NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);
             notification.setAdminid("System");
             notification.setUserid(author.getUserid());
             notificationPrivateDAO.addNotification(notification);
         }
-        else if(crisisResponse.getPredicted_class() == 2) {
+        else if(justify == 2) {
             NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
             notification.setAdminid("System");
             notification.setUserid(author.getUserid());
@@ -276,14 +275,12 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public void likeBlog(Long blogid,String userid) {
-        // TODO: Implement likeBlog method
-            blogDAO.likeBlog(blogid,userid);
+        blogDAO.likeBlog(blogid,userid);
     }
 
     @Override
     public void unlikeBlog(Long blogid, String userid) {
-        // TODO: Implement unlikeBlog method
-            blogDAO.unlikeBlog(blogid,userid);
+        blogDAO.unlikeBlog(blogid,userid);
 
     }
 
