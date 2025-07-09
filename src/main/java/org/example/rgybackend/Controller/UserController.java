@@ -3,10 +3,7 @@ package org.example.rgybackend.Controller;
 import java.util.List;
 
 import org.example.rgybackend.DTO.IntimateDTO;
-import org.example.rgybackend.Model.ProfileModel;
-import org.example.rgybackend.Model.PsyProfileModel;
-import org.example.rgybackend.Model.SimplifiedProfileModel;
-import org.example.rgybackend.Model.UserModel;
+import org.example.rgybackend.Model.*;
 import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.ForbiddenException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +48,15 @@ public class UserController {
     public ProfileModel getUserProfile(HttpSession session) {
         String userid = (String)session.getAttribute("user");
         return userService.getUserProfile(userid);
+    }
+
+    @GetMapping("/getall")
+    public List<AdminProfileModel> getAllProfile(HttpSession session) {
+        String adminid = (String)session.getAttribute("user");
+        if(!userService.isAdmin(adminid)) {
+            throw new ForbiddenException("只有管理员允许进行此操作");
+        }
+        return userService.getAllProfile(adminid);
     }
 
     @GetMapping("/getpsy")

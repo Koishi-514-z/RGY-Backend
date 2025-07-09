@@ -13,6 +13,10 @@ public class Notification {
         messagingTemplate.convertAndSend("/topic/messages", message);
     }
 
+    public void pushBlogToAllClients(SocketMessage message) {
+        messagingTemplate.convertAndSend("/topic/messages/blog", message);
+    }
+
     public void pushToUser(SocketMessage message) {
         messagingTemplate.convertAndSendToUser(message.getTouserid(), "/queue/notifications", message);
     }
@@ -24,9 +28,4 @@ public class Notification {
     public void pushNotificationToUser(SocketMessage message) {
         messagingTemplate.convertAndSendToUser(message.getTouserid(), "/queue/notifications/notify", message);
     }
-
-    public void pushBlogToUser(SocketMessage message) {
-        messagingTemplate.convertAndSendToUser(message.getTouserid(), "/queue/notifications/blog", message);
-    }
-
 }
