@@ -59,6 +59,7 @@ public class SimplifiedUrlData {
         this.title = pushContent.getTitle();
         this.description = pushContent.getDescription();
         this.url = pushContent.getUrl();
+        this.createdAt = pushContent.getCreatedAt();
         this.tags = new ArrayList<>();
     
         List<String> list = fromStringToList(pushContent.getTags());

@@ -9,6 +9,8 @@ import org.example.rgybackend.Service.PushContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/api/pushcontent")
 public class PushContentController {
@@ -26,8 +28,9 @@ public class PushContentController {
     }
 
     @GetMapping("/get")
-    public List<UrlDataModel> getContent(@RequestParam Integer pageIndex, @RequestParam Integer pageSize) {
-        return pushContentService.getContent(pageIndex, pageSize);
+    public List<UrlDataModel> getContent(@RequestParam Integer pageIndex, @RequestParam Integer pageSize, HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return pushContentService.getContent(userid, pageIndex, pageSize);
     }
 
     @GetMapping("/getnum")

@@ -13,7 +13,7 @@ public interface PushContentService {
 
     List<UrlDataModel> getContentByTag(Long tagid, Integer pageIndex, Integer pageSize);
 
-    List<UrlDataModel> getContent(Integer pageIndex, Integer pageSize);
+    List<UrlDataModel> getContent(String userid, Integer pageIndex, Integer pageSize);
 
     Long getDataNum(Long tagid);
 

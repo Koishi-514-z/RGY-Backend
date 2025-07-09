@@ -125,8 +125,8 @@ public class UserServiceImpl implements UserService {
     public List<IntimateDTO> getIntimateUsers(String userid) {
         List<IntimateDTO> intimateUsers = new ArrayList<>();
         final int total = 4;
-        final double likeWeight = 0.5;   
-        final double timeWeight[] = {27.0, 9.0, 3.0, 1.0};
+        final double likeWeight = 0.6;   
+        final double timeWeight[] = {18.0, 9.0, 3.0, 1.0};
         List<LikeData> likeDatas = likeDAO.findOppositeUser(userid);
         List<ReplyData> replyDatas = replyDAO.findOppositeUser(userid);
 

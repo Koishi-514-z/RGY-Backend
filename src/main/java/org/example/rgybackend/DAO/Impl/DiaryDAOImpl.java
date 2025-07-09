@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.example.rgybackend.DAO.DiaryDAO;
+import org.example.rgybackend.DTO.DiaryLabelData;
 import org.example.rgybackend.Entity.Diary;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Repository.DiaryRepository;
@@ -50,7 +51,7 @@ public class DiaryDAOImpl implements DiaryDAO {
     }
 
     @Override
-    public List<Long> scanLabel(String userid, LocalDate startDate, LocalDate endDate) {
+    public List<DiaryLabelData> scanLabel(String userid, LocalDate startDate, LocalDate endDate) {
         Long start = TimeUtil.getStartOfDayTimestamp(startDate);
         Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
         return diaryRepository.scanEmotionLabel(userid, start, end);

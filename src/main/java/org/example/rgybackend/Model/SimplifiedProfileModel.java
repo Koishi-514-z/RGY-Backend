@@ -12,4 +12,5 @@ public class SimplifiedProfileModel {
     private String username;
     private String avatar;
     private String note;
+    private Long jointime;
 }

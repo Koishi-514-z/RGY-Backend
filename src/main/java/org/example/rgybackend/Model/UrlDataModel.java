@@ -32,19 +32,18 @@ public class UrlDataModel {
             new TagModel(6L, "运动健身"),
             new TagModel(7L, "冥想放松"),
             new TagModel(8L, "音乐疗愈"),
-            new TagModel(10L, "美食治愈"),
-            new TagModel(11L, "旅行散心"),
-            new TagModel(12L, "艺术创作"),
-            new TagModel(13L, "社交互动"),
-            new TagModel(14L, "学习成长"),
-            new TagModel(16L, "亲情友情"),
-            new TagModel(17L, "爱情感悟"),
-            new TagModel(18L, "自我关爱"),
-            new TagModel(19L, "心理科普"),
-            new TagModel(20L, "生活技巧"),
-            new TagModel(23L, "趣味娱乐"),
-            new TagModel(24L, "温暖故事"),
-            new TagModel(25L, "其他")
+            new TagModel(9L, "美食治愈"),
+            new TagModel(10L, "旅行散心"),
+            new TagModel(11L, "艺术创作"),
+            new TagModel(12L, "社交互动"),
+            new TagModel(13L, "学习成长"),
+            new TagModel(14L, "亲情友情"),
+            new TagModel(15L, "爱情感悟"),
+            new TagModel(16L, "自我关爱"),
+            new TagModel(17L, "心理科普"),
+            new TagModel(18L, "趣味娱乐"),
+            new TagModel(19L, "温暖故事"),
+            new TagModel(20L, "其他")
         )
     );
 
@@ -61,6 +60,7 @@ public class UrlDataModel {
         this.img = pushContent.getImg();
         this.description = pushContent.getDescription();
         this.url = pushContent.getUrl();
+        this.createdAt = pushContent.getCreatedAt();
         this.tags = new ArrayList<>();
     
         List<String> list = fromStringToList(pushContent.getTags());
