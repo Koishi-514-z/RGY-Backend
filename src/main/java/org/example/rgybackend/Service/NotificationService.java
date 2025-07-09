@@ -11,7 +11,9 @@ public interface NotificationService {
 
     boolean markRead(Long notificationid);
 
-    boolean markAllRead(String userid);
+    boolean markAllPrivateRead(String userid);
+
+    boolean markAllPublicRead(String userid);
 
     boolean deleteNotification(Long notificationid);
 }

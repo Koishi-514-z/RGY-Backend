@@ -56,8 +56,18 @@ public class NotificationPrivateDAOImpl implements NotificationPrivateDAO {
     }
 
     @Override
-    public boolean markAllRead(String userid) {
-        List<NotificationPrivate> notificationPrivates = notificationPrivateRepository.findByUserid(userid);
+    public boolean markAllPrivateRead(String userid) {
+        List<NotificationPrivate> notificationPrivates = notificationPrivateRepository.findPrivateByUserid(userid);
+        for(NotificationPrivate notificationPrivate : notificationPrivates) {
+            notificationPrivate.setUnread(0L);
+            notificationPrivateRepository.save(notificationPrivate);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean markAllPublicRead(String userid) {
+        List<NotificationPrivate> notificationPrivates = notificationPrivateRepository.findPublicByUserid(userid);
         for(NotificationPrivate notificationPrivate : notificationPrivates) {
             notificationPrivate.setUnread(0L);
             notificationPrivateRepository.save(notificationPrivate);
