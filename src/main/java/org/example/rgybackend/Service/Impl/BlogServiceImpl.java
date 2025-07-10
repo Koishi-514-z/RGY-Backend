@@ -61,9 +61,9 @@ public class BlogServiceImpl implements BlogService {
             if (emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag() == null)
                 emotion = 0;
             else emotion = emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag().getId().intValue();
-            BlogModel blogModel = new BlogModel(null, author, timestamp,likeNum, title, content, tags, new ArrayList<>(), emotion, timestamp, 0L);
+            BlogModel blogModel = new BlogModel(null, author, timestamp,likeNum, title, content, tags, new ArrayList<>(), emotion, timestamp, 0L,1);
             Blog blog = blogDAO.addBlog(blogModel,0);
-            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), title + '\n' + content, TimeUtil.now(), blog.getBlogid());
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), title + '\n' + content, TimeUtil.now(), blog.getBlogid(),0L);
             crisisAuditingDAO.addCrisis(crisisAuditingModel);
             return;
         }
@@ -74,7 +74,7 @@ public class BlogServiceImpl implements BlogService {
         if (emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag() == null)
             emotion = 0;
         else emotion = emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag().getId().intValue();
-        BlogModel blogModel = new BlogModel(null, author, timestamp,likeNum, title, content, tags, new ArrayList<>(), emotion, timestamp, 0L);
+        BlogModel blogModel = new BlogModel(null, author, timestamp,likeNum, title, content, tags, new ArrayList<>(), emotion, timestamp, 0L,1);
         blogDAO.addBlog(blogModel,1);
     }
 
@@ -100,7 +100,7 @@ public class BlogServiceImpl implements BlogService {
             Long timestamp = System.currentTimeMillis();
             ReplyModel replyModel = new ReplyModel(null, blogid, author.getUserid(), getBlogById(blogid).getUser().getUserid(),timestamp, content,author);
             Reply reply = blogDAO.addReply(replyModel,0);
-            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), content, TimeUtil.now(),reply.getReplyid());
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), content, TimeUtil.now(),reply.getReplyid(),1L);
             crisisAuditingDAO.addCrisis(crisisAuditingModel);
             return new ReplyModel();
         }
@@ -134,6 +134,7 @@ public class BlogServiceImpl implements BlogService {
             blogModel.setEmotion(blog.getEmotion());
             blogModel.setBrowsenum(blog.getBrowsenum());
             blogModel.setLastreply(blog.getLastreply());
+            blogModel.setValid(blog.getValid());
             blogs.add(blogModel);
         }
         EmotionSimilarity emotionSimilarity = new EmotionSimilarity();
@@ -175,6 +176,7 @@ public class BlogServiceImpl implements BlogService {
             blogModel.setEmotion(blog.getEmotion());
             blogModel.setBrowsenum(blog.getBrowsenum());
             blogModel.setLastreply(blog.getLastreply());
+            blogModel.setValid(blog.getValid());
             blogs.add(blogModel);
         }
         //对所有blogs进行筛选，只选择blog的标题或作者包含titleOrAuthor的博客，且标签包含tags中的所有标签的博客
@@ -252,6 +254,8 @@ public class BlogServiceImpl implements BlogService {
         blogModel.setLikeNum(blog.getLikeNum());
         blogModel.setTitle(blog.getTitle());
         blogModel.setContent(blog.getContent());
+        blogModel.setValid(blog.getValid());
+        blogModel.setBrowsenum(blog.getBrowsenum());
         blogModel.setTags(Arrays.asList(blog.getTags().split(",")));
         //获得blog的reply
         List<Reply> replies = blogDAO.getRepliesByBlogid(blog.getBlogid());

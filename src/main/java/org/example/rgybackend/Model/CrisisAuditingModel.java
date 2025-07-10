@@ -15,6 +15,7 @@ public class CrisisAuditingModel {
     private String content;
     private Long timestamp;
     private Long contentid;
+    private Long type;
 
     public CrisisAuditingModel(CrisisAuditing entity) {
         this.crisisid = entity.getCrisisid();
@@ -22,6 +23,8 @@ public class CrisisAuditingModel {
         this.content = entity.getContent();
         this.timestamp = entity.getTimestamp();
         this.contentid = entity.getContentid();
+        this.type = entity.getType();
+
     }
     
     public CrisisAuditingModel(CrisisAuditingModel other) {
@@ -30,5 +33,8 @@ public class CrisisAuditingModel {
         this.content = other.content;
         this.timestamp = other.timestamp;
         this.contentid = other.contentid;
+        this.type = other.type;
+
     }
+
 }

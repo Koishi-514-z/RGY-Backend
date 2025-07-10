@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileModel {
+public class AdminProfileModel {
     private String userid;
     private String username;
     private String email;
@@ -17,8 +17,9 @@ public class ProfileModel {
     private String note;
     private Long role;
     private Long jointime;
+    private int disabled;
 
-    public ProfileModel(UserProfile userProfile) {
+    public AdminProfileModel(ProfileModel userProfile, int disabled) {
         this.userid = userProfile.getUserid();
         this.username = userProfile.getUsername();
         this.email = userProfile.getEmail();
@@ -26,6 +27,8 @@ public class ProfileModel {
         this.note = userProfile.getNote();
         this.role = userProfile.getRole();
         this.jointime = userProfile.getJointime();
+        this.disabled = disabled;
 
     }
 }
+

@@ -3,10 +3,7 @@ package org.example.rgybackend.Service;
 import java.util.List;
 
 import org.example.rgybackend.DTO.IntimateDTO;
-import org.example.rgybackend.Model.ProfileModel;
-import org.example.rgybackend.Model.PsyProfileModel;
-import org.example.rgybackend.Model.SimplifiedProfileModel;
-import org.example.rgybackend.Model.UserModel;
+import org.example.rgybackend.Model.*;
 
 public interface UserService {
     boolean isAdmin(String userid);
@@ -16,6 +13,8 @@ public interface UserService {
     boolean userExisted(String username);
 
     ProfileModel getUserProfile(String userid);
+
+    List<AdminProfileModel> getAllProfile(String adminid);
 
     PsyProfileModel getPsyProfile(String psyid);
 
