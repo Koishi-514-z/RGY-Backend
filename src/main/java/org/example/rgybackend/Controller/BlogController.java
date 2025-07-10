@@ -47,7 +47,7 @@ public class BlogController {
         Map<Long, BlogModel> blogMap = new HashMap<>();
         for (Like userLike : userLikes) {
             BlogModel blogModel = blogService.getBlogById(userLike.getBlogid());
-            if (blogModel == null)
+            if (blogModel == null || blogModel.getValid() == 0)
                 continue;
             blogMap.put(blogModel.getBlogid(), blogModel);
         }

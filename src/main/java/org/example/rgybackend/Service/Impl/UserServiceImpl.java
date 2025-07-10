@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
         List<ProfileModel> profileModels = userDAO.getAll();
         List<AdminProfileModel> adminProfileModels = new ArrayList<>();
         for(ProfileModel profileModel : profileModels) {
-            if(profileModel.getRole() == 1 && profileModel.getUserid().equals(adminid)){
+            if(profileModel.getRole() == 1 && profileModel.getUserid().equals(adminid) || profileModel.getUserid().equals("System")) {
                 continue;
             }
             AdminProfileModel adminProfileModel = new AdminProfileModel(profileModel, userAuthDAO.isDisabled(profileModel.getUserid())? 1 : 0);

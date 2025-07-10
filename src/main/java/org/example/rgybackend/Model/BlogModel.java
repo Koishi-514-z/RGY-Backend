@@ -21,4 +21,5 @@ public class BlogModel {
     private int emotion;
     private Long lastreply;
     private Long browsenum;
+    private int valid;
 }

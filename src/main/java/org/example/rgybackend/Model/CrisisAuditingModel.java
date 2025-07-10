@@ -37,4 +37,5 @@ public class CrisisAuditingModel {
         this.type = other.type;
         this.urgencyLevel = other.urgencyLevel;
     }
+
 }
