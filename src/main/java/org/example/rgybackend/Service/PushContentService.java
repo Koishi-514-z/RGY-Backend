@@ -7,13 +7,15 @@ import org.example.rgybackend.Model.QuoteModel;
 import org.example.rgybackend.Model.UrlDataModel;
 
 public interface PushContentService {
+    List<UrlDataModel> getAllContent();
+
     boolean pushContent(UrlDataModel urlDataModel);
 
     List<SimplifiedUrlData> getSimplifiedContent();
 
     List<UrlDataModel> getContentByTag(Long tagid, Integer pageIndex, Integer pageSize);
 
-    List<UrlDataModel> getContent(Integer pageIndex, Integer pageSize);
+    List<UrlDataModel> getContent(String userid, Integer pageIndex, Integer pageSize);
 
     Long getDataNum(Long tagid);
 

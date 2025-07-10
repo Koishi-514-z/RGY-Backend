@@ -76,8 +76,16 @@ public class TimeUtil {
         return today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
     }
 
+    public static LocalDate firstDayOfWeek(LocalDate date) {
+        return date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    }
+
     public static LocalDate firstDayOfMonth() {
         LocalDate today = LocalDate.now();
         return today.with(TemporalAdjusters.firstDayOfMonth());
+    }
+
+    public static LocalDate firstDayOfMonth(LocalDate date) {
+        return date.with(TemporalAdjusters.firstDayOfMonth());
     }
 }

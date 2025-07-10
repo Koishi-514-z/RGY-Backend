@@ -29,8 +29,13 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public boolean markAllRead(String userid) {
-        return notificationPrivateDAO.markAllRead(userid);
+    public boolean markAllPrivateRead(String userid) {
+        return notificationPrivateDAO.markAllPrivateRead(userid);
+    }
+
+    @Override
+    public boolean markAllPublicRead(String userid) {
+        return notificationPrivateDAO.markAllPublicRead(userid);
     }
 
     @Override

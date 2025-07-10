@@ -65,15 +65,21 @@ public class NotificationController {
 
     }
 
-    @PostMapping("/private/markread")
+    @PostMapping("/markread")
     public boolean markRead(@RequestParam Long notificationid) {
         return notificationService.markRead(notificationid);
     }
 
     @PostMapping("/private/markallread")
-    public boolean markAllRead(HttpSession session) {
+    public boolean markAllPrivateRead(HttpSession session) {
         String userid = (String)session.getAttribute("user");
-        return notificationService.markAllRead(userid);
+        return notificationService.markAllPrivateRead(userid);
+    }
+
+    @PostMapping("/public/markallread")
+    public boolean markAllPublicRead(HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return notificationService.markAllPublicRead(userid);
     }
 
     @DeleteMapping("/private/del")

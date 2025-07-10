@@ -22,6 +22,8 @@ import org.example.rgybackend.Utils.NotExistException;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +72,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "profile", key = "#userid")
     public ProfileModel getUserProfile(String userid) {
         return userDAO.get(userid);
     }
@@ -79,7 +82,7 @@ public class UserServiceImpl implements UserService {
         List<ProfileModel> profileModels = userDAO.getAll();
         List<AdminProfileModel> adminProfileModels = new ArrayList<>();
         for(ProfileModel profileModel : profileModels) {
-            if(profileModel.getRole() == 1 && profileModel.getUserid().equals(adminid)||profileModel.getUserid().equals("System")){
+            if(profileModel.getRole() == 1 && profileModel.getUserid().equals(adminid) || profileModel.getUserid().equals("System")) {
                 continue;
             }
             AdminProfileModel adminProfileModel = new AdminProfileModel(profileModel, userAuthDAO.isDisabled(profileModel.getUserid())? 1 : 0);
@@ -89,6 +92,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "psyprofile", key = "#psyid")
     public PsyProfileModel getPsyProfile(String psyid) {
         ProfileModel profileModel = userDAO.get(psyid);
         PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);
@@ -128,11 +132,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "intimateUsers", key = "#userid")
     public List<IntimateDTO> getIntimateUsers(String userid) {
         List<IntimateDTO> intimateUsers = new ArrayList<>();
         final int total = 4;
-        final double likeWeight = 0.5;   
-        final double timeWeight[] = {27.0, 9.0, 3.0, 1.0};
+        final double likeWeight = 0.6;   
+        final double timeWeight[] = {18.0, 9.0, 3.0, 1.0};
         List<LikeData> likeDatas = likeDAO.findOppositeUser(userid);
         List<ReplyData> replyDatas = replyDAO.findOppositeUser(userid);
 
@@ -152,18 +157,10 @@ public class UserServiceImpl implements UserService {
         for(LikeData likeData : likeDatas) {
             LocalDate date = TimeUtil.getLocalDate(likeData.getTimestamp());
             int timeClass;
-            if(date.compareTo(yesterday) >= 0) {
-                timeClass = 0;
-            }
-            else if(date.compareTo(prevWeek) >= 0) {
-                timeClass = 1;
-            }
-            else if(date.compareTo(prevMonth) >= 0) {
-                timeClass = 2;
-            }
-            else {
-                timeClass = 3;
-            }
+            if(date.compareTo(yesterday) >= 0) timeClass = 0;
+            else if(date.compareTo(prevWeek) >= 0) timeClass = 1;
+            else if(date.compareTo(prevMonth) >= 0) timeClass = 2;
+            else timeClass = 3;
             Double score = likeWeight * timeWeight[timeClass];
             Double originScore = intimateScores.get(likeData.getUserid());
             intimateScores.put(likeData.getUserid(), originScore + score);
@@ -172,18 +169,10 @@ public class UserServiceImpl implements UserService {
         for(ReplyData replyData : replyDatas) {
             LocalDate date = TimeUtil.getLocalDate(replyData.getTimestamp());
             int timeClass;
-            if(date.compareTo(yesterday) >= 0) {
-                timeClass = 0;
-            }
-            else if(date.compareTo(prevWeek) >= 0) {
-                timeClass = 1;
-            }
-            else if(date.compareTo(prevMonth) >= 0) {
-                timeClass = 2;
-            }
-            else {
-                timeClass = 3;
-            }
+            if(date.compareTo(yesterday) >= 0) timeClass = 0;
+            else if(date.compareTo(prevWeek) >= 0) timeClass = 1;
+            else if(date.compareTo(prevMonth) >= 0) timeClass = 2;
+            else timeClass = 3;
             Double score = (1 - likeWeight) * timeWeight[timeClass];
             Double originScore = intimateScores.get(replyData.getUserid());
             intimateScores.put(replyData.getUserid(), originScore + score);
@@ -198,6 +187,9 @@ public class UserServiceImpl implements UserService {
         }
         
         for(int i = 0; i < total; ++i) {
+            if(intimateScores.isEmpty()) {
+                break;
+            }
             String maxUserid = null;
             Double maxScore = -1.0;
             for(Map.Entry<String, Double> data : intimateScores.entrySet()) {
@@ -211,9 +203,6 @@ public class UserServiceImpl implements UserService {
             SimplifiedProfileModel profile = userDAO.getSimplified(maxUserid);
             intimateUsers.add(new IntimateDTO(maxScore, profile));
             intimateScores.remove(maxUserid);
-            if(intimateScores.isEmpty()) {
-                break;
-            }
         }
 
         return intimateUsers;
@@ -248,11 +237,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "profile", key = "#profile.userid")
     public boolean updateProfile(ProfileModel profile) {
         return userDAO.update(profile);
     }
 
     @Override
+    @CacheEvict(value = "psyprofile", key = "#psyProfileModel.userid")
     public boolean updatePsyProfile(PsyProfileModel psyProfileModel) {
         String psyid = psyProfileModel.getUserid();
 

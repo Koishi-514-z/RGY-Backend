@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.example.rgybackend.DAO.EmotionDAO;
-import org.example.rgybackend.DTO.EmotionData;
-import org.example.rgybackend.DTO.MoodData;
-import org.example.rgybackend.DTO.TimeData;
 import org.example.rgybackend.Entity.Emotion;
 import org.example.rgybackend.Entity.Tag;
 import org.example.rgybackend.Model.EmotionDataModel;
@@ -50,6 +47,16 @@ public class EmotionDAOImpl implements EmotionDAO {
     }
 
     @Override
+    public List<EmotionModel> getAllUserEmotion(String userid) {
+        List<Emotion> emotions = emotionRepository.findByUserid(userid);
+        List<EmotionModel> emotionModels = new ArrayList<>();
+        for(Emotion emotion : emotions) {
+            emotionModels.add(new EmotionModel(emotion));
+        }
+        return emotionModels;
+    }
+
+    @Override
     public boolean setEmotion(EmotionModel emotionModel) {
         Long timestamp = TimeUtil.getStartOfDayTimestamp(emotionModel.getTimestamp());
         List<Emotion> emotions = emotionRepository.scanEmotion(emotionModel.getUserid(), timestamp, timestamp + TimeUtil.DAY);
@@ -67,6 +74,31 @@ public class EmotionDAOImpl implements EmotionDAO {
         }
         return true;
     }
+
+    @Override
+    public List<EmotionModel> scanEmotion(String userid, LocalDate startDate, LocalDate endDate) {
+        Long start = TimeUtil.getStartOfDayTimestamp(startDate);
+        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
+        List<Emotion> emotions = emotionRepository.scanEmotion(userid, start, end);
+        List<EmotionModel> emotionModels = new ArrayList<>();
+        for(Emotion emotion : emotions) {
+            emotionModels.add(new EmotionModel(emotion));
+        }
+        return emotionModels;
+    }
+
+    @Override
+    public List<EmotionModel> scanAllEmotion(LocalDate startDate, LocalDate endDate) {
+        Long start = TimeUtil.getStartOfDayTimestamp(startDate);
+        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
+        List<Emotion> emotions = emotionRepository.scanAllEmotion(start, end);
+        List<EmotionModel> emotionModels = new ArrayList<>();
+        for(Emotion emotion : emotions) {
+            emotionModels.add(new EmotionModel(emotion));
+        }
+        return emotionModels;
+    }
+    
 
     @Override
     public List<EmotionDataModel> scanEmotionData(String userid, LocalDate startDate, LocalDate endDate) {
@@ -90,72 +122,10 @@ public class EmotionDAOImpl implements EmotionDAO {
     }
 
     @Override
-    public EmotionData scanAllData(LocalDate startDate, LocalDate endDate, Long interval) {
+    public List<EmotionDataModel> scanAllData(LocalDate startDate, LocalDate endDate) {
         Long start = TimeUtil.getStartOfDayTimestamp(startDate);
         Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
-        List<EmotionDataModel> emotionDataModels = emotionRepository.scanData(start, end);
-        List<TagModel> tagModels = getTags();
-
-        EmotionData emotionData = new EmotionData(interval);
-        emotionData.setTotalNum((long)emotionDataModels.size());
-
-        if(emotionDataModels.isEmpty()) {
-            return emotionData;
-        }
-
-        emotionDataModels.sort((e1, e2) -> e1.getTimestamp().compareTo(e2.getTimestamp()));
-        Long minTimestamp = TimeUtil.getStartOfDayTimestamp(emotionDataModels.get(0).getTimestamp());
-        Long maxTimestamp = TimeUtil.getStartOfDayTimestamp(emotionDataModels.get(emotionDataModels.size() - 1).getTimestamp()) + TimeUtil.DAY;
-        emotionData.setStartDate(minTimestamp);
-        emotionData.setEndDate(maxTimestamp);
-        emotionData.setTotalDate((maxTimestamp - minTimestamp) / TimeUtil.DAY);
-
-        Long num = 0L, score = 0L, lastSlots = 0L;
-        Long pos = 0L, neu = 0L, neg = 0L;
-        Long totalScore = 0L;
-
-        for(int i = 0; i < emotionDataModels.size(); ++i) {
-            EmotionDataModel emotionDataModel = emotionDataModels.get(i);
-            totalScore += emotionDataModel.getScore();
-            Long diffSlots = (emotionDataModel.getTimestamp() - minTimestamp) / (interval * TimeUtil.DAY);
-            if(diffSlots == lastSlots) {
-                score += emotionDataModel.getScore();
-                num++;
-                if(emotionDataModel.getScore() >= 4) pos++;
-                else if(emotionDataModel.getScore() >= 3) neu++;
-                else neg++;
-            }
-            else {
-                emotionData.getTimeDatas().add(new TimeData(lastSlots, num, score * 1.0 / num, pos, neu, neg));
-                num = 1L;
-                score = emotionDataModel.getScore();
-                pos = neu = neg = 0L;
-                if(emotionDataModel.getScore() >= 4) pos++;
-                else if(emotionDataModel.getScore() >= 3) neu++;
-                else neg++;
-                lastSlots = diffSlots;
-            }
-        }
-        emotionData.getTimeDatas().add(new TimeData(lastSlots, num, score * 1.0 / num, pos, neu, neg));
-        emotionData.setAvgScore(totalScore * 1.0 / emotionDataModels.size());
-
-        Map<Long, Long> radioDataMap = new HashMap<>();
-        for(TagModel tagModel : tagModels) {
-            radioDataMap.put(tagModel.getId(), 0L);
-        }
-
-        for(int i = 0; i < emotionDataModels.size(); ++i) {
-            EmotionDataModel emotionDataModel = emotionDataModels.get(i);
-            Long oldNum = radioDataMap.get(emotionDataModel.getTagid());
-            radioDataMap.put(emotionDataModel.getTagid(), oldNum + 1);
-        }
-
-        for(TagModel tagModel : tagModels) {
-            Long total = radioDataMap.get(tagModel.getId());
-            emotionData.getRatioDatas().add(new MoodData(tagModel, total, total * 100.0 / emotionDataModels.size()));
-        }
-
-        return emotionData;
+        return emotionRepository.scanData(start, end);
     }
 
     @Override
