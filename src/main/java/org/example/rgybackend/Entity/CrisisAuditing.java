@@ -44,14 +44,19 @@ public class CrisisAuditing {
     @Column(name = "type")
     private Long type;
 
+    @Basic
+    @Column(name = "urgencyLevel")
+    private Long urgencyLevel;
 
 
-    public CrisisAuditing(String content, Long timestamp, String userid, Long contentid,Long type) {
+
+    public CrisisAuditing(String content, Long timestamp, String userid, Long contentid, Long type, Long urgencyLevel) {
         this.content = content;
         this.timestamp = timestamp;
         this.userid = userid;
         this.contentid = contentid;
         this.type = type;
+        this.urgencyLevel = urgencyLevel;
     }
   
     public CrisisAuditing(CrisisAuditingModel model) {
@@ -61,6 +66,7 @@ public class CrisisAuditing {
         this.timestamp = model.getTimestamp();
         this.contentid = model.getContentid();
         this.type = model.getType();
+        this.urgencyLevel = model.getUrgencyLevel();
     }
     
     public CrisisAuditing(CrisisAuditing other) {
@@ -70,5 +76,6 @@ public class CrisisAuditing {
         this.timestamp = other.timestamp;
         this.contentid = other.contentid;
         this.type = other.type;
+        this.urgencyLevel = other.urgencyLevel;
     }
 }

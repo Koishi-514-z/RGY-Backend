@@ -12,6 +12,7 @@ import org.example.rgybackend.Entity.Reply;
 import org.example.rgybackend.Model.*;
 import org.example.rgybackend.Service.BlogService;
 import org.example.rgybackend.Utils.BERTModel;
+import org.example.rgybackend.Utils.CacheUtil;
 import org.example.rgybackend.Utils.NotificationUtil;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,29 +41,36 @@ public class BlogServiceImpl implements BlogService {
     @Autowired
     private CrisisAuditingDAO crisisAuditingDAO;
 
+    @Autowired
+    private CacheUtil cacheUtil;
+
     @Override
     public void addBlog(String title, String content, List<String> tags, SimplifiedProfileModel author) {
         Long justify = bertModel.justify(title + content);
+
         if(justify == 1) {
             NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);
             notification.setAdminid("System");
             notification.setUserid(author.getUserid());
             notificationPrivateDAO.addNotification(notification);
         }
-        else if(justify == 2) {
-            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
-            notification.setAdminid("System");
-            notification.setUserid(author.getUserid());
-            notificationPrivateDAO.addNotification(notification);
+
+        else if(justify >= 2) {
+            if(justify >= 3) {
+                NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
+                notification.setAdminid("System");
+                notification.setUserid(author.getUserid());
+                notificationPrivateDAO.addNotification(notification);
+            }
             Long timestamp = System.currentTimeMillis();
             Long likeNum = 0L;
             int emotion = 0;
             if (emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag() == null)
                 emotion = 0;
             else emotion = emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag().getId().intValue();
-            BlogModel blogModel = new BlogModel(null, author, timestamp,likeNum, title, content, tags, new ArrayList<>(), emotion, timestamp, 0L);
+            BlogModel blogModel = new BlogModel(null, author, timestamp, likeNum, title, content, tags, new ArrayList<>(), emotion, timestamp, 0L);
             Blog blog = blogDAO.addBlog(blogModel,0);
-            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), title + '\n' + content, TimeUtil.now(), blog.getBlogid(),0L);
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), title + '\n' + content, TimeUtil.now(), blog.getBlogid(), 0L, justify - 2);
             crisisAuditingDAO.addCrisis(crisisAuditingModel);
             return;
         }
@@ -73,7 +81,7 @@ public class BlogServiceImpl implements BlogService {
         if (emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag() == null)
             emotion = 0;
         else emotion = emotionDAO.getEmotion(author.getUserid(), LocalDate.now()).getTag().getId().intValue();
-        BlogModel blogModel = new BlogModel(null, author, timestamp,likeNum, title, content, tags, new ArrayList<>(), emotion, timestamp, 0L);
+        BlogModel blogModel = new BlogModel(null, author, timestamp, likeNum, title, content, tags, new ArrayList<>(), emotion, timestamp, 0L);
         blogDAO.addBlog(blogModel,1);
     }
 
@@ -84,34 +92,49 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public ReplyModel addReply(Long blogid, String content, SimplifiedProfileModel author) {
+        String fromuserid = author.getUserid();
+        String touserid = getBlogById(blogid).getUser().getUserid();
+
         Long justify = bertModel.justify(content);
+
         if(justify == 1) {
             NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);
             notification.setAdminid("System");
             notification.setUserid(author.getUserid());
             notificationPrivateDAO.addNotification(notification);
         }
-        else if(justify == 2) {
-            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
-            notification.setAdminid("System");
-            notification.setUserid(author.getUserid());
-            notificationPrivateDAO.addNotification(notification);
+
+        else if(justify >= 2) {
+            if(justify >= 3) {
+                NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
+                notification.setAdminid("System");
+                notification.setUserid(author.getUserid());
+                notificationPrivateDAO.addNotification(notification);
+            }
             Long timestamp = System.currentTimeMillis();
-            ReplyModel replyModel = new ReplyModel(null, blogid, author.getUserid(), getBlogById(blogid).getUser().getUserid(),timestamp, content,author);
+            ReplyModel replyModel = new ReplyModel(null, blogid, fromuserid, touserid, timestamp, content,author);
             Reply reply = blogDAO.addReply(replyModel,0);
-            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), content, TimeUtil.now(),reply.getReplyid(),1L);
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author.getUserid(), content, TimeUtil.now(), reply.getReplyid(), 1L, justify - 2);
             crisisAuditingDAO.addCrisis(crisisAuditingModel);
             return new ReplyModel();
         }
 
+        cacheUtil.evictIntimateUsersCache(fromuserid);
+        cacheUtil.evictIntimateUsersCache(touserid);
+
         Long timestamp = System.currentTimeMillis();
-        ReplyModel replyModel = new ReplyModel(null, blogid, author.getUserid(), getBlogById(blogid).getUser().getUserid(),timestamp, content,author);
+        ReplyModel replyModel = new ReplyModel(null, blogid, fromuserid, touserid, timestamp, content, author);
         blogDAO.addReply(replyModel,1);
         return replyModel;
     }
 
     @Override
     public void deleteReply(Long replyid) {
+        Reply reply = blogDAO.getReplyById(replyid);
+
+        cacheUtil.evictIntimateUsersCache(reply.getFromuserid());
+        cacheUtil.evictIntimateUsersCache(reply.getTouserid());
+
         blogDAO.deleteReply(replyid);
     }
 
@@ -274,12 +297,22 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void likeBlog(Long blogid,String userid) {
-        blogDAO.likeBlog(blogid,userid);
+    public void likeBlog(Long blogid, String userid) {
+        String touserid = getBlogById(blogid).getUser().getUserid();
+
+        cacheUtil.evictIntimateUsersCache(userid);
+        cacheUtil.evictIntimateUsersCache(touserid);
+
+        blogDAO.likeBlog(blogid, userid);
     }
 
     @Override
     public void unlikeBlog(Long blogid, String userid) {
+        String touserid = getBlogById(blogid).getUser().getUserid();
+
+        cacheUtil.evictIntimateUsersCache(userid);
+        cacheUtil.evictIntimateUsersCache(touserid);
+        
         blogDAO.unlikeBlog(blogid,userid);
 
     }

@@ -13,7 +13,13 @@ public interface EmotionDAO {
 
     EmotionModel getEmotion(String userid, LocalDate date);
 
+    List<EmotionModel> getAllUserEmotion(String userid);
+
     boolean setEmotion(EmotionModel emotionModel);
+
+    List<EmotionModel> scanEmotion(String userid, LocalDate startDate, LocalDate endDate);
+
+    List<EmotionModel> scanAllEmotion(LocalDate startDate, LocalDate endDate);
 
     List<EmotionDataModel> scanEmotionData(String userid, LocalDate startDate, LocalDate endDate);
 

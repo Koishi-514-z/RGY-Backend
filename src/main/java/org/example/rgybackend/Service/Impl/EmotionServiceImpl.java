@@ -1,6 +1,7 @@
 package org.example.rgybackend.Service.Impl;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.example.rgybackend.Model.TagModel;
 import org.example.rgybackend.Model.UrlDataModel;
 import org.example.rgybackend.Service.EmotionService;
 import org.example.rgybackend.Utils.BERTModel;
+import org.example.rgybackend.Utils.CacheUtil;
 import org.example.rgybackend.Utils.ModelResponse;
 import org.example.rgybackend.Utils.NotificationUtil;
 import org.example.rgybackend.Utils.TimeUtil;
@@ -45,9 +47,174 @@ public class EmotionServiceImpl implements EmotionService {
     @Autowired
     private CrisisAuditingDAO crisisAuditingDAO;
 
+    @Autowired
+    private CacheUtil cacheUtil;
+
+    // 获取某一星期内的情绪数据
+    @Override
+    public List<EmotionModel> getUserEmotionByWeek(String userid, LocalDate date) {
+        LocalDate firstDayOfWeek = TimeUtil.firstDayOfWeek(date);
+        LocalDate lastDayOfWeek = firstDayOfWeek.plusDays(6);
+        List<EmotionModel> cachedEmotions = cacheUtil.getEmotionsFromCache(userid, firstDayOfWeek);
+        if(cachedEmotions == null) {
+            List<EmotionModel> emotionModels = emotionDAO.scanEmotion(userid, firstDayOfWeek, lastDayOfWeek);
+            cacheUtil.putEmotionsToCache(userid, firstDayOfWeek, emotionModels);
+            return emotionModels;
+        }
+        return cachedEmotions;
+    }
+
+    // 获取今天的情绪数据
     @Override
     public EmotionModel getEmotion(String userid) {
-        return emotionDAO.getEmotion(userid, TimeUtil.today());
+        LocalDate today = TimeUtil.today();
+        List<EmotionModel> emotionModels = this.getUserEmotionByWeek(userid, today);
+        for(EmotionModel emotionModel : emotionModels) {
+            if(TimeUtil.getLocalDate(emotionModel.getTimestamp()).equals(today)) {
+                return emotionModel;
+            }
+        }
+        return new EmotionModel(userid, TimeUtil.now(), null, null);
+    }
+
+    // 修改今天的情绪数据
+    @Override
+    public boolean setEmotion(EmotionModel emotionModel) {
+        LocalDate today = TimeUtil.today();
+        LocalDate firstDayOfWeek = TimeUtil.firstDayOfWeek();
+        cacheUtil.evictEmotionsCache(emotionModel.getUserid(), firstDayOfWeek);
+        cacheUtil.evictAllEmotionsCache(today);
+        emotionModel.setTimestamp(TimeUtil.now());
+        return emotionDAO.setEmotion(emotionModel);
+    }
+    
+    // 获取给定时间段内的情绪数据
+    @Override
+    public List<EmotionDataModel> scanUserEmotionDatas(String userid, LocalDate startDate, LocalDate endDate) {
+        Long start = TimeUtil.getStartOfDayTimestamp(startDate);
+        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
+        List<EmotionModel> emotionModels = new ArrayList<>();
+
+        for(LocalDate date = TimeUtil.firstDayOfWeek(startDate); date.compareTo(endDate) <= 0; date = date.plusDays(7)) {
+            List<EmotionModel> weeklyDatas = this.getUserEmotionByWeek(userid, date);
+            for(EmotionModel emotionModel : weeklyDatas) {
+                if(emotionModel.getTimestamp() >= start && emotionModel.getTimestamp() < end) {
+                    emotionModels.add(emotionModel);
+                }
+            }
+        }
+
+        return EmotionDataModel.transToDatas(emotionModels);
+    }
+
+    @Override
+    public List<EmotionDataModel> getWeekData(String userid) {
+        LocalDate startDate = TimeUtil.firstDayOfWeek();
+        LocalDate endDate = TimeUtil.today();
+        return this.scanUserEmotionDatas(userid, startDate, endDate);
+    }
+
+    @Override
+    public List<EmotionDataModel> getMonthData(String userid) {
+        LocalDate startDate = TimeUtil.firstDayOfMonth();
+        LocalDate endDate = TimeUtil.today();
+        return this.scanUserEmotionDatas(userid, startDate, endDate);
+    }
+
+
+
+    @Override
+    public List<DiaryModel> getUserDiariesByWeek(String userid, LocalDate date) {
+        LocalDate firstDayOfWeek = TimeUtil.firstDayOfWeek(date);
+        LocalDate lastDayOfWeek = firstDayOfWeek.plusDays(6);
+        List<DiaryModel> cachedDiaries = cacheUtil.getDiariesFromCache(userid, firstDayOfWeek);
+        if(cachedDiaries == null) {
+            List<DiaryModel> diaryModels = diaryDAO.scanDiary(userid, firstDayOfWeek, lastDayOfWeek);
+            cacheUtil.putDiariesToCache(userid, firstDayOfWeek, diaryModels);
+            return diaryModels;
+        }
+        return cachedDiaries;
+    }
+
+    @Override
+    public DiaryModel getDiary(String userid) {
+        LocalDate today = TimeUtil.today();
+        List<DiaryModel> diaryModels = this.getUserDiariesByWeek(userid, today);
+        for(DiaryModel diaryModel : diaryModels) {
+            if(TimeUtil.getLocalDate(diaryModel.getTimestamp()).equals(today)) {
+                return diaryModel;
+            }
+        }
+        return new DiaryModel(userid, TimeUtil.now(), null, null);
+    }
+
+    @Override
+    public boolean updateDiary(String userid, String content) {
+        ModelResponse emotionResponse = bertModel.checkEmotion(content);
+        Long justify = bertModel.justify(content);
+
+        if(justify == 1) {
+            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);
+            notification.setAdminid("System");
+            notification.setUserid(userid);
+            notificationPrivateDAO.addNotification(notification);
+        }
+
+        else if(justify == 2) {
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, userid, content, TimeUtil.now(),0L, 2L, 0L);
+            crisisAuditingDAO.addCrisis(crisisAuditingModel);
+        }
+
+        else if(justify >= 3) {
+            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
+            notification.setAdminid("System");
+            notification.setUserid(userid);
+            notificationPrivateDAO.addNotification(notification);
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, userid, content, TimeUtil.now(),0L, 2L, justify - 2);
+            crisisAuditingDAO.addCrisis(crisisAuditingModel);
+        }
+
+        LocalDate firstDayOfWeek = TimeUtil.firstDayOfWeek();
+        cacheUtil.evictDiariesCache(userid, firstDayOfWeek);
+
+        DiaryModel diaryModel = new DiaryModel(userid, TimeUtil.now(), emotionResponse.getPredicted_class(), content);
+        return diaryDAO.setDiary(diaryModel);
+    }
+
+    @Override
+    public List<DiaryModel> scanUserDiaries(String userid, LocalDate startDate, LocalDate endDate) {
+        Long start = TimeUtil.getStartOfDayTimestamp(startDate);
+        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
+        List<DiaryModel> diaryModels = new ArrayList<>();
+
+        for(LocalDate date = TimeUtil.firstDayOfWeek(startDate); date.compareTo(endDate) <= 0; date = date.plusDays(7)) {
+            List<DiaryModel> weeklyDatas = this.getUserDiariesByWeek(userid, date);
+            for(DiaryModel diaryModel : weeklyDatas) {
+                if(diaryModel.getTimestamp() >= start && diaryModel.getTimestamp() < end) {
+                    diaryModels.add(diaryModel);
+                }
+            }
+        }
+
+        return diaryModels;
+    }
+
+    @Override
+    public List<DiaryLabelData> scanUserDiaryLabels(String userid, LocalDate startDate, LocalDate endDate) {
+        Long start = TimeUtil.getStartOfDayTimestamp(startDate);
+        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
+        List<DiaryLabelData> datas = new ArrayList<>();
+
+        for(LocalDate date = TimeUtil.firstDayOfWeek(startDate); date.compareTo(endDate) <= 0; date = date.plusDays(7)) {
+            List<DiaryModel> weeklyDatas = this.getUserDiariesByWeek(userid, date);
+            for(DiaryModel diaryModel : weeklyDatas) {
+                if(diaryModel.getTimestamp() >= start && diaryModel.getTimestamp() < end) {
+                    datas.add(new DiaryLabelData(diaryModel.getLabel(), diaryModel.getTimestamp()));
+                }
+            }
+        }
+
+        return datas;
     }
 
     @Override
@@ -60,13 +227,14 @@ public class EmotionServiceImpl implements EmotionService {
         return new UrlDataModel().typeTags;
     }
 
+
     @Override
     public boolean checkNegative(String userid) {
         LocalDate today = TimeUtil.today();
         LocalDate prevThreeDay = today.minusDays(3);
         LocalDate prevWeek = today.minusDays(7);
-        List<DiaryLabelData> diaryLabelDatas = diaryDAO.scanLabel(userid, prevWeek, today);
-        List<EmotionDataModel> emotionDatas = emotionDAO.scanAllData(prevWeek, today);
+        List<DiaryLabelData> diaryLabelDatas = this.scanUserDiaryLabels(userid, prevWeek, today);
+        List<EmotionDataModel> emotionDatas = this.scanUserEmotionDatas(userid, prevWeek, today);
 
         final double labelRate[] = {-2.0, 0.0, 4.0};
         final double scoreRate[] = {6.0, 3.0, 0.0, -1.0, -3.0}; 
@@ -104,27 +272,32 @@ public class EmotionServiceImpl implements EmotionService {
         return negativeRate > boundary[0];
     }
 
+    
+    // 获取某天的全部情绪数据
     @Override
-    public DiaryModel getDiary(String userid) {
-        return diaryDAO.getDiary(userid, TimeUtil.today());
+    public List<EmotionModel> getAllEmotionsByDate(LocalDate date) {
+        List<EmotionModel> cachedEmotions = cacheUtil.getAllEmotionsFromCache(date);
+        if(cachedEmotions == null) {
+            List<EmotionModel> emotionModels = emotionDAO.scanAllEmotion(date, date);
+            cacheUtil.putAllEmotionsToCache(date, emotionModels);
+            return emotionModels;
+        }
+        return cachedEmotions;
     }
 
-    @Override
-    public List<EmotionDataModel> getWeekData(String userid) {
-        return emotionDAO.scanEmotionData(userid, TimeUtil.firstDayOfWeek(), TimeUtil.today());
-    }
-
-    @Override
-    public List<EmotionDataModel> getMonthData(String userid) {
-        return emotionDAO.scanEmotionData(userid, TimeUtil.firstDayOfMonth(), TimeUtil.today());
-    }
-
+    // 统计给定时间段的情绪数据信息
     @Override
     public EmotionData scanEmotionData(Long start, Long end, Long interval) {
         LocalDate startDate = TimeUtil.getLocalDate(start);
         LocalDate endDate = TimeUtil.getLocalDate(end);
-        List<EmotionDataModel> emotionDataModels = emotionDAO.scanAllData(startDate, endDate);
+        List<EmotionModel> emotionModels = new ArrayList<>();
         List<TagModel> tagModels = getTags();
+
+        for(LocalDate date = startDate; date.compareTo(endDate) <= 0; date = date.plusDays(1)) {
+            emotionModels.addAll(this.getAllEmotionsByDate(date));
+        }
+
+        List<EmotionDataModel> emotionDataModels = EmotionDataModel.transToDatas(emotionModels);
 
         EmotionData emotionData = new EmotionData(interval);
         emotionData.setTotalNum((long)emotionDataModels.size());
@@ -133,7 +306,6 @@ public class EmotionServiceImpl implements EmotionService {
             return emotionData;
         }
 
-        emotionDataModels.sort((e1, e2) -> e1.getTimestamp().compareTo(e2.getTimestamp()));
         Long minTimestamp = TimeUtil.getStartOfDayTimestamp(emotionDataModels.get(0).getTimestamp());
         Long maxTimestamp = TimeUtil.getStartOfDayTimestamp(emotionDataModels.get(emotionDataModels.size() - 1).getTimestamp()) + TimeUtil.DAY;
         emotionData.setStartDate(minTimestamp);
@@ -186,36 +358,5 @@ public class EmotionServiceImpl implements EmotionService {
         }
 
         return emotionData;
-    }
-
-    @Override
-    public boolean setEmotion(EmotionModel emotionModel) {
-        emotionModel.setTimestamp(TimeUtil.now());
-        return emotionDAO.setEmotion(emotionModel);
-    }
-
-    @Override
-    public boolean updateDiary(String userid, String content) {
-        ModelResponse emotionResponse = bertModel.checkEmotion(content);
-        Long justify = bertModel.justify(content);
-
-        if(justify == 1) {
-            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);
-            notification.setAdminid("System");
-            notification.setUserid(userid);
-            notificationPrivateDAO.addNotification(notification);
-        }
-
-        else if(justify == 2) {
-            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
-            notification.setAdminid("System");
-            notification.setUserid(userid);
-            notificationPrivateDAO.addNotification(notification);
-            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, userid, content, TimeUtil.now(),0L,2L);
-            crisisAuditingDAO.addCrisis(crisisAuditingModel);
-        }
-
-        DiaryModel diaryModel = new DiaryModel(userid, TimeUtil.now(), emotionResponse.getPredicted_class(), content);
-        return diaryDAO.setDiary(diaryModel);
     }
 }

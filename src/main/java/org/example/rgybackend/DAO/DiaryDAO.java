@@ -7,6 +7,8 @@ import org.example.rgybackend.DTO.DiaryLabelData;
 import org.example.rgybackend.Model.DiaryModel;
 
 public interface DiaryDAO {
+    List<DiaryModel> getAllUserDiaries(String userid);
+
     boolean diaryExists(String userid, LocalDate date);
 
     DiaryModel getDiary(String userid, LocalDate date);

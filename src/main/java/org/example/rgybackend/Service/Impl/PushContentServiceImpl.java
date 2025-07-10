@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.example.rgybackend.DAO.EmotionDAO;
 import org.example.rgybackend.DAO.PushContentDAO;
 import org.example.rgybackend.DAO.QuoteDAO;
 import org.example.rgybackend.DTO.PushContentSortDTO;
@@ -14,9 +13,12 @@ import org.example.rgybackend.Model.PushContentMatrix;
 import org.example.rgybackend.Model.QuoteModel;
 import org.example.rgybackend.Model.TagModel;
 import org.example.rgybackend.Model.UrlDataModel;
+import org.example.rgybackend.Service.EmotionService;
 import org.example.rgybackend.Service.PushContentService;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,10 +30,16 @@ public class PushContentServiceImpl implements PushContentService {
     private QuoteDAO quoteDAO;
 
     @Autowired
-    private EmotionDAO emotionDAO;
+    private EmotionService emotionService;
+
+    @Cacheable(value = "allPushContent")
+    public List<UrlDataModel> getAllContent() {
+        return pushContentDAO.getAllContent();
+    }
 
     @Override
-    public boolean pushContent(UrlDataModel urlDataModel){
+    @CacheEvict(value = "allPushContent", allEntries = true)
+    public boolean pushContent(UrlDataModel urlDataModel) {
         urlDataModel.setCreatedAt(TimeUtil.now());
         return pushContentDAO.pushContent(urlDataModel);
     }
@@ -42,17 +50,17 @@ public class PushContentServiceImpl implements PushContentService {
     }
 
     @Override
-    public List<UrlDataModel> getContentByTag(Long tagid, Integer pageIndex, Integer pageSize){
+    public List<UrlDataModel> getContentByTag(Long tagid, Integer pageIndex, Integer pageSize) {
         return pushContentDAO.getContentByTag(tagid, pageIndex, pageSize);
     }
 
     @Override
     public List<UrlDataModel> getContent(String userid, Integer pageIndex, Integer pageSize) {
         List<UrlDataModel> results = new ArrayList<>();
-        List<UrlDataModel> urlDataModels = pushContentDAO.getAllContent();
+        List<UrlDataModel> urlDataModels = this.getAllContent();
         LocalDate today = TimeUtil.today();
         LocalDate prevThreeDay = today.minusDays(3);
-        List<EmotionDataModel> emotionDataModels = emotionDAO.scanEmotionData(userid, today, prevThreeDay);
+        List<EmotionDataModel> emotionDataModels = emotionService.scanUserEmotionDatas(userid, prevThreeDay, today);
 
         double[] suitabilityArray = PushContentMatrix.getSuitabilityArray(emotionDataModels);
         List<PushContentSortDTO> pushContentSortDTOs = new ArrayList<>();
@@ -72,7 +80,7 @@ public class PushContentServiceImpl implements PushContentService {
 
         pushContentSortDTOs.sort((s1, s2) -> Double.compare(s2.getRate(), s1.getRate()));
 
-        for(int i = pageIndex * pageSize; i < (pageIndex + 1) * pageSize; ++i) {
+        for(int i = pageIndex * pageSize; i < Math.min((pageIndex + 1) * pageSize, pushContentSortDTOs.size()); ++i) {
             results.add(pushContentSortDTOs.get(i).getUrlDataModel());
         }
 
@@ -90,6 +98,7 @@ public class PushContentServiceImpl implements PushContentService {
     }
 
     @Override
+    @CacheEvict(value = "allPushContent", allEntries = true)
     public boolean deleteUrlData(Long dataid) {
         return pushContentDAO.deleteUrlData(dataid);
     }

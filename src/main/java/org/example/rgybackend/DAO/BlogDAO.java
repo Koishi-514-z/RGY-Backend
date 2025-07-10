@@ -54,5 +54,5 @@ public interface BlogDAO {
 
 
 
-    Reply getReplyById(Long contentid);
+    Reply getReplyById(Long replyid);
 }

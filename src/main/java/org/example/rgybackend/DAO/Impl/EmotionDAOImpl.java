@@ -47,6 +47,16 @@ public class EmotionDAOImpl implements EmotionDAO {
     }
 
     @Override
+    public List<EmotionModel> getAllUserEmotion(String userid) {
+        List<Emotion> emotions = emotionRepository.findByUserid(userid);
+        List<EmotionModel> emotionModels = new ArrayList<>();
+        for(Emotion emotion : emotions) {
+            emotionModels.add(new EmotionModel(emotion));
+        }
+        return emotionModels;
+    }
+
+    @Override
     public boolean setEmotion(EmotionModel emotionModel) {
         Long timestamp = TimeUtil.getStartOfDayTimestamp(emotionModel.getTimestamp());
         List<Emotion> emotions = emotionRepository.scanEmotion(emotionModel.getUserid(), timestamp, timestamp + TimeUtil.DAY);
@@ -64,6 +74,31 @@ public class EmotionDAOImpl implements EmotionDAO {
         }
         return true;
     }
+
+    @Override
+    public List<EmotionModel> scanEmotion(String userid, LocalDate startDate, LocalDate endDate) {
+        Long start = TimeUtil.getStartOfDayTimestamp(startDate);
+        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
+        List<Emotion> emotions = emotionRepository.scanEmotion(userid, start, end);
+        List<EmotionModel> emotionModels = new ArrayList<>();
+        for(Emotion emotion : emotions) {
+            emotionModels.add(new EmotionModel(emotion));
+        }
+        return emotionModels;
+    }
+
+    @Override
+    public List<EmotionModel> scanAllEmotion(LocalDate startDate, LocalDate endDate) {
+        Long start = TimeUtil.getStartOfDayTimestamp(startDate);
+        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
+        List<Emotion> emotions = emotionRepository.scanAllEmotion(start, end);
+        List<EmotionModel> emotionModels = new ArrayList<>();
+        for(Emotion emotion : emotions) {
+            emotionModels.add(new EmotionModel(emotion));
+        }
+        return emotionModels;
+    }
+    
 
     @Override
     public List<EmotionDataModel> scanEmotionData(String userid, LocalDate startDate, LocalDate endDate) {

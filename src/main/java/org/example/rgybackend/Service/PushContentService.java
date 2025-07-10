@@ -7,6 +7,8 @@ import org.example.rgybackend.Model.QuoteModel;
 import org.example.rgybackend.Model.UrlDataModel;
 
 public interface PushContentService {
+    List<UrlDataModel> getAllContent();
+
     boolean pushContent(UrlDataModel urlDataModel);
 
     List<SimplifiedUrlData> getSimplifiedContent();

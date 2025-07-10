@@ -19,6 +19,16 @@ public class DiaryDAOImpl implements DiaryDAO {
     private DiaryRepository diaryRepository;
 
     @Override
+    public List<DiaryModel> getAllUserDiaries(String userid) {
+        List<Diary> diaries = diaryRepository.findByUserid(userid);
+        List<DiaryModel> diaryModels = new ArrayList<>();
+        for(Diary diary : diaries) {
+            diaryModels.add(new DiaryModel(diary));
+        }
+        return diaryModels;
+    }
+
+    @Override
     public boolean diaryExists(String userid, LocalDate date) {
         Long timestamp = TimeUtil.getStartOfDayTimestamp(date);
         List<Diary> diaries = diaryRepository.scanDiary(userid, timestamp, timestamp + TimeUtil.DAY);
