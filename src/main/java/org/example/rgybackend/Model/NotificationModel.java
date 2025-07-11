@@ -1,7 +1,6 @@
 package org.example.rgybackend.Model;
 
 import org.example.rgybackend.Entity.Notification;
-import org.example.rgybackend.Entity.NotificationPrivate;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -18,9 +18,11 @@ import org.example.rgybackend.Model.CounselingModel;
 import org.example.rgybackend.Model.NotificationPrivateModel;
 import org.example.rgybackend.Model.TagModel;
 import org.example.rgybackend.Service.CounselingService;
+import org.example.rgybackend.Utils.CacheUtil;
 import org.example.rgybackend.Utils.NotificationUtil;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,6 +41,9 @@ public class CounselingServiceImpl implements CounselingService {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private CacheUtil cacheUtil;
 
     @Override
     public List<CounselingModel> getCounseling(String psyid) {
@@ -66,6 +71,7 @@ public class CounselingServiceImpl implements CounselingService {
     }
 
     @Override
+    @CacheEvict(value = "psyprofile", key = "#psyCommentData.psyid")
     public boolean addComment(PsyCommentData psyCommentData) {
         return psyExtraDAO.addComments(psyCommentData);
     }
@@ -87,6 +93,7 @@ public class CounselingServiceImpl implements CounselingService {
             notification.setUserid(counseling.getUserid());
             notificationPrivateDAO.addNotification(notification);
             psyExtraDAO.increaseClients(counseling.getPsyid());
+            cacheUtil.evictPsyProfileCache(counseling.getPsyid());
         }
         else if(status == 3) {
             if(role == 0) {

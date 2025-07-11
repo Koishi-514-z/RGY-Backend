@@ -88,9 +88,8 @@ public class UserController {
     }
 
     @GetMapping("/disabled/get")
-    public boolean isDisabled(HttpSession session) {
-        String userid = (String)session.getAttribute("user");
-        return userService.isDisabled(userid);
+    public boolean isDisabled(@RequestParam String username) {
+        return userService.isDisabled(username);
     }
 
     @PostMapping("/add")

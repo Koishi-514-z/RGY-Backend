@@ -46,7 +46,9 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public void addBlog(String title, String content, List<String> tags, SimplifiedProfileModel author) {
-        Long justify = bertModel.justify(title + content);
+        Long justify = bertModel.justify(content);
+
+        System.out.println(justify);
 
         if(justify == 1) {
             NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);

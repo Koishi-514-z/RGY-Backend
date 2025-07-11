@@ -84,6 +84,7 @@ public class CrisisServiceImpl implements CrisisService {
             crisisModel.setTimestamp(crisisAuditing.getTimestamp());
             crisisModel.setUser(userDAO.getSimplified(crisisAuditing.getUserid()));
             crisisModel.setUserid(crisisAuditing.getUserid());
+            crisisModel.setUrgencyLevel(crisisAuditing.getUrgencyLevel());
             crisisModelList.add(crisisModel);
         }
         return crisisModelList;

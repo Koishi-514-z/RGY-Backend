@@ -209,7 +209,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isDisabled(String userid) {
+    public boolean isDisabled(String username) {
+        boolean existed = userDAO.existedByName(username);
+        if(!existed) {
+            return true;
+        }
+        String userid = userDAO.getByName(username).getUserid();
         return userAuthDAO.isDisabled(userid);
     }
 

@@ -44,7 +44,7 @@ public class CrisisController {
     }
 
     @PostMapping("/confirm")
-    public boolean confirmCrisis(@RequestBody String json,HttpSession session) {
+    public boolean confirmCrisis(@RequestBody String json, HttpSession session) {
         String userid = (String)session.getAttribute("user");
         if(!userService.isAdmin(userid)) {
             throw new ForbiddenException("只有管理员允许进行该操作");
@@ -52,6 +52,7 @@ public class CrisisController {
         JSONObject obj = JSONObject.parseObject(json);
         int crisisid = obj.getIntValue("crisisid");
         Long urgencyLevel = obj.getLongValue("urgencyLevel");
+        System.out.println("LEVEL" + urgencyLevel);
         crisisService.saveCrisis(crisisid, urgencyLevel);
         return true;
     }

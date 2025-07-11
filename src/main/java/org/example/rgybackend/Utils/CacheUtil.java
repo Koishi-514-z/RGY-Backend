@@ -15,6 +15,13 @@ public class CacheUtil {
     @Autowired
     private CacheManager cacheManager;
 
+    public void evictPsyProfileCache(String psyid) {
+        Cache cache = cacheManager.getCache("psyprofile");
+        if(cache != null) {
+            cache.evict(psyid);
+        }
+    }
+
     public void evictIntimateUsersCache(String userid) {
         Cache cache = cacheManager.getCache("intimateUsers");
         if(cache != null) {
