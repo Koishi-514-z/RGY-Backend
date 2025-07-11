@@ -331,7 +331,6 @@ public class BlogServiceImpl implements BlogService {
             if(blog.getValid() == 0) continue;
             BlogModel blogModel = new BlogModel();
             blogModel.setBlogid(blog.getBlogid());
-            blogModel.setUser(userDAO.getSimplified(blog.getUserid()));
             blogModel.setTimestamp(blog.getTimestamp());
             blogModel.setLikeNum(blog.getLikeNum());
             blogModel.setTitle(blog.getTitle());
@@ -345,7 +344,6 @@ public class BlogServiceImpl implements BlogService {
                 ReplyModel replyModel = new ReplyModel();
                 replyModel.setReplyid(reply.getReplyid());
                 replyModel.setBlogid(reply.getBlogid());
-                replyModel.setUser(userDAO.getSimplified(reply.getFromuserid()));
                 replyModel.setFromuserid(reply.getFromuserid());
                 replyModel.setTouserid(reply.getTouserid());
                 replyModel.setTimestamp(reply.getTimestamp());
@@ -374,8 +372,9 @@ public class BlogServiceImpl implements BlogService {
         }
         return blogs;
     }
+
     @Override
-    public List<Like> getBlogLikedByUserid(String userid){
+    public List<Like> getBlogLikedByUserid(String userid) {
         return blogDAO.getBlogLikedByUserid(userid);
     }
 

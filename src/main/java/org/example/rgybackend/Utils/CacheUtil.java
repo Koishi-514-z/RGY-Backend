@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionModel;
+import org.example.rgybackend.Model.ProfileModel;
+import org.example.rgybackend.Model.PsyProfileModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -15,11 +17,54 @@ public class CacheUtil {
     @Autowired
     private CacheManager cacheManager;
 
+    public void putProfileToCache(String userid, ProfileModel profileModel) {
+        Cache cache = cacheManager.getCache("profile");
+        if(cache != null) {
+            cache.put(userid, profileModel);
+        }
+    }
+
+    public void evictProfileCache(String userid) {
+        Cache cache = cacheManager.getCache("profile");
+        if(cache != null) {
+            cache.evict(userid);
+        }
+    }
+
+    public ProfileModel getProfileFromCache(String userid) {
+        Cache cache = cacheManager.getCache("profile");
+        if(cache != null) {
+            Cache.ValueWrapper wrapper = cache.get(userid);
+            if(wrapper != null) {
+                return (ProfileModel) wrapper.get();
+            }
+        }
+        return null;
+    }
+
+    public void putPsyProfileToCache(String psyid, PsyProfileModel profileModel) {
+        Cache cache = cacheManager.getCache("psyprofile");
+        if(cache != null) {
+            cache.put(psyid, profileModel);
+        }
+    }
+
     public void evictPsyProfileCache(String psyid) {
         Cache cache = cacheManager.getCache("psyprofile");
         if(cache != null) {
             cache.evict(psyid);
         }
+    }
+
+    public PsyProfileModel getPsyProfileFromCache(String psyid) {
+        Cache cache = cacheManager.getCache("psyprofile");
+        if(cache != null) {
+            Cache.ValueWrapper wrapper = cache.get(psyid);
+            if(wrapper != null) {
+                return (PsyProfileModel) wrapper.get();
+            }
+        }
+        return null;
     }
 
     public void evictIntimateUsersCache(String userid) {

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.example.rgybackend.DAO.UserDAO;
+import org.example.rgybackend.DTO.ProfileTag;
 import org.example.rgybackend.Entity.UserProfile;
 import org.example.rgybackend.Model.ProfileModel;
 import org.example.rgybackend.Model.SimplifiedProfileModel;
@@ -108,6 +109,16 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public Long getRole(String userid) {
         return userRepository.getRole(userid);
+    }
+
+    @Override
+    public List<ProfileTag> getAllProfileTags() {
+        return userRepository.findAllTags();
+    }
+
+    @Override
+    public List<ProfileTag> getPsyProfileTags() {
+        return userRepository.findPsyTags();
     }
 
 }

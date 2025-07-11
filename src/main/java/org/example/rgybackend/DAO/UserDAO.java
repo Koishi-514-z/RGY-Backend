@@ -2,6 +2,7 @@ package org.example.rgybackend.DAO;
 
 import java.util.List;
 
+import org.example.rgybackend.DTO.ProfileTag;
 import org.example.rgybackend.Model.ProfileModel;
 import org.example.rgybackend.Model.SimplifiedProfileModel;
 
@@ -27,4 +28,8 @@ public interface UserDAO {
     boolean remove(String userid);
 
     Long getRole(String userid);
+
+    List<ProfileTag> getAllProfileTags();
+
+    List<ProfileTag> getPsyProfileTags();
 }

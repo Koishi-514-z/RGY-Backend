@@ -37,6 +37,18 @@ public class NotificationUtil {
         "high"
     );
 
+    public final static NotificationPrivateModel counselingNew = new NotificationPrivateModel(
+        null,
+        310L, 
+        null,
+        null,
+        "咨询预约已提交",
+        "您的心理咨询预约已成功提交！\n\n请耐心等待咨询师确认。\n如有变动，您将收到进一步通知。\n如需修改或取消预约，请在预约详情页操作。\n\n感谢您的信任，祝您一切顺利！",
+        TimeUtil.now(),
+        1L,
+        "low"
+    );
+
     public final static NotificationPrivateModel counselingAccepted = new NotificationPrivateModel(
         null, 
         420L, 

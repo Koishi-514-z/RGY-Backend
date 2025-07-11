@@ -1,5 +1,6 @@
 package org.example.rgybackend.Service.Impl;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,15 +15,17 @@ import org.example.rgybackend.DAO.UserAuthDAO;
 import org.example.rgybackend.DAO.UserDAO;
 import org.example.rgybackend.DTO.IntimateDTO;
 import org.example.rgybackend.DTO.LikeData;
+import org.example.rgybackend.DTO.ProfileTag;
 import org.example.rgybackend.DTO.ReplyData;
 import org.example.rgybackend.Entity.PsyProfileExtra;
 import org.example.rgybackend.Model.*;
 import org.example.rgybackend.Service.UserService;
+import org.example.rgybackend.Utils.CacheUtil;
+import org.example.rgybackend.Utils.ImageCompressor;
 import org.example.rgybackend.Utils.NotExistException;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,6 +49,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ReplyDAO replyDAO;
+
+    @Autowired
+    private CacheUtil cacheUtil;
+
+    @Autowired
+    private ImageCompressor imageCompressor;
 
     @Value("${verify.admin.key}")
     private String KEY;
@@ -71,15 +80,27 @@ public class UserServiceImpl implements UserService {
         return userDAO.existedByName(username);
     }
 
+    // 获取用户的个人信息（自动缓存）
     @Override
-    @Cacheable(value = "profile", key = "#userid")
     public ProfileModel getUserProfile(String userid) {
-        return userDAO.get(userid);
+        ProfileModel cachedProfile = cacheUtil.getProfileFromCache(userid);
+        if(cachedProfile != null) {
+            return cachedProfile;
+        }
+        ProfileModel profileModel = userDAO.get(userid);
+        cacheUtil.putProfileToCache(userid, profileModel);
+        return profileModel;
     }
 
+    // 获取所有用户的个人信息（自动缓存）
     @Override
     public List<AdminProfileModel> getAllProfile(String adminid) {
-        List<ProfileModel> profileModels = userDAO.getAll();
+        List<ProfileModel> profileModels = new ArrayList<>();
+        List<ProfileTag> profileTags = userDAO.getAllProfileTags();
+        for(ProfileTag profileTag : profileTags) {
+            profileModels.add(this.getUserProfile(profileTag.getUserid()));
+        }
+
         List<AdminProfileModel> adminProfileModels = new ArrayList<>();
         for(ProfileModel profileModel : profileModels) {
             if(profileModel.getRole() == 1 && profileModel.getUserid().equals(adminid) || profileModel.getUserid().equals("System")) {
@@ -91,9 +112,13 @@ public class UserServiceImpl implements UserService {
         return adminProfileModels;
     }
 
+    // 获取心理咨询师个人信息（自动缓存）
     @Override
-    @Cacheable(value = "psyprofile", key = "#psyid")
     public PsyProfileModel getPsyProfile(String psyid) {
+        PsyProfileModel cachedProfile = cacheUtil.getPsyProfileFromCache(psyid);
+        if(cachedProfile != null) {
+            return cachedProfile;
+        }
         ProfileModel profileModel = userDAO.get(psyid);
         PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);
         PsyProfileModel psyProfileModel = new PsyProfileModel(profileExtra);
@@ -101,22 +126,17 @@ public class UserServiceImpl implements UserService {
         psyProfileModel.setEmail(profileModel.getEmail());
         psyProfileModel.setAvatar(profileModel.getAvatar());
         psyProfileModel.setJointime(profileModel.getJointime());
+        cacheUtil.putPsyProfileToCache(psyid, psyProfileModel);
         return psyProfileModel;
     }
 
+    // 获取所有心理咨询师个人信息（自动缓存）
     @Override
     public List<PsyProfileModel> getPsyProfiles() {
-        List<ProfileModel> profileModels = userDAO.getAllPsys();
+        List<ProfileTag> profileTags = userDAO.getPsyProfileTags();
         List<PsyProfileModel> psyProfileModels = new ArrayList<>();
-        for(ProfileModel profileModel : profileModels) {
-            String psyid = profileModel.getUserid();
-            PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);
-            PsyProfileModel psyProfileModel = new PsyProfileModel(profileExtra);
-            psyProfileModel.setUsername(profileModel.getUsername());
-            psyProfileModel.setEmail(profileModel.getEmail());
-            psyProfileModel.setAvatar(profileModel.getAvatar());
-            psyProfileModel.setJointime(profileModel.getJointime());
-            psyProfileModels.add(psyProfileModel);
+        for(ProfileTag profileTag : profileTags) {
+            psyProfileModels.add(this.getPsyProfile(profileTag.getUserid()));
         }
         return psyProfileModels;
     }
@@ -126,9 +146,16 @@ public class UserServiceImpl implements UserService {
         return userDAO.getByName(username);
     }
 
+    // 获取简化后的个人信息（缓存）
     @Override
     public SimplifiedProfileModel getSimplifiedProfile(String userid) {
-        return userDAO.getSimplified(userid);
+        ProfileModel cachedProfile = cacheUtil.getProfileFromCache(userid);
+        if(cachedProfile != null) {
+            return new SimplifiedProfileModel(cachedProfile);
+        }
+        ProfileModel profile = userDAO.get(userid);
+        cacheUtil.putProfileToCache(userid, profile);
+        return new SimplifiedProfileModel(profile);
     }
 
     @Override
@@ -200,7 +227,7 @@ public class UserServiceImpl implements UserService {
                     maxUserid = datauserid;
                 }
             }
-            SimplifiedProfileModel profile = userDAO.getSimplified(maxUserid);
+            SimplifiedProfileModel profile = this.getSimplifiedProfile(maxUserid);
             intimateUsers.add(new IntimateDTO(maxScore, profile));
             intimateScores.remove(maxUserid);
         }
@@ -242,15 +269,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CacheEvict(value = "profile", key = "#profile.userid")
     public boolean updateProfile(ProfileModel profile) {
+        cacheUtil.evictProfileCache(profile.getUserid());
+
+        String avatar = profile.getAvatar();
+        String compressedAvatar;
+        try {
+            compressedAvatar = imageCompressor.compressBase64Image(avatar);
+        } catch (IOException e) {
+            throw new RuntimeException("图片压缩失败", e);
+        }
+        profile.setAvatar(compressedAvatar);
+
         return userDAO.update(profile);
     }
 
     @Override
-    @CacheEvict(value = "psyprofile", key = "#psyProfileModel.userid")
     public boolean updatePsyProfile(PsyProfileModel psyProfileModel) {
         String psyid = psyProfileModel.getUserid();
+        cacheUtil.evictPsyProfileCache(psyid);
+
+        String avatar = psyProfileModel.getAvatar();
+        String compressedAvatar;
+        try {
+            compressedAvatar = imageCompressor.compressBase64Image(avatar);
+        } catch (IOException e) {
+            throw new RuntimeException("图片压缩失败", e);
+        }
+        psyProfileModel.setAvatar(compressedAvatar);
 
         ProfileModel newProfileModel = new ProfileModel();
         newProfileModel.setUserid(psyid);
