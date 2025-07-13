@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface BlogRepository extends JpaRepository<Blog, Long> {
     List<Blog> findAllByUserid(String userid);
+
     Blog findByTimestampAndUserid(Long timestamp, String userid);
 }

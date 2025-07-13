@@ -1,5 +1,6 @@
 package org.example.rgybackend.Service.Impl;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.example.rgybackend.Model.TagModel;
 import org.example.rgybackend.Model.UrlDataModel;
 import org.example.rgybackend.Service.EmotionService;
 import org.example.rgybackend.Service.PushContentService;
+import org.example.rgybackend.Utils.ImageCompressor;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -32,6 +34,9 @@ public class PushContentServiceImpl implements PushContentService {
     @Autowired
     private EmotionService emotionService;
 
+    @Autowired
+    private ImageCompressor imageCompressor;
+
     @Cacheable(value = "allPushContent")
     public List<UrlDataModel> getAllContent() {
         return pushContentDAO.getAllContent();
@@ -40,6 +45,16 @@ public class PushContentServiceImpl implements PushContentService {
     @Override
     @CacheEvict(value = "allPushContent", allEntries = true)
     public boolean pushContent(UrlDataModel urlDataModel) {
+        String img = urlDataModel.getImg();
+        if(img != null) {
+            String compressedImg;
+            try {
+                compressedImg = imageCompressor.compressBase64Image(img);
+            } catch (IOException e) {
+                throw new RuntimeException("图片压缩失败", e);
+            }
+            urlDataModel.setImg(compressedImg);
+        }
         urlDataModel.setCreatedAt(TimeUtil.now());
         return pushContentDAO.pushContent(urlDataModel);
     }

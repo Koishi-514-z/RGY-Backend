@@ -41,4 +41,8 @@ public interface UserService {
     boolean updatePassword(String userid, String password);
 
     boolean setDisabled(String userid, boolean disabled);
+
+    boolean postAuthCode(String email);
+
+    boolean checkAuthCode(String email, Long authCode);
 }

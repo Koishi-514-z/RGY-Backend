@@ -15,6 +15,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 
     @Query("SELECT new org.example.rgybackend.DTO.LikeData(l.likeid, l.fromuserid, l.timestamp) FROM Like l WHERE l.touserid = :touserid")
     List<LikeData> findFromUser(String touserid);
+    
     @Modifying
     @Transactional
     void deleteByFromuseridAndBlogid(String fromuserid, Long blogid);

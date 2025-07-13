@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.example.rgybackend.DAO.BlogDAO;
 import org.example.rgybackend.DAO.LikeDAO;
 import org.example.rgybackend.DAO.PsyExtraDAO;
 import org.example.rgybackend.DAO.ReplyDAO;
@@ -19,7 +20,10 @@ import org.example.rgybackend.DTO.ProfileTag;
 import org.example.rgybackend.DTO.ReplyData;
 import org.example.rgybackend.Entity.PsyProfileExtra;
 import org.example.rgybackend.Model.*;
+import org.example.rgybackend.Service.MilestoneServive;
+import org.example.rgybackend.Service.SjtuMailService;
 import org.example.rgybackend.Service.UserService;
+import org.example.rgybackend.Utils.AuthCodeManager;
 import org.example.rgybackend.Utils.CacheUtil;
 import org.example.rgybackend.Utils.ImageCompressor;
 import org.example.rgybackend.Utils.NotExistException;
@@ -45,6 +49,9 @@ public class UserServiceImpl implements UserService {
     private BCryptPasswordEncoder encoder;
 
     @Autowired
+    private BlogDAO blogDAO;
+
+    @Autowired
     private LikeDAO likeDAO;
 
     @Autowired
@@ -55,6 +62,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ImageCompressor imageCompressor;
+
+    @Autowired
+    private MilestoneServive milestoneServive;
+
+    @Autowired
+    private SjtuMailService sjtuMailService;
 
     @Value("${verify.admin.key}")
     private String KEY;
@@ -88,6 +101,12 @@ public class UserServiceImpl implements UserService {
             return cachedProfile;
         }
         ProfileModel profileModel = userDAO.get(userid);
+        profileModel.calcLevel(blogDAO.getBlogsByUserid(userid), replyDAO.findOppositeUser(userid), likeDAO.findOppositeUser(userid));
+
+        if(profileModel.getLevel() > 20) {
+            milestoneServive.addMilestone(userid, 7L);
+        }
+
         cacheUtil.putProfileToCache(userid, profileModel);
         return profileModel;
     }
@@ -260,6 +279,7 @@ public class UserServiceImpl implements UserService {
         user.getProfile().setJointime(TimeUtil.now());
         boolean result = userDAO.add(user.getProfile());
         boolean resultAuth = userAuthDAO.addAuth(user.getProfile().getUserid(), user.getStuid(), user.getPassword());
+        milestoneServive.addMilestone(user.getProfile().getUserid(), 1L);
         if(user.getProfile().getRole() != 2) {
             return result && resultAuth;
         }
@@ -273,13 +293,15 @@ public class UserServiceImpl implements UserService {
         cacheUtil.evictProfileCache(profile.getUserid());
 
         String avatar = profile.getAvatar();
-        String compressedAvatar;
-        try {
-            compressedAvatar = imageCompressor.compressBase64Image(avatar);
-        } catch (IOException e) {
-            throw new RuntimeException("图片压缩失败", e);
+        if(avatar != null) {
+            String compressedAvatar;
+            try {
+                compressedAvatar = imageCompressor.compressBase64Image(avatar);
+            } catch (IOException e) {
+                throw new RuntimeException("图片压缩失败", e);
+            }
+            profile.setAvatar(compressedAvatar);
         }
-        profile.setAvatar(compressedAvatar);
 
         return userDAO.update(profile);
     }
@@ -330,6 +352,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean setDisabled(String userid, boolean disabled) {
         return userAuthDAO.setDisabled(userid, disabled);
+    }
+
+    @Override
+    public boolean postAuthCode(String email) {
+        Long authCode = AuthCodeManager.addAuthCode(email);
+        if(authCode == null) {
+            return false;
+        }
+        String subject = "【心理健康互助社区】您的验证码";
+        String content = "您好，\n\n"
+            + "您正在进行邮箱验证操作，您的验证码为： " + authCode + "\n\n"
+            + "请在5分钟内完成验证。请勿将验证码泄露给他人。\n\n"
+            + "如非本人操作，请忽略此邮件。\n\n"
+            + "—— 心理健康互助社区团队";
+        sjtuMailService.sendSimpleMail(email, subject, content);
+        return true;
+    }   
+
+    @Override
+    public boolean checkAuthCode(String email, Long authCode) {
+        return AuthCodeManager.checkAuthCode(email, authCode);
     }
 
 }

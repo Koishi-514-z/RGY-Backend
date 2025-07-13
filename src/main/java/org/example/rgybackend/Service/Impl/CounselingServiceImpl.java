@@ -18,6 +18,7 @@ import org.example.rgybackend.Model.CounselingModel;
 import org.example.rgybackend.Model.NotificationPrivateModel;
 import org.example.rgybackend.Model.TagModel;
 import org.example.rgybackend.Service.CounselingService;
+import org.example.rgybackend.Service.MilestoneServive;
 import org.example.rgybackend.Utils.CacheUtil;
 import org.example.rgybackend.Utils.NotificationUtil;
 import org.example.rgybackend.Utils.TimeUtil;
@@ -45,6 +46,9 @@ public class CounselingServiceImpl implements CounselingService {
     @Autowired
     private CacheUtil cacheUtil;
 
+    @Autowired
+    private MilestoneServive milestoneServive;
+
     @Override
     public List<CounselingModel> getCounseling(String psyid) {
         return counselingDAO.getCounseling(psyid);
@@ -63,6 +67,8 @@ public class CounselingServiceImpl implements CounselingService {
 
     @Override
     public boolean addCounseling(CounselingModel counselingModel, String userid) {
+        milestoneServive.addMilestone(userid, 6L);
+
         NotificationPrivateModel notificationForUser = new NotificationPrivateModel(NotificationUtil.counselingNew);
         notificationForUser.setAdminid("System");
         notificationForUser.setUserid(userid);
