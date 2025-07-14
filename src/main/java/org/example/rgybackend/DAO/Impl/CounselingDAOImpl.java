@@ -23,7 +23,11 @@ public class CounselingDAOImpl implements CounselingDAO {
 
     @Override
     public boolean counseled(String psyid, Long timestamp) {
-        return counselingRepository.existsByPsyidAndTimestamp(psyid, timestamp);
+        List<Counseling> counselings = counselingRepository.findByPsyidAndTimestamp(psyid, timestamp);
+        if(counselings.size() > 1) {
+            throw new RuntimeException("Duplicate counseling");
+        }
+        return !counselings.isEmpty() && counselings.get(0).getStatus() != 3;
     }
 
     @Override

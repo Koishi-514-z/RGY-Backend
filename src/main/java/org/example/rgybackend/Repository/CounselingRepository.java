@@ -15,5 +15,5 @@ public interface CounselingRepository extends JpaRepository<Counseling, Long> {
     @Query("SELECT c FROM Counseling c WHERE c.psyid = :psyid AND c.timestamp >= :start AND c.timestamp < :end")
     List<Counseling> scanCounseling(String psyid, Long start, Long end);
 
-    boolean existsByPsyidAndTimestamp(String psyid, Long timestamp);
+    List<Counseling> findByPsyidAndTimestamp(String psyid, Long timestamp);
 }

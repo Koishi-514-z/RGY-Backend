@@ -10,9 +10,9 @@ import java.util.List;
 public interface NotificationPrivateRepository extends JpaRepository<NotificationPrivate, Long> {
     List<NotificationPrivate> findByUserid(String userid);
 
-    @Query("SELECT n FROM NotificationPrivate n WHERE n.type < 1000")
+    @Query("SELECT n FROM NotificationPrivate n WHERE n.userid = :userid AND n.type < 1000")
     List<NotificationPrivate> findPrivateByUserid(String userid);
 
-    @Query("SELECT n FROM NotificationPrivate n WHERE n.type >= 1000")
+    @Query("SELECT n FROM NotificationPrivate n WHERE n.userid = :userid AND n.type >= 1000")
     List<NotificationPrivate> findPublicByUserid(String userid);
 }

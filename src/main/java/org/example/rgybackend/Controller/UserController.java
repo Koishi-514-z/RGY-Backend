@@ -103,7 +103,11 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public boolean addUser(@RequestBody UserModel user) {
+    public boolean addUser(@RequestBody UserModel user, HttpSession session) {
+        String email = (String)session.getAttribute("check");
+        if(!user.getProfile().getEmail().equals(email)) {
+            return false;
+        }
         return userService.addUser(user);
     }
 

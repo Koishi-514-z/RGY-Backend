@@ -120,7 +120,6 @@ public class CounselingServiceImpl implements CounselingService {
                 notification.setUserid(counseling.getUserid());
                 notificationPrivateDAO.addNotification(notification);
             }
-            counselingDAO.removeCounseling(counselingid);
         }
         return counselingDAO.setStatus(counselingid, status);
     }
@@ -166,6 +165,9 @@ public class CounselingServiceImpl implements CounselingService {
 
         for(Long slot : workingslots) {
             LocalDateTime ldt = TimeUtil.getLocalDateTime(date, slot);
+            if(TimeUtil.getTimestamp(ldt) < TimeUtil.now()) {
+                continue;
+            }
             boolean counseled = counselingDAO.counseled(psyid, TimeUtil.getTimestamp(ldt));
             if(!counseled) {
                 dateAvailables.add(slot);
