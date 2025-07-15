@@ -11,12 +11,17 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.apache.hc.client5.http.cookie.BasicCookieStore;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.example.rgybackend.DTO.IntimateDTO;
 import org.example.rgybackend.Model.AdminProfileModel;
 import org.example.rgybackend.Model.MilestoneModel;
 import org.example.rgybackend.Model.ProfileModel;
+import org.example.rgybackend.Model.PsyProfileModel;
+import org.example.rgybackend.Model.SimplifiedProfileModel;
+import org.example.rgybackend.Utils.ErrorResponse;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerTest {
@@ -105,12 +110,12 @@ class UserControllerTest {
 
     @Test
     void getUserProfile() {
-        ResponseEntity<ProfileModel> response = restTemplate.getForEntity("/api/user/get", ProfileModel.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Profile retrieval should fail without login");
+        ResponseEntity<ErrorResponse> errorResponse = restTemplate.getForEntity("/api/user/get", ErrorResponse.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, errorResponse.getStatusCode(), "Profile retrieval should fail without login");
 
         userLogin();
 
-        response = restTemplate.getForEntity("/api/user/get", ProfileModel.class);
+        ResponseEntity<ProfileModel> response = restTemplate.getForEntity("/api/user/get", ProfileModel.class);
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Profile retrieval should be successful after login");
         ProfileModel profile = response.getBody();
         assertNotNull(profile, "Profile should not be null for an existing user");
@@ -120,19 +125,19 @@ class UserControllerTest {
     @Test
     void getAllProfile() {
         // Test for unauthorized access
-        ResponseEntity<AdminProfileModel[]> response = restTemplate.getForEntity("/api/user/getall", AdminProfileModel[].class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Admin profile retrieval should fail without admin login");
+        ResponseEntity<ErrorResponse> errorResponse = restTemplate.getForEntity("/api/user/getall", ErrorResponse.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, errorResponse.getStatusCode(), "Admin profile retrieval should fail without admin login");
 
         // Login as a regular user
         userLogin();
-        response = restTemplate.getForEntity("/api/user/getall", AdminProfileModel[].class);
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode(), "Admin profile retrieval should fail for regular user");
+        errorResponse = restTemplate.getForEntity("/api/user/getall", ErrorResponse.class);
+        assertEquals(HttpStatus.FORBIDDEN, errorResponse.getStatusCode(), "Admin profile retrieval should fail for regular user");
 
         // Admin login
         adminLogin();
 
         // Test for authorized access
-        response = restTemplate.getForEntity("/api/user/getall", AdminProfileModel[].class);
+        ResponseEntity<AdminProfileModel[]> response = restTemplate.getForEntity("/api/user/getall", AdminProfileModel[].class);
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Admin profile retrieval should be successful after admin login");
         AdminProfileModel[] profiles = response.getBody();
         assertNotNull(profiles, "Profiles should not be null for an existing admin");
@@ -141,16 +146,16 @@ class UserControllerTest {
     @Test
     void getPsyProfile() {
         // Test for unauthorized access
-        ResponseEntity<ProfileModel> response = restTemplate.getForEntity("/api/user/getpsy", ProfileModel.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Psychologist profile retrieval should fail without login");
+        ResponseEntity<ErrorResponse> errorResponse = restTemplate.getForEntity("/api/user/getpsy", ErrorResponse.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, errorResponse.getStatusCode(), "Psychologist profile retrieval should fail without login");
 
         // Psychologist login
         psyLogin();
 
         // Test for authorized access
-        response = restTemplate.getForEntity("/api/user/getpsy", ProfileModel.class);
+        ResponseEntity<PsyProfileModel> response = restTemplate.getForEntity("/api/user/getpsy", PsyProfileModel.class);
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Psychologist profile retrieval should be successful after psychologist login");
-        ProfileModel psyProfile = response.getBody();
+        PsyProfileModel psyProfile = response.getBody();
         assertNotNull(psyProfile, "Psychologist profile should not be null for an existing psychologist");
         assertEquals(TEST_PSY_ID, psyProfile.getUserid(), "Psychologist profile ID should match the test psychologist ID");
     }
@@ -158,16 +163,16 @@ class UserControllerTest {
     @Test
     void getSimplifiedProfile() {
         // Test for unauthorized access
-        ResponseEntity<ProfileModel> response = restTemplate.getForEntity("/api/user/getsim?userid=" + TEST_USER_ID, ProfileModel.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Simplified profile retrieval should fail without login");
-
+        ResponseEntity<ErrorResponse> errorResponse = restTemplate.getForEntity("/api/user/getsim?userid=" + TEST_USER_ID, ErrorResponse.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, errorResponse.getStatusCode(), "Simplified profile retrieval should fail without login");
+    
         // User login
         userLogin();
 
         // Test for authorized access
-        response = restTemplate.getForEntity("/api/user/getsim?userid=" + TEST_USER_ID, ProfileModel.class);
+        ResponseEntity<SimplifiedProfileModel> response = restTemplate.getForEntity("/api/user/getsim?userid=" + TEST_USER_ID, SimplifiedProfileModel.class);
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Simplified profile retrieval should be successful after user login");
-        ProfileModel simplifiedProfile = response.getBody();
+        SimplifiedProfileModel simplifiedProfile = response.getBody();
         assertNotNull(simplifiedProfile, "Simplified profile should not be null for an existing user");
         assertEquals(TEST_USER_ID, simplifiedProfile.getUserid(), "Simplified profile ID should match the test user ID");
     }
@@ -175,14 +180,14 @@ class UserControllerTest {
     @Test
     void getIntimateUsers() {
         // Test for unauthorized access
-        ResponseEntity<IntimateDTO[]> response = restTemplate.getForEntity("/api/user/getintm", IntimateDTO[].class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Intimate users retrieval should fail without login");
+        ResponseEntity<ErrorResponse> errorResponse = restTemplate.getForEntity("/api/user/getintm", ErrorResponse.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, errorResponse.getStatusCode(), "Intimate users retrieval should fail without login");
 
         // User login
         userLogin();
 
         // Test for authorized access
-        response = restTemplate.getForEntity("/api/user/getintm", IntimateDTO[].class);
+        ResponseEntity<IntimateDTO[]> response = restTemplate.getForEntity("/api/user/getintm", IntimateDTO[].class);
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Intimate users retrieval should be successful after user login");
         IntimateDTO[] intimateUsers = response.getBody();
         assertNotNull(intimateUsers, "Intimate users list should not be null for an existing user");
@@ -191,14 +196,14 @@ class UserControllerTest {
     @Test
     void getMilestone() {
         // Test for unauthorized access
-        ResponseEntity<MilestoneModel> response = restTemplate.getForEntity("/api/user/milestone", MilestoneModel.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Milestone retrieval should fail without login");
+        ResponseEntity<ErrorResponse> errorResponse = restTemplate.getForEntity("/api/user/milestone", ErrorResponse.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, errorResponse.getStatusCode(), "Milestone retrieval should fail without login");
 
         // User login
         userLogin();
 
         // Test for authorized access
-        response = restTemplate.getForEntity("/api/user/milestone", MilestoneModel.class);
+        ResponseEntity<MilestoneModel> response = restTemplate.getForEntity("/api/user/milestone", MilestoneModel.class);
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Milestone retrieval should be successful after user login");
         MilestoneModel milestone = response.getBody();
         assertNotNull(milestone, "Milestone should not be null for an existing user");
@@ -207,14 +212,14 @@ class UserControllerTest {
     @Test
     void verifyPassword() {
         // Test for unauthorized access
-        ResponseEntity<Boolean> response = restTemplate.getForEntity("/api/user/verify/pwd?password=" + TEST_PASSWORD, Boolean.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Password verification should fail without login");
+        ResponseEntity<ErrorResponse> errorResponse = restTemplate.getForEntity("/api/user/verify/pwd?password=" + TEST_PASSWORD, ErrorResponse.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, errorResponse.getStatusCode(), "Password verification should fail without login");
 
         // User login
         userLogin();
 
         // Test for authorized access with correct password
-        response = restTemplate.getForEntity("/api/user/verify/pwd?password=" + TEST_PASSWORD, Boolean.class);
+        ResponseEntity<Boolean> response = restTemplate.getForEntity("/api/user/verify/pwd?password=" + TEST_PASSWORD, Boolean.class);
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Password verification should be successful with correct password");
         Boolean body = response.getBody();
         assertNotNull(body, "Password verification response should not be null");
