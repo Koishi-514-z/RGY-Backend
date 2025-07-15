@@ -38,13 +38,15 @@ public class CrisisServiceImpl implements CrisisService {
     public void saveCrisis(int crisisid, Long urgencyLevel) {
         CrisisAuditing crisisAuditing = crisisDAO.findById(crisisid);
 
-        if(crisisAuditing != null){
-            if(crisisAuditing.getType() == 0){
-                blogDAO.deleteBlog(crisisAuditing.getContentid());
-            }
-            else if(crisisAuditing.getType() == 1){
-                blogDAO.deleteReply(crisisAuditing.getContentid());
-            }
+        if(crisisAuditing == null) {
+            return;
+        }
+
+        if(crisisAuditing.getType() == 0){
+            blogDAO.deleteBlog(crisisAuditing.getContentid());
+        }
+        else if(crisisAuditing.getType() == 1){
+            blogDAO.deleteReply(crisisAuditing.getContentid());
         }
 
         NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
@@ -74,7 +76,6 @@ public class CrisisServiceImpl implements CrisisService {
     }
     @Override
     public void deleteCrisisAuditing(int crisisid) {
-        CrisisAuditing crisisAuditing = crisisDAO.findById(crisisid);
         crisisDAO.deleteCrisisAuditing(crisisid);
     }
 

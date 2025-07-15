@@ -1,7 +1,6 @@
 package org.example.rgybackend.Repository;
 
 import org.example.rgybackend.Entity.NotificationPrivate;
-import org.example.rgybackend.Model.NotificationSentModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,8 +15,6 @@ public interface NotificationPrivateRepository extends JpaRepository<Notificatio
 
     @Query("SELECT n FROM NotificationPrivate n WHERE n.userid = :userid AND n.type >= 1000")
     List<NotificationPrivate> findPublicByUserid(String userid);
-
-
 
     List<NotificationPrivate> findByAdminid(String adminid);
 }

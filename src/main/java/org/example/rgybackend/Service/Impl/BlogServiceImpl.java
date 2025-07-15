@@ -53,8 +53,8 @@ public class BlogServiceImpl implements BlogService {
     private MilestoneServive milestoneServive;
 
     @Override
-    public void addBlog(String title, String content, List<String> tags, SimplifiedProfileModel author) {
-        milestoneServive.addMilestone(author.getUserid(), 2L);
+    public void addBlog(String title, String content, List<String> tags, String author) {
+        milestoneServive.addMilestone(author, 2L);
         
         Long justify = bertModel.justify(content);
 
@@ -507,7 +507,6 @@ public class BlogServiceImpl implements BlogService {
             replyModel.setContent(reply.getContent());
             replyModels.add(replyModel);
         }
-        int total = replyModels.size();
         replyModels.sort(Comparator.comparing(ReplyModel::getTimestamp).reversed());
         int start = (currentPage - 1) * pageSize;
         int end = start + pageSize;
