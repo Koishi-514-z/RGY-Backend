@@ -18,7 +18,7 @@ public class SimplifiedBlogModel {
     private String title;
     private String content;
     private List<String> tags;
-    private List<ReplyModel> replies;
+    private List<SimplifiedReplyModel> replies;
     private int emotion;
     private Long lastreply;
     private Long browsenum;

@@ -357,6 +357,13 @@ public class BlogServiceImpl implements BlogService {
             blogModel.setTags(Arrays.asList(blog.getTags().split(",")));
             blogModel.setUser(userService.getProfileTag(blog.getUserid()));
             blogModel.setEmotion(blog.getEmotion());
+            List<Reply> replies = blogDAO.getRepliesByBlogid(blog.getBlogid());
+            List<SimplifiedReplyModel> replyModels = new ArrayList<>(replies.size());
+            for (Reply reply : replies) {
+                if (reply.getValid() == 0) continue;
+                replyModels.add(null);
+            }
+            blogModel.setReplies(replyModels);
             blogs.add(blogModel);
         }
         return blogs;
@@ -377,6 +384,7 @@ public class BlogServiceImpl implements BlogService {
         }
         return blogs;
     }
+
     @Override
     public SimplifiedBlogModel getSimplifiedBlogById(Long blogid) {
         Blog blog = blogDAO.getBlogById(blogid);
@@ -390,7 +398,13 @@ public class BlogServiceImpl implements BlogService {
         blogModel.setValid(blog.getValid());
         blogModel.setBrowsenum(blog.getBrowsenum());
         blogModel.setTags(Arrays.asList(blog.getTags().split(",")));
-        //获得blog的reply
+        List<Reply> replies = blogDAO.getRepliesByBlogid(blog.getBlogid());
+        List<SimplifiedReplyModel> replyModels = new ArrayList<>(replies.size());
+        for (Reply reply : replies) {
+            if (reply.getValid() == 0) continue;
+            replyModels.add(null);
+        }
+        blogModel.setReplies(replyModels);
         blogModel.setEmotion(blog.getEmotion());
         return blogModel;
 

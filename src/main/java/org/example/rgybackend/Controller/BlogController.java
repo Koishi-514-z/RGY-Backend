@@ -22,11 +22,9 @@ import com.alibaba.fastjson2.JSONObject;
 @RestController
 @RequestMapping("/api/blogs")
 public class BlogController {
-
-
-
     @Autowired
     private BlogService blogService;
+
     @Autowired
     private UserService userService;
 
@@ -58,7 +56,6 @@ public class BlogController {
     @GetMapping("/getcomment")
     public List<SimplifiedBlogModel> getCommentBlogs(@RequestParam String userid) {
         List<SimplifiedBlogModel> result = new ArrayList<>();
-//        String userid = (String)session.getAttribute("user");
         result = blogService.getBlogRepliedByUserid(userid);
         return result;
     }
