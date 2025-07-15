@@ -109,4 +109,29 @@ public class NotificationUtil {
         "low"
     );
 
+    public final static NotificationPrivateModel callBackNotifyForUser = new NotificationPrivateModel(
+        null,
+        450L,
+        null,
+        null,
+        "心理咨询师主动关怀",
+        "我们注意到您最近与AI助手进行了较长时间的交流，为了给您提供更专业的帮助，已为您安排心理咨询师主动回访。\n\n回访安排：\n• 专业咨询师将在24小时内联系您\n• 提供更深入的心理支持和建议\n• 完全免费，无需额外操作\n\n如果您暂时不需要回访，可以在设置中关闭此功能。\n\n我们始终关心您的心理健康！",
+        TimeUtil.now(),
+        1L,
+        "medium"
+    );
+
+    public static NotificationPrivateModel getCallBackNotifyForPsy(String userid) {
+        return new NotificationPrivateModel(
+            null,
+            451L,
+            null,
+            null,
+            "系统分配主动回访任务",
+            "系统检测到用户 " + userid + " 与AI助手交流时间超过1小时，现为您分配主动回访任务。\n\n用户情况：\n• 用户ID：" + userid + "\n• AI交流时长：超过1小时\n• 建议关注：情绪状态和心理需求\n• 回访方式：电话或在线咨询\n\n任务要求：\n• 请在24小时内联系该用户\n• 提供专业的心理支持和建议\n• 评估是否需要进一步干预\n\n如有疑问，请联系系统管理员。\n感谢您的专业服务！",
+            TimeUtil.now(),
+            1L,
+            "medium"
+        );
+    }
 }

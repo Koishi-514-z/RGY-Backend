@@ -29,4 +29,6 @@ public interface CounselingService {
     boolean setAvailableTimes(AvailableTimeModel availableTimeModel);
 
     List<TagModel> getTypeTags();
+
+    boolean placeCallBackRequest(String userid);
 }

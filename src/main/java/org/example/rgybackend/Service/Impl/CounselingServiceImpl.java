@@ -5,12 +5,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.example.rgybackend.DAO.AvailableDAO;
 import org.example.rgybackend.DAO.CounselingDAO;
 import org.example.rgybackend.DAO.NotificationPrivateDAO;
 import org.example.rgybackend.DAO.PsyExtraDAO;
 import org.example.rgybackend.DAO.UserDAO;
+import org.example.rgybackend.DTO.ProfileTag;
 import org.example.rgybackend.DTO.PsyCommentData;
 import org.example.rgybackend.Entity.Counseling;
 import org.example.rgybackend.Model.AvailableTimeModel;
@@ -184,5 +186,24 @@ public class CounselingServiceImpl implements CounselingService {
     @Override
     public List<TagModel> getTypeTags() {
         return new CounselingModel().typeTags;
+    }
+
+    @Override
+    public boolean placeCallBackRequest(String userid) {
+        NotificationPrivateModel notificationForUser = new NotificationPrivateModel(NotificationUtil.callBackNotifyForUser);
+        notificationForUser.setAdminid("System");
+        notificationForUser.setUserid(userid);
+        notificationPrivateDAO.addNotification(notificationForUser);
+
+        List<ProfileTag> psyProfileTags = userDAO.getPsyProfileTags();
+        Random random = new Random();
+        final int psyIndex = random.nextInt(psyProfileTags.size());
+
+        NotificationPrivateModel notificationForPsy = NotificationUtil.getCallBackNotifyForPsy(userid);
+        notificationForPsy.setAdminid("System");
+        notificationForPsy.setUserid(psyProfileTags.get(psyIndex).getUserid());
+        notificationPrivateDAO.addNotification(notificationForPsy);
+
+        return true;
     }
 }
