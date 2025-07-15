@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.example.rgybackend.DTO.IntimateDTO;
 import org.example.rgybackend.Model.*;
+import org.example.rgybackend.Service.MilestoneServive;
 import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.ForbiddenException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ import jakarta.servlet.http.HttpSession;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MilestoneServive milestoneServive;
 
     @GetMapping("/login")
     public boolean login(@RequestParam String username, @RequestParam String password, HttpSession session) {
@@ -76,6 +80,12 @@ public class UserController {
         return userService.getIntimateUsers(userid);
     }
 
+    @GetMapping("/milestone")
+    public MilestoneModel getMilestone(HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return milestoneServive.getMilestone(userid);
+    }
+
     @GetMapping("/verify/pwd")
     public boolean verifyPassword(@RequestParam String password, HttpSession session) {
         String userid = (String)session.getAttribute("user");
@@ -93,7 +103,11 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public boolean addUser(@RequestBody UserModel user) {
+    public boolean addUser(@RequestBody UserModel user, HttpSession session) {
+        String email = (String)session.getAttribute("check");
+        if(!user.getProfile().getEmail().equals(email)) {
+            return false;
+        }
         return userService.addUser(user);
     }
 
@@ -128,5 +142,23 @@ public class UserController {
             throw new ForbiddenException("只有管理员允许进行此操作");
         }
         return userService.setDisabled(userid, disabled);
+    }
+
+    @GetMapping("/secure/code")
+    public boolean postAuthCode(@RequestParam String email, HttpSession session) {
+        boolean result = userService.postAuthCode(email);
+        if(result) {
+            session.setAttribute("check", email);
+        }
+        return result;
+    }
+
+    @GetMapping("/secure/check")
+    public boolean checkAuthCode(@RequestParam Long authCode, HttpSession session) {
+        String email = (String)session.getAttribute("check");
+        if(email == null) {
+            return false;
+        }
+        return userService.checkAuthCode(email, authCode);
     }
 }

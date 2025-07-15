@@ -3,6 +3,7 @@ package org.example.rgybackend.Controller;
 import java.util.List;
 
 import org.example.rgybackend.DTO.EmotionData;
+import org.example.rgybackend.DTO.EmotionRecord;
 import org.example.rgybackend.DTO.StringDTO;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionModel;
@@ -34,6 +35,18 @@ public class EmotionController {
     public EmotionModel getEmotion(HttpSession session) {
         String userid = (String)session.getAttribute("user");
         return emotionService.getEmotion(userid);
+    }
+
+    @GetMapping("/record/getnum")
+    public Long getRecordNum(HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return emotionService.getRecordNum(userid);
+    }
+
+    @GetMapping("/record/get")
+    public List<EmotionRecord> getHistoryRecords(@RequestParam Long pageIndex, @RequestParam Long pageSize, HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return emotionService.getHistoryRecords(pageIndex, pageSize, userid);
     }
 
     @GetMapping("/tag/getall")

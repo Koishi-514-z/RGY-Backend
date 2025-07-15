@@ -44,4 +44,8 @@ public interface UserService {
     boolean setDisabled(String userid, boolean disabled);
 
     ProfileTag getProfileTag(String userid);
+  
+    boolean postAuthCode(String email);
+
+    boolean checkAuthCode(String email, Long authCode);
 }

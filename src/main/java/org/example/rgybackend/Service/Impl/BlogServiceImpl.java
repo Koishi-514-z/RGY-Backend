@@ -12,6 +12,7 @@ import org.example.rgybackend.Entity.Reply;
 import org.example.rgybackend.Model.*;
 import org.example.rgybackend.Service.BlogService;
 import org.example.rgybackend.Service.UserService;
+import org.example.rgybackend.Service.MilestoneServive;
 import org.example.rgybackend.Utils.BERTModel;
 import org.example.rgybackend.Utils.CacheUtil;
 import org.example.rgybackend.Utils.NotificationUtil;
@@ -48,11 +49,14 @@ public class BlogServiceImpl implements BlogService {
     @Autowired
     private CacheUtil cacheUtil;
 
+    @Autowired
+    private MilestoneServive milestoneServive;
+
     @Override
-    public void addBlog(String title, String content, List<String> tags, String author) {
+    public void addBlog(String title, String content, List<String> tags, SimplifiedProfileModel author) {
+        milestoneServive.addMilestone(author.getUserid(), 2L);
+        
         Long justify = bertModel.justify(content);
-        //Long justify = 0L;
-        System.out.println(justify);
 
         if(justify == 1) {
             NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);
@@ -62,7 +66,7 @@ public class BlogServiceImpl implements BlogService {
         }
 
         else if(justify >= 2) {
-            if(justify >= 3) {
+            if(justify >= 4) {
                 NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
                 notification.setAdminid("System");
                 notification.setUserid(author);
@@ -118,7 +122,7 @@ public class BlogServiceImpl implements BlogService {
         }
 
         else if(justify >= 2) {
-            if(justify >= 3) {
+            if(justify >= 4) {
                 NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
                 notification.setAdminid("System");
                 notification.setUserid(author);
@@ -318,6 +322,8 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public void likeBlog(Long blogid, String userid) {
         String touserid = getBlogById(blogid).getUser().getUserid();
+
+        milestoneServive.addMilestone(touserid, 3L);
 
         cacheUtil.evictIntimateUsersCache(userid);
         cacheUtil.evictIntimateUsersCache(touserid);

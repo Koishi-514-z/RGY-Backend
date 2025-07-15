@@ -5,12 +5,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.example.rgybackend.DAO.AvailableDAO;
 import org.example.rgybackend.DAO.CounselingDAO;
 import org.example.rgybackend.DAO.NotificationPrivateDAO;
 import org.example.rgybackend.DAO.PsyExtraDAO;
 import org.example.rgybackend.DAO.UserDAO;
+import org.example.rgybackend.DTO.ProfileTag;
 import org.example.rgybackend.DTO.PsyCommentData;
 import org.example.rgybackend.Entity.Counseling;
 import org.example.rgybackend.Model.AvailableTimeModel;
@@ -18,6 +20,7 @@ import org.example.rgybackend.Model.CounselingModel;
 import org.example.rgybackend.Model.NotificationPrivateModel;
 import org.example.rgybackend.Model.TagModel;
 import org.example.rgybackend.Service.CounselingService;
+import org.example.rgybackend.Service.MilestoneServive;
 import org.example.rgybackend.Utils.CacheUtil;
 import org.example.rgybackend.Utils.NotificationUtil;
 import org.example.rgybackend.Utils.TimeUtil;
@@ -45,6 +48,9 @@ public class CounselingServiceImpl implements CounselingService {
     @Autowired
     private CacheUtil cacheUtil;
 
+    @Autowired
+    private MilestoneServive milestoneServive;
+
     @Override
     public List<CounselingModel> getCounseling(String psyid) {
         return counselingDAO.getCounseling(psyid);
@@ -63,6 +69,8 @@ public class CounselingServiceImpl implements CounselingService {
 
     @Override
     public boolean addCounseling(CounselingModel counselingModel, String userid) {
+        milestoneServive.addMilestone(userid, 6L);
+
         NotificationPrivateModel notificationForUser = new NotificationPrivateModel(NotificationUtil.counselingNew);
         notificationForUser.setAdminid("System");
         notificationForUser.setUserid(userid);
@@ -114,7 +122,6 @@ public class CounselingServiceImpl implements CounselingService {
                 notification.setUserid(counseling.getUserid());
                 notificationPrivateDAO.addNotification(notification);
             }
-            counselingDAO.removeCounseling(counselingid);
         }
         return counselingDAO.setStatus(counselingid, status);
     }
@@ -160,6 +167,9 @@ public class CounselingServiceImpl implements CounselingService {
 
         for(Long slot : workingslots) {
             LocalDateTime ldt = TimeUtil.getLocalDateTime(date, slot);
+            if(TimeUtil.getTimestamp(ldt) < TimeUtil.now()) {
+                continue;
+            }
             boolean counseled = counselingDAO.counseled(psyid, TimeUtil.getTimestamp(ldt));
             if(!counseled) {
                 dateAvailables.add(slot);
@@ -176,5 +186,24 @@ public class CounselingServiceImpl implements CounselingService {
     @Override
     public List<TagModel> getTypeTags() {
         return new CounselingModel().typeTags;
+    }
+
+    @Override
+    public boolean placeCallBackRequest(String userid) {
+        NotificationPrivateModel notificationForUser = new NotificationPrivateModel(NotificationUtil.callBackNotifyForUser);
+        notificationForUser.setAdminid("System");
+        notificationForUser.setUserid(userid);
+        notificationPrivateDAO.addNotification(notificationForUser);
+
+        List<ProfileTag> psyProfileTags = userDAO.getPsyProfileTags();
+        Random random = new Random();
+        final int psyIndex = random.nextInt(psyProfileTags.size());
+
+        NotificationPrivateModel notificationForPsy = NotificationUtil.getCallBackNotifyForPsy(userid);
+        notificationForPsy.setAdminid("System");
+        notificationForPsy.setUserid(psyProfileTags.get(psyIndex).getUserid());
+        notificationPrivateDAO.addNotification(notificationForPsy);
+
+        return true;
     }
 }

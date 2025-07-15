@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.example.rgybackend.DAO.CrisisAuditingDAO;
 import org.example.rgybackend.DAO.DiaryDAO;
@@ -12,6 +13,7 @@ import org.example.rgybackend.DAO.EmotionDAO;
 import org.example.rgybackend.DAO.NotificationPrivateDAO;
 import org.example.rgybackend.DTO.DiaryLabelData;
 import org.example.rgybackend.DTO.EmotionData;
+import org.example.rgybackend.DTO.EmotionRecord;
 import org.example.rgybackend.DTO.MoodData;
 import org.example.rgybackend.DTO.TimeData;
 import org.example.rgybackend.Model.CrisisAuditingModel;
@@ -22,6 +24,7 @@ import org.example.rgybackend.Model.NotificationPrivateModel;
 import org.example.rgybackend.Model.TagModel;
 import org.example.rgybackend.Model.UrlDataModel;
 import org.example.rgybackend.Service.EmotionService;
+import org.example.rgybackend.Service.MilestoneServive;
 import org.example.rgybackend.Utils.BERTModel;
 import org.example.rgybackend.Utils.CacheUtil;
 import org.example.rgybackend.Utils.ModelResponse;
@@ -49,6 +52,9 @@ public class EmotionServiceImpl implements EmotionService {
 
     @Autowired
     private CacheUtil cacheUtil;
+
+    @Autowired
+    private MilestoneServive milestoneServive;
 
     // 获取某一星期内的情绪数据
     @Override
@@ -82,8 +88,11 @@ public class EmotionServiceImpl implements EmotionService {
     public boolean setEmotion(EmotionModel emotionModel) {
         LocalDate today = TimeUtil.today();
         LocalDate firstDayOfWeek = TimeUtil.firstDayOfWeek();
+
         cacheUtil.evictEmotionsCache(emotionModel.getUserid(), firstDayOfWeek);
         cacheUtil.evictAllEmotionsCache(today);
+        cacheUtil.evictEmotionRecordsCache(emotionModel.getUserid(), firstDayOfWeek);
+
         emotionModel.setTimestamp(TimeUtil.now());
         return emotionDAO.setEmotion(emotionModel);
     }
@@ -160,12 +169,12 @@ public class EmotionServiceImpl implements EmotionService {
             notificationPrivateDAO.addNotification(notification);
         }
 
-        else if(justify == 2) {
-            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, userid, content, TimeUtil.now(),0L, 2L, 0L);
+        else if(justify == 2 || justify == 3) {
+            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, userid, content, TimeUtil.now(),0L, 2L, justify - 2);
             crisisAuditingDAO.addCrisis(crisisAuditingModel);
         }
 
-        else if(justify >= 3) {
+        else if(justify >= 4) {
             NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
             notification.setAdminid("System");
             notification.setUserid(userid);
@@ -176,6 +185,7 @@ public class EmotionServiceImpl implements EmotionService {
 
         LocalDate firstDayOfWeek = TimeUtil.firstDayOfWeek();
         cacheUtil.evictDiariesCache(userid, firstDayOfWeek);
+        cacheUtil.evictEmotionRecordsCache(userid, firstDayOfWeek);
 
         DiaryModel diaryModel = new DiaryModel(userid, TimeUtil.now(), emotionResponse.getPredicted_class(), content);
         return diaryDAO.setDiary(diaryModel);
@@ -235,6 +245,7 @@ public class EmotionServiceImpl implements EmotionService {
         LocalDate prevWeek = today.minusDays(7);
         List<DiaryLabelData> diaryLabelDatas = this.scanUserDiaryLabels(userid, prevWeek, today);
         List<EmotionDataModel> emotionDatas = this.scanUserEmotionDatas(userid, prevWeek, today);
+        boolean positive = true;
 
         final double labelRate[] = {-2.0, 0.0, 4.0};
         final double scoreRate[] = {6.0, 3.0, 0.0, -1.0, -3.0}; 
@@ -250,6 +261,7 @@ public class EmotionServiceImpl implements EmotionService {
             else if(date.compareTo(prevThreeDay) >= 0) timeClass = 1;
             else timeClass = 2;
             negativeRate += timeWeight[timeClass] * labelRate[label];
+            positive = positive && (label == 0);
         }
 
         for(EmotionDataModel emotionDataModel : emotionDatas) {
@@ -260,6 +272,11 @@ public class EmotionServiceImpl implements EmotionService {
             else if(date.compareTo(prevWeek) >= 0) timeClass = 1;
             else timeClass = 2;
             negativeRate += timeWeight[timeClass] * scoreRate[score];
+            positive = positive && (score >= 4);
+        }
+
+        if(positive && diaryLabelDatas.size() >= 5 && emotionDatas.size() >= 5) {
+            milestoneServive.addMilestone(userid, 4L);
         }
 
         if(negativeRate > boundary[1]) {
@@ -358,5 +375,71 @@ public class EmotionServiceImpl implements EmotionService {
         }
 
         return emotionData;
+    }
+
+    @Override
+    public List<EmotionRecord> getRecordsByWeek(String userid, LocalDate date) {
+        LocalDate weekDate = TimeUtil.firstDayOfWeek(date);
+
+        List<EmotionRecord> cachedRecords = cacheUtil.getEmotionRecordsFromCache(userid, weekDate);
+        if(cachedRecords != null) {
+            return cachedRecords;
+        }
+
+        List<EmotionModel> emotionModels = this.getUserEmotionByWeek(userid, weekDate);
+        List<DiaryModel>  diaryModels = this.getUserDiariesByWeek(userid, weekDate);
+        List<EmotionRecord> emotionRecords = new ArrayList<>();
+
+        for(int i = 0; i < 7; ++i) {
+            final LocalDate currentDate = weekDate.plusDays(i);
+            Optional<EmotionModel> emotionOptional = emotionModels.stream()
+                    .filter(e -> TimeUtil.getLocalDate(e.getTimestamp()).equals(currentDate))
+                    .findFirst();
+            Optional<DiaryModel> diaryOptional = diaryModels.stream()
+                    .filter(d -> TimeUtil.getLocalDate(d.getTimestamp()).equals(currentDate))
+                    .findFirst();
+            EmotionRecord emotionRecord = EmotionRecord.getEmotionRecord(emotionOptional, diaryOptional, currentDate);
+            if(emotionRecord != null) {
+                emotionRecords.add(emotionRecord);
+            }
+        }
+
+        cacheUtil.putEmotionRecordsToCache(userid, weekDate, emotionRecords);
+
+        return emotionRecords;
+    }
+
+    @Override
+    public Long getRecordNum(String userid) {
+        LocalDate startDate = TimeUtil.firstDayOfWeek();
+        LocalDate endDate = startDate.minusDays(7 * 52 * 3);  
+        List<EmotionRecord> emotionRecords = new ArrayList<>();
+
+        for(LocalDate weekDate = startDate; weekDate.compareTo(endDate) > 0; weekDate = weekDate.minusDays(7)) {
+            emotionRecords.addAll(this.getRecordsByWeek(userid, weekDate));
+        }
+
+        return Long.valueOf(emotionRecords.size());
+    }
+
+    @Override
+    public List<EmotionRecord> getHistoryRecords(Long pageIndex, Long pageSize, String userid) {
+        Long total = pageSize * (pageIndex + 1);
+        LocalDate startDate = TimeUtil.firstDayOfWeek();
+        LocalDate endDate = startDate.minusDays(7 * 52 * 3);
+        List<EmotionRecord> emotionRecords = new ArrayList<>();
+        List<EmotionRecord> resultList = new ArrayList<>();
+
+        for(LocalDate weekDate = startDate; weekDate.compareTo(endDate) > 0 && emotionRecords.size() < total; weekDate = weekDate.minusDays(7)) {
+            emotionRecords.addAll(this.getRecordsByWeek(userid, weekDate));
+        }
+        
+        emotionRecords.sort((e1, e2) -> e2.getTimestamp().compareTo(e1.getTimestamp()));
+
+        for(Long i = pageSize * pageIndex; i < Math.min(total, emotionRecords.size()); ++i) {
+            resultList.add(emotionRecords.get(i.intValue()));
+        }
+
+        return resultList;
     }
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.example.rgybackend.DAO.ChatDAO;
-import org.example.rgybackend.DAO.UserDAO;
 import org.example.rgybackend.DTO.SessionTagDTO;
 import org.example.rgybackend.Entity.Message;
 import org.example.rgybackend.Entity.Session;
@@ -12,6 +11,8 @@ import org.example.rgybackend.Model.MessageModel;
 import org.example.rgybackend.Model.SessionModel;
 import org.example.rgybackend.Model.SessionTagModel;
 import org.example.rgybackend.Service.ChatService;
+import org.example.rgybackend.Service.MilestoneServive;
+import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.SocketMessage;
 import org.example.rgybackend.Utils.Notification;
 import org.example.rgybackend.Utils.TimeUtil;
@@ -24,10 +25,13 @@ public class ChatServiceImpl implements ChatService {
     private ChatDAO chatDAO;
 
     @Autowired
-    private UserDAO userDAO;
+    private UserService userService;
 
     @Autowired
     private Notification notification;
+
+    @Autowired
+    private MilestoneServive milestoneServive;
 
     @Override
     public SessionModel getSession(String fromuserid, Long sessionid) {
@@ -52,13 +56,13 @@ public class ChatServiceImpl implements ChatService {
         sessionModel.setMessages(messageModels);
 
         if(fromuserid.equals(session.getUserAid())) {
-            sessionModel.setMyself(userDAO.getSimplified(session.getUserAid()));
-            sessionModel.setOther(userDAO.getSimplified(session.getUserBid()));
+            sessionModel.setMyself(userService.getSimplifiedProfile(session.getUserAid()));
+            sessionModel.setOther(userService.getSimplifiedProfile(session.getUserBid()));
             sessionModel.setUnread(session.getUnreadA());
         }
         else if(fromuserid.equals(session.getUserBid())) {
-            sessionModel.setMyself(userDAO.getSimplified(session.getUserBid()));
-            sessionModel.setOther(userDAO.getSimplified(session.getUserAid()));
+            sessionModel.setMyself(userService.getSimplifiedProfile(session.getUserBid()));
+            sessionModel.setOther(userService.getSimplifiedProfile(session.getUserAid()));
             sessionModel.setUnread(session.getUnreadB());
         }
         else {
@@ -79,13 +83,13 @@ public class ChatServiceImpl implements ChatService {
             sessionTagModel.setTimestamp(sessionTagDTO.getTimestamp());
 
             if(fromuserid.equals(sessionTagDTO.getUserAid())) {
-                sessionTagModel.setMyself(userDAO.getSimplified(sessionTagDTO.getUserAid()));
-                sessionTagModel.setOther(userDAO.getSimplified(sessionTagDTO.getUserBid()));
+                sessionTagModel.setMyself(userService.getSimplifiedProfile(sessionTagDTO.getUserAid()));
+                sessionTagModel.setOther(userService.getSimplifiedProfile(sessionTagDTO.getUserBid()));
                 sessionTagModel.setUnread(sessionTagDTO.getUnreadA());
             }
             else if(fromuserid.equals(sessionTagDTO.getUserBid())){
-                sessionTagModel.setMyself(userDAO.getSimplified(sessionTagDTO.getUserBid()));
-                sessionTagModel.setOther(userDAO.getSimplified(sessionTagDTO.getUserAid()));
+                sessionTagModel.setMyself(userService.getSimplifiedProfile(sessionTagDTO.getUserBid()));
+                sessionTagModel.setOther(userService.getSimplifiedProfile(sessionTagDTO.getUserAid()));
                 sessionTagModel.setUnread(sessionTagDTO.getUnreadB());
             }
             else {
@@ -108,6 +112,8 @@ public class ChatServiceImpl implements ChatService {
         Message message = new Message();
         Session session = chatDAO.getById(sessionid);
         String touserid = session.getUserAid().equals(fromuserid) ? session.getUserBid() : session.getUserAid();
+
+        milestoneServive.addMilestone(fromuserid, 5L);
 
         message.setSessionid(sessionid);
         message.setFromuserid(fromuserid);

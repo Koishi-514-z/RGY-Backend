@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.example.rgybackend.DTO.DiaryLabelData;
 import org.example.rgybackend.DTO.EmotionData;
+import org.example.rgybackend.DTO.EmotionRecord;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionDataModel;
 import org.example.rgybackend.Model.EmotionModel;
@@ -45,4 +46,11 @@ public interface EmotionService {
     List<EmotionModel> getAllEmotionsByDate(LocalDate date);
 
     EmotionData scanEmotionData(Long start, Long end, Long interval);
+
+
+    List<EmotionRecord> getRecordsByWeek(String userid, LocalDate date);
+
+    Long getRecordNum(String userid);
+
+    List<EmotionRecord> getHistoryRecords(Long pageIndex, Long pageSize, String userid);
 }

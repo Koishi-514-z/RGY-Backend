@@ -101,4 +101,10 @@ public class CounselingController {
         availableTimeModel.setPsyid(psyid);
         return counselingService.setAvailableTimes(availableTimeModel);
     }
+
+    @PostMapping("/callback")
+    public boolean placeCallBackRequest(HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return counselingService.placeCallBackRequest(userid);
+    }
 }

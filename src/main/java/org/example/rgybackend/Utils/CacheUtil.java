@@ -3,6 +3,7 @@ package org.example.rgybackend.Utils;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.example.rgybackend.DTO.EmotionRecord;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionModel;
 import org.example.rgybackend.Model.ProfileModel;
@@ -121,6 +122,32 @@ public class CacheUtil {
             Cache.ValueWrapper wrapper = cache.get(userid + "_" + date);
             if(wrapper != null) {
                 return (List<DiaryModel>) wrapper.get();
+            }
+        }
+        return null;
+    }
+
+    public void putEmotionRecordsToCache(String userid, LocalDate date, List<EmotionRecord> emotions) {
+        Cache cache = cacheManager.getCache("emotionRecords");
+        if(cache != null) {
+            cache.put(userid + "_" + date, emotions);
+        }
+    }
+
+    public void evictEmotionRecordsCache(String userid, LocalDate date) {
+        Cache cache = cacheManager.getCache("emotionRecords");
+        if(cache != null) {
+            cache.evict(userid + "_" + date);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<EmotionRecord> getEmotionRecordsFromCache(String userid, LocalDate date) {
+        Cache cache = cacheManager.getCache("emotionRecords");
+        if(cache != null) {
+            Cache.ValueWrapper wrapper = cache.get(userid + "_" + date);
+            if(wrapper != null) {
+                return (List<EmotionRecord>) wrapper.get();
             }
         }
         return null;

@@ -24,7 +24,9 @@ public class WebConfig implements WebMvcConfigurer {
                 "/api/user/add",    
                 "/api/user/verify/pwd",
                 "/api/user/verify/admin",
-                "/api/user/disabled/get"
+                "/api/user/disabled/get",
+                "/api/user/secure/check",
+                "/api/user/secure/code"
             ); 
     }
 

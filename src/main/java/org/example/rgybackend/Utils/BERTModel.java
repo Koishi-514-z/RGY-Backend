@@ -42,7 +42,7 @@ public class BERTModel {
             return 1L;
         }
 
-        if(crisisResponse.getPredicted_class() == 2 && (crisisResponse.getConfidence() > 0.9 && crisisResponse.getConfidence() < 0.99)) {
+        if(crisisResponse.getPredicted_class() == 2 && (crisisResponse.getConfidence() > 0.6 && crisisResponse.getConfidence() < 0.99)) {
             return 2L;
         }
 
