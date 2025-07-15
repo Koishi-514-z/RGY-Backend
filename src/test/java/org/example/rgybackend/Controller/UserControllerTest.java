@@ -1,14 +1,18 @@
 package org.example.rgybackend.Controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.apache.hc.client5.http.cookie.BasicCookieStore;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.example.rgybackend.DTO.IntimateDTO;
 import org.example.rgybackend.Model.AdminProfileModel;
 import org.example.rgybackend.Model.MilestoneModel;
@@ -16,6 +20,7 @@ import org.example.rgybackend.Model.ProfileModel;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerTest {
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -32,6 +37,19 @@ class UserControllerTest {
     private static final String TEST_DISABLED_PASSWORD = "123456";
     private static final String TEST_DISABLED_ID = "TEST_USER_DISABLED_1752566178965";
     private static final String CORRECT_KEY = "0xFFFFFFFF";
+
+   @BeforeEach
+   void setUp() {
+       BasicCookieStore cookieStore = new BasicCookieStore();
+       HttpComponentsClientHttpRequestFactory factory =
+           new HttpComponentsClientHttpRequestFactory(
+               HttpClients.custom()
+                   .setDefaultCookieStore(cookieStore)
+                   .build()
+           );
+
+       this.restTemplate.getRestTemplate().setRequestFactory(factory);
+   }
 
     void userLogin() {
         restTemplate.getForObject("/api/user/login?username=" + TEST_USERNAME + "&password=" + TEST_PASSWORD, Boolean.class);
@@ -69,7 +87,7 @@ class UserControllerTest {
         boolean result = restTemplate.getForObject("/api/user/logout", Boolean.class);
         assertTrue(result, "Logout should be successful");
         
-        ResponseEntity<ProfileModel> response = restTemplate.getForEntity("/profile/get", ProfileModel.class);
+        ResponseEntity<ProfileModel> response = restTemplate.getForEntity("/api/user/get", ProfileModel.class);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Profile retrieval should fail after logout");
     }
 
@@ -87,12 +105,12 @@ class UserControllerTest {
 
     @Test
     void getUserProfile() {
-        ResponseEntity<ProfileModel> response = restTemplate.getForEntity("/profile/get", ProfileModel.class);
+        ResponseEntity<ProfileModel> response = restTemplate.getForEntity("/api/user/get", ProfileModel.class);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode(), "Profile retrieval should fail without login");
 
         userLogin();
 
-        response = restTemplate.getForEntity("/profile/get", ProfileModel.class);
+        response = restTemplate.getForEntity("/api/user/get", ProfileModel.class);
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Profile retrieval should be successful after login");
         ProfileModel profile = response.getBody();
         assertNotNull(profile, "Profile should not be null for an existing user");
