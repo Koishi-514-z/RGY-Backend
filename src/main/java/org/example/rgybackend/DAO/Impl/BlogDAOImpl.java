@@ -41,7 +41,7 @@ public class BlogDAOImpl implements BlogDAO {
         blogRepository.save(new Blog(blogModel,valid));
         SocketMessage sockMessage = new SocketMessage("System", blogModel.getBlogid(), "System", null, blogModel.getTimestamp(), blogModel.getContent());
         socket.pushBlogToAllClients(sockMessage);
-        return blogRepository.findByTimestampAndUserid(blogModel.getTimestamp(),blogModel.getUser().getUserid());
+        return blogRepository.findByTimestampAndUserid(blogModel.getTimestamp(),blogModel.getUserid());
     }
 
     @Override
@@ -159,6 +159,19 @@ public class BlogDAOImpl implements BlogDAO {
         Blog blog = blogRepository.findById(blogid).get();
         Illegal illegal = new Illegal(0,blogid,blog.getUserid(),System.currentTimeMillis(),reason,0);
         illegalRepository.save(illegal);
+    }
+
+    @Override
+    public void addBlockingRecord(Long contentid, String reason,int type){
+        if(type == 0){
+            Blog blog = blogRepository.findById(contentid).get();
+            Illegal illegal = new Illegal(0,blog.getBlogid(),blog.getUserid(),System.currentTimeMillis(),reason,1);
+            illegalRepository.save(illegal);
+        }else if(type == 1){
+            Reply reply = replyRepository.findById(contentid).get();
+            Illegal illegal = new Illegal(1,reply.getReplyid(),reply.getFromuserid(),System.currentTimeMillis(),reason,1);
+            illegalRepository.save(illegal);
+        }
     }
 
     @Override

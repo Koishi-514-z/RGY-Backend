@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson2.JSONObject;
 import org.example.rgybackend.Model.NotificationPrivateModel;
+import org.example.rgybackend.Model.NotificationSentModel;
 import org.example.rgybackend.Service.NotificationService;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,11 @@ public class NotificationController {
         return notificationService.getPrivateNotification(userid);
     }
 
+    @GetMapping("/getmine")
+    public List<NotificationSentModel> getPrivateNotificationMine(HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        return notificationService.getPrivateNotificationMine(userid);
+    }
     @PutMapping("/private/add")
     public boolean addPrivateNotification(@RequestBody NotificationPrivateModel notification, HttpSession session) {
         String adminid = (String)session.getAttribute("user");
@@ -45,6 +51,7 @@ public class NotificationController {
         Long timestamp = TimeUtil.now();
         JSONObject json = JSONObject.parseObject(params);
         List<String> users = json.getJSONArray("users").toJavaList(String.class);
+        System.out.println(users);
         Long type = json.getLong("type");
         String title = json.getString("title");
         String content = json.getString("content");

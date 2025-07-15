@@ -121,4 +121,9 @@ public class UserDAOImpl implements UserDAO {
         return userRepository.findPsyTags();
     }
 
+    @Override
+    public String getUsername(String userid) {
+        return userRepository.getUsername(userid);
+    }
+
 }

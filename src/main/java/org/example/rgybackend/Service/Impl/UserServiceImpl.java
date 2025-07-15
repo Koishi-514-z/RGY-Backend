@@ -355,6 +355,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ProfileTag getProfileTag(String userid){
+        ProfileTag profileTag = new ProfileTag();
+        profileTag.setUserid(userid);
+        profileTag.setUsername(userDAO.getUsername(userid));
+        return profileTag;
+    }
+
+    @Override
     public boolean postAuthCode(String email) {
         Long authCode = AuthCodeManager.addAuthCode(email);
         if(authCode == null) {
@@ -374,5 +382,4 @@ public class UserServiceImpl implements UserService {
     public boolean checkAuthCode(String email, Long authCode) {
         return AuthCodeManager.checkAuthCode(email, authCode);
     }
-
 }

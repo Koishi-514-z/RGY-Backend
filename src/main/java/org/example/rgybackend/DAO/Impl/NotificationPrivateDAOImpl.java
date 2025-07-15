@@ -1,12 +1,11 @@
 package org.example.rgybackend.DAO.Impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.example.rgybackend.DAO.NotificationPrivateDAO;
 import org.example.rgybackend.Entity.NotificationPrivate;
 import org.example.rgybackend.Model.NotificationPrivateModel;
+import org.example.rgybackend.Model.NotificationSentModel;
 import org.example.rgybackend.Repository.NotificationPrivateRepository;
 import org.example.rgybackend.Utils.NotExistException;
 import org.example.rgybackend.Utils.Notification;
@@ -79,5 +78,25 @@ public class NotificationPrivateDAOImpl implements NotificationPrivateDAO {
     public boolean deleteNotification(Long notificationid) {
         notificationPrivateRepository.deleteById(notificationid);
         return true;
+    }
+
+    @Override
+    public List<NotificationSentModel> getNotificationSent(String userid) {
+        List<NotificationPrivate> notificationPrivates = notificationPrivateRepository.findByAdminid(userid);
+        Map<Long, NotificationSentModel> notificationSentMap = new HashMap<>();
+        for(NotificationPrivate notificationPrivate : notificationPrivates) {
+            NotificationSentModel notificationSentModel = notificationSentMap.get(notificationPrivate.getTimestamp());
+            if(notificationSentModel == null) {
+                notificationSentModel = new NotificationSentModel(notificationPrivate.getType(),notificationPrivate.getAdminid(), notificationPrivate.getTitle(), notificationPrivate.getContent(),  notificationPrivate.getTimestamp(),1L,notificationPrivate.getPriority());
+                notificationSentMap.put(notificationPrivate.getTimestamp(), notificationSentModel);
+            }
+            else {
+                notificationSentModel.setUnreadnum(notificationSentModel.getUnreadnum() + 1);
+            }
+        }
+        List<NotificationSentModel> notificationSentModels = new ArrayList<>(notificationSentMap.values());
+        notificationSentModels.sort((s1, s2) -> s2.getTimestamp().compareTo(s1.getTimestamp()));
+        return notificationSentModels;
+
     }
 }
