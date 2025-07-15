@@ -42,6 +42,8 @@ public interface BlogDAO {
 
     void reportBlog(Long blogid, String reason);
 
+    void addBlockingRecord(Long contentid, String reason,int type);
+
     void reportReply(Long replyid, String reason);
 
     List<Illegal> getByType(int type);

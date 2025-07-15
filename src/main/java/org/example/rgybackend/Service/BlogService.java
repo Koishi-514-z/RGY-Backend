@@ -6,11 +6,13 @@ import org.example.rgybackend.Model.*;
 import java.util.List;
 
 public interface BlogService {
-    public void addBlog(String title, String content, List<String> tags, SimplifiedProfileModel author);
+    public void addBlog(String title, String content, List<String> tags, String author);
 
     void deleteBlog(Long blogid);
 
-    public ReplyModel addReply(Long blogid, String content, SimplifiedProfileModel author);
+    void addBlockingRecord(Long blogid,int type);
+
+    public ReplyModel addReply(Long blogid, String content, String author);
 
     public void deleteReply(Long replyid);
 
@@ -22,9 +24,11 @@ public interface BlogService {
 
     void unlikeBlog(Long blogid, String userid);
 
-    List<BlogModel> getBlogsByUserid(String userid);
+    List<SimplifiedBlogModel> getBlogsByUserid(String userid);
 
-    List<BlogModel> getBlogRepliedByUserid(String userid);
+    List<SimplifiedBlogModel> getBlogRepliedByUserid(String userid);
+
+    SimplifiedBlogModel getSimplifiedBlogById(Long blogid);
 
     List<Like> getBlogLikedByUserid(String userid);
 
@@ -46,5 +50,7 @@ public interface BlogService {
 
 
 
-    List<ReplyModel> getRepliesByUserid(String userid);
+    List<SimplifiedReplyModel> getRepliesByUserid(String userid);
+
+    List<ReplyModel> getRepliesByBlogid(Long blogid,int pageSize, int currentPage);
 }

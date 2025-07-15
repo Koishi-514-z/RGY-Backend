@@ -28,6 +28,14 @@ public class CrisisServiceImpl implements CrisisService {
     public void saveCrisis(int crisisid,Long urgencyLevel) {
         CrisisAuditing crisisAuditing = crisisDAO.findById(crisisid);
         System.out.println(crisisAuditing);
+        if(crisisAuditing!= null){
+            if(crisisAuditing.getType() == 0){
+                blogDAO.deleteBlog(crisisAuditing.getContentid());
+            }
+            else if(crisisAuditing.getType() == 1){
+                blogDAO.deleteReply(crisisAuditing.getContentid());
+            }
+        }
         crisisDAO.saveCrisis(crisisAuditing.getContent(), crisisAuditing.getTimestamp(), crisisAuditing.getUserid(), urgencyLevel, crisisAuditing.getContentid());
         crisisDAO.deleteCrisisAuditing(crisisid);
     }
@@ -38,14 +46,6 @@ public class CrisisServiceImpl implements CrisisService {
     @Override
     public void deleteCrisisAuditing(int crisisid) {
         CrisisAuditing crisisAuditing = crisisDAO.findById(crisisid);
-        if(crisisAuditing!= null){
-            if(crisisAuditing.getType() == 0){
-                blogDAO.recoverBlog(crisisAuditing.getContentid());
-            }
-            else if(crisisAuditing.getType() == 1){
-                blogDAO.recoverReply(crisisAuditing.getContentid());
-            }
-        }
         crisisDAO.deleteCrisisAuditing(crisisid);
     }
 

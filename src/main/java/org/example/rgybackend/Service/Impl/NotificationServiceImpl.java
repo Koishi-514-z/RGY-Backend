@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.example.rgybackend.DAO.NotificationPrivateDAO;
 import org.example.rgybackend.Model.NotificationPrivateModel;
+import org.example.rgybackend.Model.NotificationSentModel;
 import org.example.rgybackend.Service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,5 +42,11 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public boolean deleteNotification(Long notificationid) {
         return notificationPrivateDAO.deleteNotification(notificationid);
+    }
+
+    @Override
+    public List<NotificationSentModel> getPrivateNotificationMine(String userid) {
+        return notificationPrivateDAO.getNotificationSent(userid);
+
     }
 }

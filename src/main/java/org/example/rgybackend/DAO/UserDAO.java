@@ -32,4 +32,6 @@ public interface UserDAO {
     List<ProfileTag> getAllProfileTags();
 
     List<ProfileTag> getPsyProfileTags();
+
+    String getUsername(String userid);
 }

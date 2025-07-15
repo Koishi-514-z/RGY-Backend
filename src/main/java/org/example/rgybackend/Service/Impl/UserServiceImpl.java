@@ -332,4 +332,12 @@ public class UserServiceImpl implements UserService {
         return userAuthDAO.setDisabled(userid, disabled);
     }
 
+    @Override
+    public ProfileTag getProfileTag(String userid){
+        ProfileTag profileTag = new ProfileTag();
+        profileTag.setUserid(userid);
+        profileTag.setUsername(userDAO.getUsername(userid));
+        return profileTag;
+    }
+
 }

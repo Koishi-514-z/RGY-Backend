@@ -5,14 +5,14 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.rgybackend.DTO.ProfileTag;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BlogModel {
+public class SimplifiedBlogModel {
     private Long blogid;
-    private String userid;
-    private SimplifiedProfileModel user;
+    private ProfileTag user;
     private Long timestamp;
     private Long likeNum;
     private String title;

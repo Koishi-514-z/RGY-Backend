@@ -55,7 +55,7 @@ public class Blog {
     @Column(name = "browsenum")
     private Long browsenum;
     public Blog(BlogModel blogModel) {
-        this.userid = blogModel.getUser().getUserid();
+        this.userid = blogModel.getUserid();
         this.timestamp = blogModel.getTimestamp();
         this.likeNum = blogModel.getLikeNum();
         this.title = blogModel.getTitle();
@@ -74,7 +74,7 @@ public class Blog {
 
 
     public Blog(BlogModel blogModel,int valid) {
-        this.userid = blogModel.getUser().getUserid();
+        this.userid = blogModel.getUserid();
         this.timestamp = blogModel.getTimestamp();
         this.likeNum = blogModel.getLikeNum();
         this.title = blogModel.getTitle();

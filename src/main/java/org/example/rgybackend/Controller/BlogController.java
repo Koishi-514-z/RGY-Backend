@@ -34,19 +34,19 @@ public class BlogController {
     private EmotionDAO emotionDAO;
     
     @GetMapping("/getmine")
-    public List<BlogModel> getMyBlogs(@RequestParam String userid) {
-        List<BlogModel> result = new ArrayList<>();
+    public List<SimplifiedBlogModel> getMyBlogs(@RequestParam String userid) {
+        List<SimplifiedBlogModel> result = new ArrayList<>();
         result = blogService.getBlogsByUserid(userid);
         return result;
     }
 
     @GetMapping("/getlike")
-    public List<BlogModel> getLikeBlogs(@RequestParam String userid) {
-        List<BlogModel> result = new ArrayList<>();
+    public List<SimplifiedBlogModel> getLikeBlogs(@RequestParam String userid) {
+        List<SimplifiedBlogModel> result = new ArrayList<>();
         List<Like> userLikes = blogService.getBlogLikedByUserid(userid);
-        Map<Long, BlogModel> blogMap = new HashMap<>();
+        Map<Long, SimplifiedBlogModel> blogMap = new HashMap<>();
         for (Like userLike : userLikes) {
-            BlogModel blogModel = blogService.getBlogById(userLike.getBlogid());
+            SimplifiedBlogModel blogModel = blogService.getSimplifiedBlogById(userLike.getBlogid());
             if (blogModel == null || blogModel.getValid() == 0)
                 continue;
             blogMap.put(blogModel.getBlogid(), blogModel);
@@ -56,8 +56,8 @@ public class BlogController {
     }
 
     @GetMapping("/getcomment")
-    public List<BlogModel> getCommentBlogs(@RequestParam String userid) {
-        List<BlogModel> result = new ArrayList<>();
+    public List<SimplifiedBlogModel> getCommentBlogs(@RequestParam String userid) {
+        List<SimplifiedBlogModel> result = new ArrayList<>();
 //        String userid = (String)session.getAttribute("user");
         result = blogService.getBlogRepliedByUserid(userid);
         return result;
@@ -65,12 +65,22 @@ public class BlogController {
 
 
     @GetMapping("/getreply")
-    public List<ReplyModel> getReplies(@RequestParam String userid) {
-        List<ReplyModel> result = new ArrayList<>();
+    public List<SimplifiedReplyModel> getReplies(@RequestParam String userid) {
+        List<SimplifiedReplyModel> result = new ArrayList<>();
         result = blogService.getRepliesByUserid(userid);
         return result;
     }
-
+    @PostMapping ("/getrepliesforblog")
+    public List<ReplyModel> getRepliesForBlog(@RequestBody String params) {
+        List<ReplyModel> result = new ArrayList<>();
+        JSONObject json = new JSONObject();
+        json = JSON.parseObject(params);
+        Long blogid = json.getLongValue("blogid");
+        int pageSize = json.getIntValue("pageSize");
+        int currentPage = json.getIntValue("currentPage");
+        result = blogService.getRepliesByBlogid(blogid, pageSize, currentPage);
+        return result;
+    }
     @PostMapping ("/get")
     public BlogsRet getAllBlogs(@RequestBody String params, HttpSession session) {
         BlogsRet result = new BlogsRet();
@@ -116,7 +126,7 @@ public class BlogController {
         String content = json.getString("content");
         List<String> tags = json.getJSONArray("tags").toJavaList(String.class);
         //输出tags内容
-        SimplifiedProfileModel author = userService.getSimplifiedProfile(session.getAttribute("user").toString());
+        String author = session.getAttribute("user").toString();
         blogService.addBlog(title, content, tags, author);
         return true;
     }
@@ -136,7 +146,7 @@ public class BlogController {
         json = JSON.parseObject(params);
         Long blogid = json.getLongValue("blogid");
         String content = json.getString("content");
-        SimplifiedProfileModel author = userService.getSimplifiedProfile(session.getAttribute("user").toString());
+        String author = session.getAttribute("user").toString();
         return blogService.addReply(blogid, content, author);
 
     }

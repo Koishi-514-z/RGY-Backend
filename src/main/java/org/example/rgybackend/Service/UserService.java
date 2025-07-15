@@ -3,6 +3,7 @@ package org.example.rgybackend.Service;
 import java.util.List;
 
 import org.example.rgybackend.DTO.IntimateDTO;
+import org.example.rgybackend.DTO.ProfileTag;
 import org.example.rgybackend.Model.*;
 
 public interface UserService {
@@ -41,4 +42,6 @@ public interface UserService {
     boolean updatePassword(String userid, String password);
 
     boolean setDisabled(String userid, boolean disabled);
+
+    ProfileTag getProfileTag(String userid);
 }
