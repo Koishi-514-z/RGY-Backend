@@ -71,17 +71,6 @@ public class PushContentDAOImpl implements PushContentDAO {
     }
 
     @Override
-    public List<UrlDataModel> getContent(Integer pageIndex, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<PushContent> pushContents = pushContentRepository.findAll(pageable);
-        List<UrlDataModel> urlDataModels = new ArrayList<>();
-        for(PushContent pushContent : pushContents) {
-            urlDataModels.add(new UrlDataModel(pushContent));
-        }
-        return urlDataModels;
-    }
-
-    @Override
     public Long getDataNum(Long tagid) {
         List<PushContent> pushContents = pushContentRepository.findAll();
         Long number = 0L;
@@ -100,11 +89,5 @@ public class PushContentDAOImpl implements PushContentDAO {
     @Override
     public Long getAllDataNum() {
         return pushContentRepository.count();
-    }
-
-    @Override
-    public boolean deleteUrlData(Long dataid) {
-        pushContentRepository.deleteById(dataid);
-        return true;
     }
 }

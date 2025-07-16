@@ -22,7 +22,6 @@ public class WebConfig implements WebMvcConfigurer {
                 "/api/user/login",
                 "/api/user/existed",
                 "/api/user/add",    
-                "/api/user/verify/pwd",
                 "/api/user/verify/admin",
                 "/api/user/disabled/get",
                 "/api/user/secure/check",

@@ -19,8 +19,6 @@ public interface CounselingDAO {
     
     boolean addCounseling(CounselingModel counselingModel, String userid);
 
-    boolean removeCounseling(Long counselingid);
-
     boolean setStatus(Long counselingid, Long status);
 
     boolean remove(Long counselingid);

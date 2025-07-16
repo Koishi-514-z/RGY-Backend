@@ -61,13 +61,9 @@ public class EmotionServiceImpl implements EmotionService {
     public List<EmotionModel> getUserEmotionByWeek(String userid, LocalDate date) {
         LocalDate firstDayOfWeek = TimeUtil.firstDayOfWeek(date);
         LocalDate lastDayOfWeek = firstDayOfWeek.plusDays(6);
-        List<EmotionModel> cachedEmotions = cacheUtil.getEmotionsFromCache(userid, firstDayOfWeek);
-        if(cachedEmotions == null) {
-            List<EmotionModel> emotionModels = emotionDAO.scanEmotion(userid, firstDayOfWeek, lastDayOfWeek);
-            cacheUtil.putEmotionsToCache(userid, firstDayOfWeek, emotionModels);
-            return emotionModels;
-        }
-        return cachedEmotions;
+        List<EmotionModel> emotionModels = emotionDAO.scanEmotion(userid, firstDayOfWeek, lastDayOfWeek);
+        cacheUtil.putEmotionsToCache(userid, firstDayOfWeek, emotionModels);
+        return emotionModels;
     }
 
     // 获取今天的情绪数据
@@ -136,13 +132,9 @@ public class EmotionServiceImpl implements EmotionService {
     public List<DiaryModel> getUserDiariesByWeek(String userid, LocalDate date) {
         LocalDate firstDayOfWeek = TimeUtil.firstDayOfWeek(date);
         LocalDate lastDayOfWeek = firstDayOfWeek.plusDays(6);
-        List<DiaryModel> cachedDiaries = cacheUtil.getDiariesFromCache(userid, firstDayOfWeek);
-        if(cachedDiaries == null) {
-            List<DiaryModel> diaryModels = diaryDAO.scanDiary(userid, firstDayOfWeek, lastDayOfWeek);
-            cacheUtil.putDiariesToCache(userid, firstDayOfWeek, diaryModels);
-            return diaryModels;
-        }
-        return cachedDiaries;
+        List<DiaryModel> diaryModels = diaryDAO.scanDiary(userid, firstDayOfWeek, lastDayOfWeek);
+        cacheUtil.putDiariesToCache(userid, firstDayOfWeek, diaryModels);
+        return diaryModels;
     }
 
     @Override
@@ -189,24 +181,6 @@ public class EmotionServiceImpl implements EmotionService {
 
         DiaryModel diaryModel = new DiaryModel(userid, TimeUtil.now(), emotionResponse.getPredicted_class(), content);
         return diaryDAO.setDiary(diaryModel);
-    }
-
-    @Override
-    public List<DiaryModel> scanUserDiaries(String userid, LocalDate startDate, LocalDate endDate) {
-        Long start = TimeUtil.getStartOfDayTimestamp(startDate);
-        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
-        List<DiaryModel> diaryModels = new ArrayList<>();
-
-        for(LocalDate date = TimeUtil.firstDayOfWeek(startDate); date.compareTo(endDate) <= 0; date = date.plusDays(7)) {
-            List<DiaryModel> weeklyDatas = this.getUserDiariesByWeek(userid, date);
-            for(DiaryModel diaryModel : weeklyDatas) {
-                if(diaryModel.getTimestamp() >= start && diaryModel.getTimestamp() < end) {
-                    diaryModels.add(diaryModel);
-                }
-            }
-        }
-
-        return diaryModels;
     }
 
     @Override
@@ -293,13 +267,9 @@ public class EmotionServiceImpl implements EmotionService {
     // 获取某天的全部情绪数据
     @Override
     public List<EmotionModel> getAllEmotionsByDate(LocalDate date) {
-        List<EmotionModel> cachedEmotions = cacheUtil.getAllEmotionsFromCache(date);
-        if(cachedEmotions == null) {
-            List<EmotionModel> emotionModels = emotionDAO.scanAllEmotion(date, date);
-            cacheUtil.putAllEmotionsToCache(date, emotionModels);
-            return emotionModels;
-        }
-        return cachedEmotions;
+        List<EmotionModel> emotionModels = emotionDAO.scanAllEmotion(date, date);
+        cacheUtil.putAllEmotionsToCache(date, emotionModels);
+        return emotionModels;
     }
 
     // 统计给定时间段的情绪数据信息
@@ -380,11 +350,6 @@ public class EmotionServiceImpl implements EmotionService {
     @Override
     public List<EmotionRecord> getRecordsByWeek(String userid, LocalDate date) {
         LocalDate weekDate = TimeUtil.firstDayOfWeek(date);
-
-        List<EmotionRecord> cachedRecords = cacheUtil.getEmotionRecordsFromCache(userid, weekDate);
-        if(cachedRecords != null) {
-            return cachedRecords;
-        }
 
         List<EmotionModel> emotionModels = this.getUserEmotionByWeek(userid, weekDate);
         List<DiaryModel>  diaryModels = this.getUserDiariesByWeek(userid, weekDate);

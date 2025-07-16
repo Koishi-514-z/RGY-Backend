@@ -37,9 +37,6 @@ public class ChatDAOImpl implements ChatDAO {
         if(sessions.size() == 0) {
             return null;
         }
-        if(sessions.size() > 1) {
-            throw new RuntimeException("Duplicate Session");
-        }
         return sessions.get(0).getSessionid();
     }
 
@@ -53,11 +50,8 @@ public class ChatDAOImpl implements ChatDAO {
         if(message.getTouserid().equals(session.getUserAid())) {
             session.setUnreadA(session.getUnreadA() + 1);
         }
-        else if(message.getTouserid().equals(session.getUserBid())){
-            session.setUnreadB(session.getUnreadB() + 1);
-        }
         else {
-            throw new RuntimeException("Session does not contain this message");
+            session.setUnreadB(session.getUnreadB() + 1);
         }
         session.getMessages().add(message);
         sessionRepository.save(session);
@@ -88,10 +82,10 @@ public class ChatDAOImpl implements ChatDAO {
     public Long createSession(Session session) {
         sessionRepository.save(session);
         List<Session> sessions = sessionRepository.findSession(session.getUserAid(), session.getUserBid());
-        if(sessions.size() == 0) {
-            throw new NotExistException("Session not exists");
-        }
         if(sessions.size() > 1) {
+            for(Session s : sessions) {
+                sessionRepository.deleteById(s.getSessionid());
+            }
             throw new RuntimeException("Duplicate Session");
         }
         return sessions.get(0).getSessionid();

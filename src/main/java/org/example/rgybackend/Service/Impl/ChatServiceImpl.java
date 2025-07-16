@@ -60,13 +60,10 @@ public class ChatServiceImpl implements ChatService {
             sessionModel.setOther(userService.getSimplifiedProfile(session.getUserBid()));
             sessionModel.setUnread(session.getUnreadA());
         }
-        else if(fromuserid.equals(session.getUserBid())) {
+        else {
             sessionModel.setMyself(userService.getSimplifiedProfile(session.getUserBid()));
             sessionModel.setOther(userService.getSimplifiedProfile(session.getUserAid()));
             sessionModel.setUnread(session.getUnreadB());
-        }
-        else {
-            throw new RuntimeException("Session does not contain such user, userid: " + fromuserid);
         }
 
         return sessionModel;
@@ -87,13 +84,10 @@ public class ChatServiceImpl implements ChatService {
                 sessionTagModel.setOther(userService.getSimplifiedProfile(sessionTagDTO.getUserBid()));
                 sessionTagModel.setUnread(sessionTagDTO.getUnreadA());
             }
-            else if(fromuserid.equals(sessionTagDTO.getUserBid())){
+            else {
                 sessionTagModel.setMyself(userService.getSimplifiedProfile(sessionTagDTO.getUserBid()));
                 sessionTagModel.setOther(userService.getSimplifiedProfile(sessionTagDTO.getUserAid()));
                 sessionTagModel.setUnread(sessionTagDTO.getUnreadB());
-            }
-            else {
-                throw new RuntimeException("SessionTag does not contain such user, userid: " + fromuserid);
             }
             sessionTagModels.add(sessionTagModel);
         }
@@ -111,7 +105,16 @@ public class ChatServiceImpl implements ChatService {
     public boolean postMessage(Long sessionid, String content, String fromuserid) {
         Message message = new Message();
         Session session = chatDAO.getById(sessionid);
-        String touserid = session.getUserAid().equals(fromuserid) ? session.getUserBid() : session.getUserAid();
+        String touserid;
+        if(session.getUserAid().equals(fromuserid)) {
+            touserid = session.getUserBid();
+        }
+        else if(session.getUserBid().equals(fromuserid)) {
+            touserid = session.getUserAid();
+        }
+        else {
+            throw new RuntimeException("Session does not contain such user, userid: " + fromuserid);
+        }
 
         milestoneServive.addMilestone(fromuserid, 5L);
 
@@ -121,10 +124,8 @@ public class ChatServiceImpl implements ChatService {
         message.setTimestamp(TimeUtil.now());
         message.setContent(content);
 
-        boolean result = chatDAO.postMessage(sessionid, message);
-        if(!result) {
-            return false;
-        }
+        chatDAO.postMessage(sessionid, message);
+
         SocketMessage sockMessage = new SocketMessage("System", sessionid, fromuserid, touserid, TimeUtil.now(), content);
         notification.pushChatToUser(sockMessage);
         return true;

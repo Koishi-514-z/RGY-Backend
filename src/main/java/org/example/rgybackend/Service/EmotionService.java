@@ -31,8 +31,6 @@ public interface EmotionService {
 
     boolean updateDiary(String userid, String content);
 
-    List<DiaryModel> scanUserDiaries(String userid, LocalDate startDate, LocalDate endDate);
-
     List<DiaryLabelData> scanUserDiaryLabels(String userid, LocalDate startDate, LocalDate endDate);
     
 

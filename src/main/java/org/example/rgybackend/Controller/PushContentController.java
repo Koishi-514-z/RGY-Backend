@@ -57,9 +57,4 @@ public class PushContentController {
     public boolean AddQuote(@RequestBody QuoteModel quoteModel) {
         return pushContentService.addQuote(quoteModel);
     }
-
-    @DeleteMapping("/del")
-    public boolean deleteUrlData(@RequestParam Long urlid) {
-        return pushContentService.deleteUrlData(urlid);
-    }
 }

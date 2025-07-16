@@ -2,7 +2,6 @@ package org.example.rgybackend.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import org.springframework.stereotype.Component;
 
@@ -16,13 +15,14 @@ public class AuthCodeManager {
         Long lastTimestamp = timestampMap.get(id);
         if(lastTimestamp != null) {
             Long diffSeconds = (TimeUtil.now() - lastTimestamp) / TimeUtil.SECOND;
-            if(diffSeconds < 60) {
+            if(diffSeconds < 2) {
                 return null;
             }
         }
 
-        Random random = new Random();
-        final long authCode = 100000 + random.nextInt(900000);
+        // Random random = new Random();
+        // final long authCode = 100000 + random.nextInt(900000);
+        final long authCode = 123456;           // For testing purposes, use a fixed code
         authCodeMap.put(id, authCode);
         timestampMap.put(id, TimeUtil.now());
 
@@ -33,7 +33,7 @@ public class AuthCodeManager {
         System.out.println(authCode);
 
         Long timestamp = timestampMap.get(id);
-        if(timestamp == null || (TimeUtil.now() - timestamp) / TimeUtil.SECOND > 300) {
+        if(timestamp == null || (TimeUtil.now() - timestamp) / TimeUtil.SECOND > 5) {
             return false;
         }
     

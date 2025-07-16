@@ -129,13 +129,13 @@ public class UserController {
         return userService.updatePsyProfile(profile);
     }
 
-    @PutMapping("pwd")
+    @PutMapping("/pwd")
     public boolean updatePassword(@RequestParam String password, HttpSession session) {
         String userid = (String)session.getAttribute("user");
         return userService.updatePassword(userid, password);
     }
 
-    @PutMapping("disabled/set")
+    @PutMapping("/disabled/set")
     public boolean setDisabled(@RequestParam String userid, @RequestParam boolean disabled, HttpSession session) {
         String adminid = (String)session.getAttribute("user");
         if(!userService.isAdmin(adminid)) {

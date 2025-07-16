@@ -19,8 +19,6 @@ import org.example.rgybackend.Service.PushContentService;
 import org.example.rgybackend.Utils.ImageCompressor;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,13 +35,11 @@ public class PushContentServiceImpl implements PushContentService {
     @Autowired
     private ImageCompressor imageCompressor;
 
-    @Cacheable(value = "allPushContent")
     public List<UrlDataModel> getAllContent() {
         return pushContentDAO.getAllContent();
     }
 
     @Override
-    @CacheEvict(value = "allPushContent", allEntries = true)
     public boolean pushContent(UrlDataModel urlDataModel) {
         String img = urlDataModel.getImg();
         if(img != null) {
@@ -110,12 +106,6 @@ public class PushContentServiceImpl implements PushContentService {
     @Override
     public Long getAllDataNum() {
         return pushContentDAO.getAllDataNum();
-    }
-
-    @Override
-    @CacheEvict(value = "allPushContent", allEntries = true)
-    public boolean deleteUrlData(Long dataid) {
-        return pushContentDAO.deleteUrlData(dataid);
     }
 
     @Override

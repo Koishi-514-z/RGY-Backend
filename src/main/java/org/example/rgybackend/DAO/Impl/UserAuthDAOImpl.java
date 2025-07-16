@@ -42,22 +42,14 @@ public class UserAuthDAOImpl implements UserAuthDAO {
 
     @Override
     public boolean updatePassword(String userid, String password) {
-        if(!userAuthRepository.existsById(userid)) {
-            throw new NotExistException("User not exists, userid: " + userid);
-        }
         Optional<UserAuth> userAuthOptional = userAuthRepository.findById(userid);
         if(userAuthOptional.isEmpty()) {
             return false;
         }
         UserAuth userAuth = userAuthOptional.get();
-        userAuth.setPassword(password);
+        String encodedPassword = passwordEncoder.encode(password);
+        userAuth.setPassword(encodedPassword);
         userAuthRepository.save(userAuth);
-        return true;
-    }
-
-    @Override
-    public boolean removeAuth(String userid) {
-        userAuthRepository.deleteById(userid);
         return true;
     }
 

@@ -21,8 +21,6 @@ public interface PushContentService {
 
     Long getAllDataNum();
 
-    boolean deleteUrlData(Long dataid);
-
     QuoteModel getQuote();
 
     boolean addQuote(QuoteModel quoteModel);

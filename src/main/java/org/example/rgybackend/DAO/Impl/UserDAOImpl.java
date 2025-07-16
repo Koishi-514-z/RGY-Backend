@@ -1,6 +1,5 @@
 package org.example.rgybackend.DAO.Impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,26 +26,6 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public boolean existedByName(String username) {
         return userRepository.existsByUsername(username);
-    }
-
-    @Override
-    public List<ProfileModel> getAll() {
-        List<UserProfile> userProfileDTOs = userRepository.findAll();
-        List<ProfileModel> profiles = new ArrayList<>();
-        for(UserProfile userProfileDTO : userProfileDTOs) {
-            profiles.add(new ProfileModel(userProfileDTO));
-        }
-        return profiles;
-    }
-
-    @Override
-    public List<ProfileModel> getAllPsys() {
-        List<UserProfile> userProfiles = userRepository.findByRole(2L);
-        List<ProfileModel> profiles = new ArrayList<>();
-        for(UserProfile userProfile : userProfiles) {
-            profiles.add(new ProfileModel(userProfile));
-        }
-        return profiles;
     }
 
     @Override
@@ -97,12 +76,6 @@ public class UserDAOImpl implements UserDAO {
         }
         UserProfile userProfileDTO = new UserProfile(profile);
         userRepository.save(userProfileDTO);
-        return true;
-    }
-
-    @Override
-    public boolean remove(String userid) {
-        userRepository.deleteById(userid);
         return true;
     }
 

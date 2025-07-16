@@ -14,11 +14,7 @@ public interface PushContentDAO {
 
     List<UrlDataModel> getContentByTag(Long tagid, Integer pageIndex, Integer pageSize);
 
-    List<UrlDataModel> getContent(Integer pageIndex, Integer pageSize);
-
     Long getDataNum(Long tagid);
 
     Long getAllDataNum();
-
-    boolean deleteUrlData(Long dataid);
 }

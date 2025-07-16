@@ -26,11 +26,9 @@ import org.example.rgybackend.Service.UserService;
 import org.example.rgybackend.Utils.AuthCodeManager;
 import org.example.rgybackend.Utils.CacheUtil;
 import org.example.rgybackend.Utils.ImageCompressor;
-import org.example.rgybackend.Utils.NotExistException;
 import org.example.rgybackend.Utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -96,10 +94,6 @@ public class UserServiceImpl implements UserService {
     // 获取用户的个人信息（自动缓存）
     @Override
     public ProfileModel getUserProfile(String userid) {
-        ProfileModel cachedProfile = cacheUtil.getProfileFromCache(userid);
-        if(cachedProfile != null) {
-            return cachedProfile;
-        }
         ProfileModel profileModel = userDAO.get(userid);
         profileModel.calcLevel(blogDAO.getBlogsByUserid(userid), replyDAO.findOppositeUser(userid), likeDAO.findOppositeUser(userid));
 
@@ -134,10 +128,6 @@ public class UserServiceImpl implements UserService {
     // 获取心理咨询师个人信息（自动缓存）
     @Override
     public PsyProfileModel getPsyProfile(String psyid) {
-        PsyProfileModel cachedProfile = cacheUtil.getPsyProfileFromCache(psyid);
-        if(cachedProfile != null) {
-            return cachedProfile;
-        }
         ProfileModel profileModel = userDAO.get(psyid);
         PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);
         PsyProfileModel psyProfileModel = new PsyProfileModel(profileExtra);
@@ -168,17 +158,12 @@ public class UserServiceImpl implements UserService {
     // 获取简化后的个人信息（缓存）
     @Override
     public SimplifiedProfileModel getSimplifiedProfile(String userid) {
-        ProfileModel cachedProfile = cacheUtil.getProfileFromCache(userid);
-        if(cachedProfile != null) {
-            return new SimplifiedProfileModel(cachedProfile);
-        }
         ProfileModel profile = userDAO.get(userid);
         cacheUtil.putProfileToCache(userid, profile);
         return new SimplifiedProfileModel(profile);
     }
 
     @Override
-    @Cacheable(value = "intimateUsers", key = "#userid")
     public List<IntimateDTO> getIntimateUsers(String userid) {
         List<IntimateDTO> intimateUsers = new ArrayList<>();
         final int total = 4;
@@ -190,7 +175,6 @@ public class UserServiceImpl implements UserService {
         LocalDate today = TimeUtil.today();
         LocalDate yesterday = today.minusDays(1);
         LocalDate prevWeek = today.minusDays(7);
-        LocalDate prevMonth = today.minusDays(30);
 
         Map<String, Double> intimateScores = new HashMap<>();
         for(LikeData likeData : likeDatas) {
@@ -205,8 +189,7 @@ public class UserServiceImpl implements UserService {
             int timeClass;
             if(date.compareTo(yesterday) >= 0) timeClass = 0;
             else if(date.compareTo(prevWeek) >= 0) timeClass = 1;
-            else if(date.compareTo(prevMonth) >= 0) timeClass = 2;
-            else timeClass = 3;
+            else timeClass = 2;
             Double score = likeWeight * timeWeight[timeClass];
             Double originScore = intimateScores.get(likeData.getUserid());
             intimateScores.put(likeData.getUserid(), originScore + score);
@@ -217,8 +200,7 @@ public class UserServiceImpl implements UserService {
             int timeClass;
             if(date.compareTo(yesterday) >= 0) timeClass = 0;
             else if(date.compareTo(prevWeek) >= 0) timeClass = 1;
-            else if(date.compareTo(prevMonth) >= 0) timeClass = 2;
-            else timeClass = 3;
+            else timeClass = 2;
             Double score = (1 - likeWeight) * timeWeight[timeClass];
             Double originScore = intimateScores.get(replyData.getUserid());
             intimateScores.put(replyData.getUserid(), originScore + score);
@@ -312,14 +294,16 @@ public class UserServiceImpl implements UserService {
         cacheUtil.evictPsyProfileCache(psyid);
 
         String avatar = psyProfileModel.getAvatar();
-        String compressedAvatar;
-        try {
-            compressedAvatar = imageCompressor.compressBase64Image(avatar);
-        } catch (IOException e) {
-            throw new RuntimeException("图片压缩失败", e);
+        if(avatar != null) {
+            String compressedAvatar;
+            try {
+                compressedAvatar = imageCompressor.compressBase64Image(avatar);
+            } catch (IOException e) {
+                throw new RuntimeException("图片压缩失败", e);
+            }
+            psyProfileModel.setAvatar(compressedAvatar);
         }
-        psyProfileModel.setAvatar(compressedAvatar);
-
+        
         ProfileModel newProfileModel = new ProfileModel();
         newProfileModel.setUserid(psyid);
         newProfileModel.setUsername(psyProfileModel.getUsername());
@@ -327,6 +311,7 @@ public class UserServiceImpl implements UserService {
         newProfileModel.setAvatar(psyProfileModel.getAvatar());
         newProfileModel.setNote("");
         newProfileModel.setRole(2L);
+        newProfileModel.setJointime(psyProfileModel.getJointime());
         boolean result = userDAO.update(newProfileModel);
 
         PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);
@@ -342,9 +327,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updatePassword(String userid, String password) {
-        boolean exists = userDAO.existed(userid);
-        if(!exists) {
-            throw new NotExistException("User not exists, userid: " + userid);
+        if(password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
         }
         return userAuthDAO.updatePassword(userid, password);
     }
@@ -355,7 +339,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ProfileTag getProfileTag(String userid){
+    public ProfileTag getProfileTag(String userid) {
         ProfileTag profileTag = new ProfileTag();
         profileTag.setUserid(userid);
         profileTag.setUsername(userDAO.getUsername(userid));

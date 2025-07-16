@@ -24,9 +24,6 @@ public class CounselingDAOImpl implements CounselingDAO {
     @Override
     public boolean counseled(String psyid, Long timestamp) {
         List<Counseling> counselings = counselingRepository.findByPsyidAndTimestamp(psyid, timestamp);
-        if(counselings.size() > 1) {
-            throw new RuntimeException("Duplicate counseling");
-        }
         return !counselings.isEmpty() && counselings.get(0).getStatus() != 3;
     }
 
@@ -73,12 +70,6 @@ public class CounselingDAOImpl implements CounselingDAO {
     @Override
     public boolean addCounseling(CounselingModel counselingModel, String userid) {
         counselingRepository.save(new Counseling(counselingModel, userid));
-        return true;
-    }
-
-    @Override
-    public boolean removeCounseling(Long counselingid) {
-        counselingRepository.deleteById(counselingid);
         return true;
     }
 
