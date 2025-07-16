@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.example.rgybackend.DAO.DiaryDAO;
-import org.example.rgybackend.DTO.DiaryLabelData;
 import org.example.rgybackend.Entity.Diary;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Repository.DiaryRepository;
@@ -17,36 +16,6 @@ import org.springframework.stereotype.Repository;
 public class DiaryDAOImpl implements DiaryDAO {
     @Autowired
     private DiaryRepository diaryRepository;
-
-    @Override
-    public List<DiaryModel> getAllUserDiaries(String userid) {
-        List<Diary> diaries = diaryRepository.findByUserid(userid);
-        List<DiaryModel> diaryModels = new ArrayList<>();
-        for(Diary diary : diaries) {
-            diaryModels.add(new DiaryModel(diary));
-        }
-        return diaryModels;
-    }
-
-    @Override
-    public boolean diaryExists(String userid, LocalDate date) {
-        Long timestamp = TimeUtil.getStartOfDayTimestamp(date);
-        List<Diary> diaries = diaryRepository.scanDiary(userid, timestamp, timestamp + TimeUtil.DAY);
-        return !diaries.isEmpty();
-    }
-
-    @Override
-    public DiaryModel getDiary(String userid, LocalDate date) {
-        Long timestamp = TimeUtil.getStartOfDayTimestamp(date);
-        List<Diary> diaries = diaryRepository.scanDiary(userid, timestamp, timestamp + TimeUtil.DAY);
-        if(diaries.isEmpty()) {
-            return new DiaryModel(userid, timestamp, null, null);
-        }
-        else if(diaries.size() > 1) {
-            throw new RuntimeException("Duplicate diary");
-        }
-        return new DiaryModel(diaries.get(0));
-    }
 
     @Override
     public List<DiaryModel> scanDiary(String userid, LocalDate startDate, LocalDate endDate) {
@@ -61,22 +30,12 @@ public class DiaryDAOImpl implements DiaryDAO {
     }
 
     @Override
-    public List<DiaryLabelData> scanLabel(String userid, LocalDate startDate, LocalDate endDate) {
-        Long start = TimeUtil.getStartOfDayTimestamp(startDate);
-        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;
-        return diaryRepository.scanEmotionLabel(userid, start, end);
-    }
-
-    @Override
     public boolean setDiary(DiaryModel diaryModel) {
         Long timestamp = TimeUtil.getStartOfDayTimestamp(diaryModel.getTimestamp());
         List<Diary> diaries = diaryRepository.scanDiary(diaryModel.getUserid(), timestamp, timestamp + TimeUtil.DAY);
         if(diaries.isEmpty()) {
             Diary diary = new Diary(diaryModel);
             diaryRepository.save(diary);
-        }
-        else if(diaries.size() > 1) {
-            throw new RuntimeException("Duplicate diary");
         }
         else {
             Diary oldDiary = diaries.get(0);

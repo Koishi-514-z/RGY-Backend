@@ -13,19 +13,6 @@ public class TimeUtil {
     public final static Long MINUTE = 60 * 1000L;
     public final static Long SECOND = 1000L;
 
-    public static boolean isSameDay(Long timestamp1, Long timestamp2) {
-        ZoneId zone = ZoneId.systemDefault(); 
-        LocalDate date1 = Instant.ofEpochMilli(timestamp1).atZone(zone).toLocalDate();
-        LocalDate date2 = Instant.ofEpochMilli(timestamp2).atZone(zone).toLocalDate();
-        return date1.equals(date2);
-    }
-
-    public static boolean isSameDay(LocalDate date, Long timestamp) {
-        ZoneId zone = ZoneId.systemDefault(); 
-        LocalDate date_plus = Instant.ofEpochMilli(timestamp).atZone(zone).toLocalDate();
-        return date.equals(date_plus);
-    }
-
     public static LocalDate getLocalDate(Long timestamp) {
         ZoneId zone = ZoneId.systemDefault();
         LocalDate date = Instant.ofEpochMilli(timestamp).atZone(zone).toLocalDate();

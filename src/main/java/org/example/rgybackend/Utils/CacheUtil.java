@@ -32,17 +32,6 @@ public class CacheUtil {
         }
     }
 
-    public ProfileModel getProfileFromCache(String userid) {
-        Cache cache = cacheManager.getCache("profile");
-        if(cache != null) {
-            Cache.ValueWrapper wrapper = cache.get(userid);
-            if(wrapper != null) {
-                return (ProfileModel) wrapper.get();
-            }
-        }
-        return null;
-    }
-
     public void putPsyProfileToCache(String psyid, PsyProfileModel profileModel) {
         Cache cache = cacheManager.getCache("psyprofile");
         if(cache != null) {
@@ -55,17 +44,6 @@ public class CacheUtil {
         if(cache != null) {
             cache.evict(psyid);
         }
-    }
-
-    public PsyProfileModel getPsyProfileFromCache(String psyid) {
-        Cache cache = cacheManager.getCache("psyprofile");
-        if(cache != null) {
-            Cache.ValueWrapper wrapper = cache.get(psyid);
-            if(wrapper != null) {
-                return (PsyProfileModel) wrapper.get();
-            }
-        }
-        return null;
     }
 
     public void evictIntimateUsersCache(String userid) {
@@ -89,18 +67,6 @@ public class CacheUtil {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public List<EmotionModel> getEmotionsFromCache(String userid, LocalDate date) {
-        Cache cache = cacheManager.getCache("userEmotions");
-        if(cache != null) {
-            Cache.ValueWrapper wrapper = cache.get(userid + "_" + date);
-            if(wrapper != null) {
-                return (List<EmotionModel>) wrapper.get();
-            }
-        }
-        return null;
-    }
-
     public void putDiariesToCache(String userid, LocalDate date, List<DiaryModel> diaries) {
         Cache cache = cacheManager.getCache("userDiaries");
         if(cache != null) {
@@ -113,18 +79,6 @@ public class CacheUtil {
         if(cache != null) {
             cache.evict(userid + "_" + date);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<DiaryModel> getDiariesFromCache(String userid, LocalDate date) {
-        Cache cache = cacheManager.getCache("userDiaries");
-        if(cache != null) {
-            Cache.ValueWrapper wrapper = cache.get(userid + "_" + date);
-            if(wrapper != null) {
-                return (List<DiaryModel>) wrapper.get();
-            }
-        }
-        return null;
     }
 
     public void putEmotionRecordsToCache(String userid, LocalDate date, List<EmotionRecord> emotions) {
@@ -141,18 +95,6 @@ public class CacheUtil {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public List<EmotionRecord> getEmotionRecordsFromCache(String userid, LocalDate date) {
-        Cache cache = cacheManager.getCache("emotionRecords");
-        if(cache != null) {
-            Cache.ValueWrapper wrapper = cache.get(userid + "_" + date);
-            if(wrapper != null) {
-                return (List<EmotionRecord>) wrapper.get();
-            }
-        }
-        return null;
-    }
-
     public void putAllEmotionsToCache(LocalDate date, List<EmotionModel> emotions) {
         Cache cache = cacheManager.getCache("allEmotions");
         if(cache != null) {
@@ -165,17 +107,5 @@ public class CacheUtil {
         if(cache != null) {
             cache.evict(date);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<EmotionModel> getAllEmotionsFromCache(LocalDate date) {
-        Cache cache = cacheManager.getCache("allEmotions");
-        if(cache != null) {
-            Cache.ValueWrapper wrapper = cache.get(date);
-            if(wrapper != null) {
-                return (List<EmotionModel>) wrapper.get();
-            }
-        }
-        return null;
     }
 }

@@ -15,11 +15,6 @@ public class AvailableDAOImpl implements AvailableDAO {
     private AvailableRepository availableRepository;
 
     @Override
-    public boolean isAvailable(String psyid, String date, Long hour) {
-        return availableRepository.existsByPsyidAndDateAndHour(psyid, date, hour);
-    }
-
-    @Override
     public AvailableTimeModel getAvailableTime(String psyid) {
         AvailableTimeModel availableTimeModel = new AvailableTimeModel();
         availableTimeModel.setPsyid(psyid);
