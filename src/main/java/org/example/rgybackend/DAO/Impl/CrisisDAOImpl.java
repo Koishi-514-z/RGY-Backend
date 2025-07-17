@@ -1,6 +1,5 @@
 package org.example.rgybackend.DAO.Impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional; 
 
@@ -11,7 +10,6 @@ import org.example.rgybackend.Repository.CrisisAuditingRepository;
 import org.example.rgybackend.Repository.CrisisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.example.rgybackend.Model.CrisisModel;
 import org.example.rgybackend.Utils.NotExistException;
 
 @Repository

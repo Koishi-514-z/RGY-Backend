@@ -2,7 +2,6 @@ package org.example.rgybackend.DAO;
 
 import java.util.List;
 
-import org.example.rgybackend.Model.CrisisModel;
 import org.example.rgybackend.Entity.Crisis;
 import org.example.rgybackend.Entity.CrisisAuditing;
 
