@@ -48,12 +48,12 @@ public class CrisisServiceImpl implements CrisisService {
         else if(crisisAuditing.getType() == 1){
             blogDAO.deleteReply(crisisAuditing.getContentid());
         }
-
-        NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
-        notification.setAdminid("System");
-        notification.setUserid(crisisAuditing.getUserid());
-        notificationPrivateDAO.addNotification(notification);
-
+        if(crisisAuditing.getUrgencyLevel() >= 2 && crisisAuditing.getUrgencyLevel() < 4){
+            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);
+            notification.setAdminid("System");
+            notification.setUserid(crisisAuditing.getUserid());
+            notificationPrivateDAO.addNotification(notification);
+        }
         if(urgencyLevel >= 2) {
             String email = userService.getUserProfile(crisisAuditing.getUserid()).getEmail();
             String subject = "【温馨提醒】我们关心您的安全与健康";

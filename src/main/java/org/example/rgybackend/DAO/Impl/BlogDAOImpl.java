@@ -39,8 +39,6 @@ public class BlogDAOImpl implements BlogDAO {
     @Override
     public Blog addBlog(BlogModel blogModel, int valid) {
         blogRepository.save(new Blog(blogModel,valid));
-        SocketMessage sockMessage = new SocketMessage("System", blogModel.getBlogid(), "System", null, blogModel.getTimestamp(), blogModel.getContent());
-        socket.pushBlogToAllClients(sockMessage);
         return blogRepository.findByTimestampAndUserid(blogModel.getTimestamp(),blogModel.getUserid());
     }
 
