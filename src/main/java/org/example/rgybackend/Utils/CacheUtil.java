@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.example.rgybackend.DTO.EmotionRecord;
+import org.example.rgybackend.DTO.ProfileTag;
 import org.example.rgybackend.Model.DiaryModel;
 import org.example.rgybackend.Model.EmotionModel;
 import org.example.rgybackend.Model.ProfileModel;
@@ -38,6 +39,31 @@ public class CacheUtil {
             Cache.ValueWrapper wrapper = cache.get(userid);
             if(wrapper != null) {
                 return (ProfileModel) wrapper.get();
+            }
+        }
+        return null;
+    }
+
+    public void putProfileTagToCache(String userid, ProfileTag profileTag) {
+        Cache cache = cacheManager.getCache("profiletag");
+        if(cache != null) {
+            cache.put(userid, profileTag);
+        }
+    }
+
+    public void evictProfileTagCache(String userid) {
+        Cache cache = cacheManager.getCache("profiletag");
+        if(cache != null) {
+            cache.evict(userid);
+        }
+    }
+
+    public ProfileTag getProfileTagFromCache(String userid) {
+        Cache cache = cacheManager.getCache("profiletag");
+        if(cache != null) {
+            Cache.ValueWrapper wrapper = cache.get(userid);
+            if(wrapper != null) {
+                return (ProfileTag) wrapper.get();
             }
         }
         return null;

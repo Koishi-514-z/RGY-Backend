@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class BlogModel {
     private Long blogid;
     private String userid;
+    private String username;
     private SimplifiedProfileModel user;
     private Long timestamp;
     private Long likeNum;

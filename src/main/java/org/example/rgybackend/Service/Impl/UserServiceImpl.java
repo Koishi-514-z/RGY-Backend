@@ -355,10 +355,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ProfileTag getProfileTag(String userid){
-        ProfileTag profileTag = new ProfileTag();
-        profileTag.setUserid(userid);
-        profileTag.setUsername(userDAO.getUsername(userid));
+    public ProfileTag getProfileTag(String userid) {
+        ProfileTag cachedProfileTag = cacheUtil.getProfileTagFromCache(userid);
+        if(cachedProfileTag != null) {
+            return cachedProfileTag;
+        }
+        ProfileTag profileTag = new ProfileTag(userid, userDAO.getUsername(userid));
+        cacheUtil.putProfileTagToCache(userid, profileTag);
         return profileTag;
     }
 
