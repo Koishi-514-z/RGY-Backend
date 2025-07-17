@@ -9,11 +9,9 @@ import org.example.rgybackend.Entity.CrisisAuditing;
 public interface CrisisDAO {
     void saveCrisis(String content, Long timestamp, String userid, Long urgencyLevel,Long contentid);
 
-    void deleteCrisis(int crisisid);
 
     void deleteCrisisAuditing(int crisisid);
 
-    void saveCrisisAuditing(String content, Long timestamp, String userid);
 
     List<Crisis> findAllCrisis();
 
@@ -23,9 +21,6 @@ public interface CrisisDAO {
 
     List<Crisis> findAllCrisisByUser(String userid);
 
-    List<CrisisModel> getAllCrisis();
-
-    boolean addCrisis(CrisisModel crisisModel);
 
     boolean updateStatus(Integer crisisid, Long status);
 }
