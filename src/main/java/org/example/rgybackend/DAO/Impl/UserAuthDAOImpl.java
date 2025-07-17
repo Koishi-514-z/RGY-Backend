@@ -50,7 +50,8 @@ public class UserAuthDAOImpl implements UserAuthDAO {
             return false;
         }
         UserAuth userAuth = userAuthOptional.get();
-        userAuth.setPassword(password);
+        String encodedPassword = passwordEncoder.encode(password);
+        userAuth.setPassword(encodedPassword);
         userAuthRepository.save(userAuth);
         return true;
     }

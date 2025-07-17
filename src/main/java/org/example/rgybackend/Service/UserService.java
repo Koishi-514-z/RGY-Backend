@@ -11,6 +11,8 @@ public interface UserService {
 
     boolean verifyPasswordByName(String username, String password);
 
+    boolean existed(String userid);
+
     boolean userExisted(String username);
 
     ProfileModel getUserProfile(String userid);

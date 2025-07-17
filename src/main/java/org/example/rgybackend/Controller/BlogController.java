@@ -67,6 +67,7 @@ public class BlogController {
         result = blogService.getRepliesByUserid(userid);
         return result;
     }
+    
     @PostMapping ("/getrepliesforblog")
     public List<ReplyModel> getRepliesForBlog(@RequestBody String params) {
         List<ReplyModel> result = new ArrayList<>();
@@ -78,6 +79,7 @@ public class BlogController {
         result = blogService.getRepliesByBlogid(blogid, pageSize, currentPage);
         return result;
     }
+
     @PostMapping ("/get")
     public BlogsRet getAllBlogs(@RequestBody String params, HttpSession session) {
         BlogsRet result = new BlogsRet();
@@ -130,6 +132,10 @@ public class BlogController {
 
     @PostMapping ("/delete")
     public boolean deleteBlog(@RequestBody String params, HttpSession session) {
+        String adminid = (String)session.getAttribute("user");
+        if(!userService.isAdmin(adminid)) {
+            throw new ForbiddenException("只有管理员允许进行此操作");
+        }
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         Long blogid = json.getLongValue("blogid");
@@ -150,6 +156,10 @@ public class BlogController {
 
     @PostMapping ("/deleteReply")
     public boolean deleteReply(@RequestBody String params, HttpSession session) {
+        String adminid = (String)session.getAttribute("user");
+        if(!userService.isAdmin(adminid)) {
+            throw new ForbiddenException("只有管理员允许进行此操作");
+        }
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         Long replyid = json.getLongValue("replyid");

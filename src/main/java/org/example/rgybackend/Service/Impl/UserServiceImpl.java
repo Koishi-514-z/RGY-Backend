@@ -93,6 +93,11 @@ public class UserServiceImpl implements UserService {
         return userDAO.existedByName(username);
     }
 
+    @Override
+    public boolean existed(String userid) {
+        return userDAO.existed(userid);
+    }
+
     // 获取用户的个人信息（自动缓存）
     @Override
     public ProfileModel getUserProfile(String userid) {
@@ -314,13 +319,15 @@ public class UserServiceImpl implements UserService {
         cacheUtil.evictProfileTagCache(psyid);
 
         String avatar = psyProfileModel.getAvatar();
-        String compressedAvatar;
-        try {
-            compressedAvatar = imageCompressor.compressBase64Image(avatar);
-        } catch (IOException e) {
-            throw new RuntimeException("图片压缩失败", e);
+        if(avatar != null) {
+            String compressedAvatar;
+            try {
+                compressedAvatar = imageCompressor.compressBase64Image(avatar);
+            } catch (IOException e) {
+                throw new RuntimeException("图片压缩失败", e);
+            }
+            psyProfileModel.setAvatar(compressedAvatar);
         }
-        psyProfileModel.setAvatar(compressedAvatar);
 
         ProfileModel newProfileModel = new ProfileModel();
         newProfileModel.setUserid(psyid);
@@ -329,6 +336,7 @@ public class UserServiceImpl implements UserService {
         newProfileModel.setAvatar(psyProfileModel.getAvatar());
         newProfileModel.setNote("");
         newProfileModel.setRole(2L);
+        newProfileModel.setJointime(psyProfileModel.getJointime());
         boolean result = userDAO.update(newProfileModel);
 
         PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);
@@ -347,6 +355,12 @@ public class UserServiceImpl implements UserService {
         boolean exists = userDAO.existed(userid);
         if(!exists) {
             throw new NotExistException("User not exists, userid: " + userid);
+        }
+        if(password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null");
+        }
+        if(password.length() < 6) {
+            throw new IllegalArgumentException("Password must be at least 6 characters long");
         }
         return userAuthDAO.updatePassword(userid, password);
     }

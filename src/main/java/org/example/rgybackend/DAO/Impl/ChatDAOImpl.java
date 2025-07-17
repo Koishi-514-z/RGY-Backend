@@ -86,14 +86,13 @@ public class ChatDAOImpl implements ChatDAO {
 
     @Override
     public Long createSession(Session session) {
+        List<Session> oldSessions = sessionRepository.findSession(session.getUserAid(), session.getUserBid());
+        for(Session old : oldSessions) {
+            sessionRepository.deleteById(old.getSessionid());
+        }
+
         sessionRepository.save(session);
         List<Session> sessions = sessionRepository.findSession(session.getUserAid(), session.getUserBid());
-        if(sessions.size() == 0) {
-            throw new NotExistException("Session not exists");
-        }
-        if(sessions.size() > 1) {
-            throw new RuntimeException("Duplicate Session");
-        }
         return sessions.get(0).getSessionid();
     }
 }

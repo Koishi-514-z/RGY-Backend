@@ -111,7 +111,16 @@ public class ChatServiceImpl implements ChatService {
     public boolean postMessage(Long sessionid, String content, String fromuserid) {
         Message message = new Message();
         Session session = chatDAO.getById(sessionid);
-        String touserid = session.getUserAid().equals(fromuserid) ? session.getUserBid() : session.getUserAid();
+        String touserid;
+        if(session.getUserAid().equals(fromuserid)) {
+            touserid = session.getUserBid();
+        }
+        else if(session.getUserBid().equals(fromuserid)) {
+            touserid = session.getUserAid();
+        }
+        else {
+            throw new RuntimeException("Session does not contain such user");
+        }
 
         milestoneServive.addMilestone(fromuserid, 5L);
 
@@ -137,6 +146,9 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public Long createSession(String fromuserid, String touserid) {
+        if(!userService.existed(touserid)) {
+            return null;
+        }
         Session session = new Session();
         session.setUserAid(fromuserid);
         session.setUserBid(touserid);
