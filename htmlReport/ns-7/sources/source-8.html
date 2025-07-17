@@ -1,0 +1,159 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MilestoneModel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Model</a>
+</div>
+
+<h1>Coverage Summary for Class: MilestoneModel (org.example.rgybackend.Model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MilestoneModel</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Model;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import org.example.rgybackend.DTO.MilestoneData;
+&nbsp;import org.example.rgybackend.Entity.Milestone;
+&nbsp;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;public class MilestoneModel {
+&nbsp;    private String userid;
+&nbsp;    
+<b class="fc">&nbsp;    private List&lt;MilestoneData&gt; milestones = new ArrayList&lt;&gt;(</b>
+<b class="fc">&nbsp;        Arrays.asList(</b>
+<b class="fc">&nbsp;            new MilestoneData(1L, &quot;register&quot;, &quot;加入社区&quot;, &quot;欢迎来到心理健康互助社区！&quot;, null),</b>
+<b class="fc">&nbsp;            new MilestoneData(2L, &quot;first_post&quot;, &quot;首次发帖&quot;, &quot;分享了第一条动态，开始你的分享之旅&quot;, null),</b>
+<b class="fc">&nbsp;            new MilestoneData(3L, &quot;first_like&quot;, &quot;首次获赞&quot;, &quot;你的分享获得了第一个赞！&quot;, null),</b>
+<b class="fc">&nbsp;            new MilestoneData(4L, &quot;positive_week&quot;, &quot;积极情绪周&quot;, &quot;连续一周保持积极情绪，真棒！&quot;, null),</b>
+<b class="fc">&nbsp;            new MilestoneData(5L, &quot;first_message&quot;, &quot;首次私信&quot;, &quot;与其他用户建立了私信联系&quot;, null),</b>
+<b class="fc">&nbsp;            new MilestoneData(6L, &quot;counseling&quot;, &quot;心理咨询&quot;, &quot;预约了第一次专业心理咨询&quot;, null),</b>
+<b class="fc">&nbsp;            new MilestoneData(7L, &quot;active_member&quot;, &quot;活跃成员&quot;, &quot;成为社区活跃成员，影响力不断提升&quot;, null)</b>
+&nbsp;        )
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    public MilestoneModel(String userid, List&lt;Milestone&gt; milestoneList) {</b>
+<b class="fc">&nbsp;        this.userid = userid;</b>
+&nbsp;
+<b class="fc">&nbsp;        for(MilestoneData milestoneData : milestones) {</b>
+<b class="fc">&nbsp;            Optional&lt;Milestone&gt; milestoneOptional = milestoneList.stream()</b>
+<b class="fc">&nbsp;                    .filter(m -&gt; m.getMilestoneid() == milestoneData.getMilestoneid())</b>
+<b class="fc">&nbsp;                    .findFirst();</b>
+<b class="fc">&nbsp;            if(milestoneOptional.isPresent()) {</b>
+<b class="fc">&nbsp;                milestoneData.setTimestamp(milestoneOptional.get().getTimestamp());</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

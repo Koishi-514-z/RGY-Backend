@@ -1,0 +1,200 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CrisisController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Controller</a>
+</div>
+
+<h1>Coverage Summary for Class: CrisisController (org.example.rgybackend.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CrisisController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (29/29)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Controller;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import com.alibaba.fastjson2.JSONObject;
+&nbsp;import org.example.rgybackend.Model.CrisisModel;
+&nbsp;import org.example.rgybackend.Service.CrisisService;
+&nbsp;import org.example.rgybackend.Service.UserService;
+&nbsp;import org.example.rgybackend.Utils.ForbiddenException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import jakarta.servlet.http.HttpSession;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/crisis&quot;)
+<b class="fc">&nbsp;public class CrisisController {</b>
+&nbsp;    @Autowired
+&nbsp;    private CrisisService crisisService;
+&nbsp;  
+&nbsp;    @Autowired
+&nbsp;    private UserService userService;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/listAuditing&quot;)
+&nbsp;    public List&lt;CrisisModel&gt; listCrisisAuditing(HttpSession session) {
+<b class="fc">&nbsp;        String id = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        if(!userService.isAdmin(id)) {</b>
+<b class="fc">&nbsp;            throw new ForbiddenException(&quot;只有管理员允许进行该操作&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return crisisService.getAllCrisisAuditing();</b>
+&nbsp;    }
+&nbsp;    @GetMapping(&quot;/listUser/{userid}&quot;)
+&nbsp;    public List&lt;CrisisModel&gt; listCrisisByUser(@PathVariable String userid, HttpSession session) {
+<b class="fc">&nbsp;        String id = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        if(!userService.isAdmin(id)) {</b>
+<b class="fc">&nbsp;            throw new ForbiddenException(&quot;只有管理员允许进行该操作&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return crisisService.getCrisisByUser(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/confirm&quot;)
+&nbsp;    public boolean confirmCrisis(@RequestBody String json, HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        if(!userService.isAdmin(userid)) {</b>
+<b class="fc">&nbsp;            throw new ForbiddenException(&quot;只有管理员允许进行该操作&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        JSONObject obj = JSONObject.parseObject(json);</b>
+<b class="fc">&nbsp;        int crisisid = obj.getIntValue(&quot;crisisid&quot;);</b>
+<b class="fc">&nbsp;        Long urgencyLevel = obj.getLongValue(&quot;urgencyLevel&quot;);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;LEVEL&quot; + urgencyLevel);</b>
+<b class="fc">&nbsp;        crisisService.saveCrisis(crisisid, urgencyLevel);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/delete&quot;)
+&nbsp;    public boolean deleteCrisisAuditing(@RequestBody String json,HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        if(!userService.isAdmin(userid)) {</b>
+<b class="fc">&nbsp;            throw new ForbiddenException(&quot;只有管理员允许进行该操作&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        JSONObject obj = JSONObject.parseObject(json);</b>
+<b class="fc">&nbsp;        int crisisid = obj.getIntValue(&quot;crisisid&quot;);</b>
+<b class="fc">&nbsp;        crisisService.deleteCrisisAuditing(crisisid);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getall&quot;)
+&nbsp;    public List&lt;CrisisModel&gt; getAllCrisis(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return crisisService.getAllCrisis();</b>
+&nbsp;    }
+&nbsp;    @PutMapping(&quot;update&quot;)
+&nbsp;    public boolean updateCrisisStatus(@RequestParam Integer crisisid, @RequestParam Long status, HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return crisisService.updateStatus(crisisid, status);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

@@ -17,22 +17,4 @@ public class NotificationModel {
     private String content;
     private Long timestamp;
     private String priority;
-
-    public NotificationModel(Notification notification) {
-        this.notificationid = notification.getNotificationid();
-        this.adminid = notification.getAdminid();
-        this.title = notification.getTitle();
-        this.content = notification.getContent();
-        this.timestamp = notification.getTimestamp();
-        this.priority = notification.getPriority();
-    }
-
-    public NotificationModel(NotificationModel other) {
-        this.notificationid = other.notificationid;
-        this.adminid = other.adminid;
-        this.title = other.title;
-        this.content = other.content;
-        this.timestamp = other.timestamp;
-        this.priority = other.priority;
-    }
 }

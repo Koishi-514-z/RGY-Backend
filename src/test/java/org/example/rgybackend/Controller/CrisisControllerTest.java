@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory; 
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,8 +32,6 @@ class CrisisControllerTest {
 
     @Autowired
     private CrisisController crisisController;
-
-    private String user_avatar;
 
     private static final String TEST_USERNAME = "guoxutao2";
     private static final String TEST_PASSWORD = "123456";
@@ -91,12 +89,6 @@ class CrisisControllerTest {
                 );
 
         this.restTemplate.getRestTemplate().setRequestFactory(factory);
-        user_avatar = new String(Files.readAllBytes(Paths.get("C:\\avatar\\avatar_guoxutao_2.txt")));
-    }
-
-    @AfterEach
-    void tearDown() {
-
     }
 
     @Test
@@ -176,9 +168,6 @@ class CrisisControllerTest {
         assertTrue(response.getBody());
         Logout();
         userLogin();
-        // 只有管理员可以更新危机状态,判断用户更新时是否会抛出异常
-        //boolean result2 = restTemplate.put("/api/crisis/update?crisisid=1&status=2", null);
-        //assertThrows(Exception.class, () -> restTemplate.put("/api/crisis/update?crisisid=1&status=2", null));
         Logout();
     }
 }

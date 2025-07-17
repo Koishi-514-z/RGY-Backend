@@ -1,0 +1,241 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > NotificationUtil</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Utils</a>
+</div>
+
+<h1>Coverage Summary for Class: NotificationUtil (org.example.rgybackend.Utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NotificationUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    99%
+  </span>
+  <span class="absValue">
+    (100/101)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Utils;
+&nbsp;
+&nbsp;import org.example.rgybackend.Model.NotificationPrivateModel;
+&nbsp;
+<b class="nc">&nbsp;public class NotificationUtil {</b>
+&nbsp;    /*
+&nbsp;     * 0 ~ 99：系统
+&nbsp;     * 100 ~ 199：安全
+&nbsp;     * 200 ~ 299：更新
+&nbsp;     * 300 ~ 399：消息
+&nbsp;     * 400 ~ 499：提醒
+&nbsp;     * 500 ~ 599：警告
+&nbsp;     * 1000+：公告
+&nbsp;     */
+&nbsp;
+<b class="fc">&nbsp;    public final static NotificationPrivateModel psyAssist = new NotificationPrivateModel(</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        400L,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        &quot;心理关怀提醒&quot;,</b>
+<b class="fc">&nbsp;        &quot;我们注意到您最近的情绪状态不太好，如果您感到压力或困扰，可以尝试：\n• 与信任的朋友或家人交流\n• 适当运动或户外活动\n• 寻求专业心理咨询\n\n心理援助热线：400-161-9995&quot;,</b>
+<b class="fc">&nbsp;        TimeUtil.now(),</b>
+<b class="fc">&nbsp;        1L,</b>
+<b class="fc">&nbsp;        &quot;medium&quot;</b>
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    public final static NotificationPrivateModel crisis = new NotificationPrivateModel(</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        500L,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        &quot;紧急心理援助&quot;,</b>
+<b class="fc">&nbsp;        &quot;您的安全对我们很重要！如果您正在经历痛苦或有轻生念头，请立即寻求帮助：\n\n 紧急求助电话：\n• 全国危机干预热线：400-161-9995\n• 北京危机干预热线：400-161-9995\n• 上海心理援助热线：021-34289888\n\n请记住：您并不孤单，总有人愿意倾听和帮助您！&quot;,</b>
+<b class="fc">&nbsp;        TimeUtil.now(),</b>
+<b class="fc">&nbsp;        1L,</b>
+<b class="fc">&nbsp;        &quot;high&quot;</b>
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    public final static NotificationPrivateModel counselingNew = new NotificationPrivateModel(</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        310L, </b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        &quot;咨询预约已提交&quot;,</b>
+<b class="fc">&nbsp;        &quot;您的心理咨询预约已成功提交！\n\n请耐心等待咨询师确认。\n如有变动，您将收到进一步通知。\n如需修改或取消预约，请在预约详情页操作。\n\n感谢您的信任，祝您一切顺利！&quot;,</b>
+<b class="fc">&nbsp;        TimeUtil.now(),</b>
+<b class="fc">&nbsp;        1L,</b>
+<b class="fc">&nbsp;        &quot;low&quot;</b>
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    public final static NotificationPrivateModel counselingAccepted = new NotificationPrivateModel(</b>
+<b class="fc">&nbsp;        null, </b>
+<b class="fc">&nbsp;        420L, </b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        &quot;咨询预约已确认&quot;,</b>
+<b class="fc">&nbsp;        &quot;您的心理咨询预约已被接受！\n\n 请按预约时间准时参加咨询\n 建议提前5-10分钟做好准备\n 如有紧急情况需要调整时间，请及时联系咨询师\n\n祝您咨询顺利！&quot;,</b>
+<b class="fc">&nbsp;        TimeUtil.now(),</b>
+<b class="fc">&nbsp;        1L,</b>
+<b class="fc">&nbsp;        &quot;medium&quot;</b>
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    public final static NotificationPrivateModel counselingFinished = new NotificationPrivateModel(</b>
+<b class="fc">&nbsp;        null, </b>
+<b class="fc">&nbsp;        320L, </b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        &quot;咨询已完成&quot;,</b>
+<b class="fc">&nbsp;        &quot;您的心理咨询已顺利完成！\n\n 感谢您的信任与配合\n 请为本次咨询体验进行评价\n 如需后续咨询，可随时预约\n 祝您身心健康，生活愉快！&quot;,</b>
+<b class="fc">&nbsp;        TimeUtil.now(),</b>
+<b class="fc">&nbsp;        1L,</b>
+<b class="fc">&nbsp;        &quot;low&quot;</b>
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    public final static NotificationPrivateModel counselingRejected = new NotificationPrivateModel(</b>
+<b class="fc">&nbsp;        null, </b>
+<b class="fc">&nbsp;        421L, </b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        &quot;咨询预约未通过&quot;,</b>
+<b class="fc">&nbsp;        &quot;很抱歉，您的咨询预约未能安排。\n\n可能原因：\n• 该时段已被预约\n• 咨询师时间冲突\n• 其他安排问题\n\n 建议：\n• 选择其他可用时间段\n• 联系其他合适的咨询师\n• 如有疑问可咨询客服\n\n感谢您的理解！&quot;,</b>
+<b class="fc">&nbsp;        TimeUtil.now(),</b>
+<b class="fc">&nbsp;        1L,</b>
+<b class="fc">&nbsp;        &quot;medium&quot;</b>
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    public final static NotificationPrivateModel counselingNewOrder = new NotificationPrivateModel(</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        340L,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        &quot;您有新的咨询预约&quot;,</b>
+<b class="fc">&nbsp;        &quot;您收到了一条新的心理咨询预约。\n\n 请及时查看预约详情并确认是否接受。\n如有时间冲突，请尽快与用户沟通调整。\n\n感谢您的专业服务！&quot;,</b>
+<b class="fc">&nbsp;        TimeUtil.now(),</b>
+<b class="fc">&nbsp;        1L,</b>
+<b class="fc">&nbsp;        &quot;low&quot;</b>
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    public final static NotificationPrivateModel counselingCanceled = new NotificationPrivateModel(</b>
+<b class="fc">&nbsp;        null, </b>
+<b class="fc">&nbsp;        442L, </b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        &quot;用户取消咨询预约&quot;,</b>
+<b class="fc">&nbsp;        &quot;有用户取消了咨询预约。\n\n 预约详情：\n• 取消时间：刚刚\n• 原因：用户主动取消\n\n 处理建议：\n• 该时段现已空出，可接受其他预约\n• 如需了解详情可查看预约记录\n• 保持专业态度，理解用户需求变化\n\n感谢您的理解与配合！&quot;,</b>
+<b class="fc">&nbsp;        TimeUtil.now(),</b>
+<b class="fc">&nbsp;        1L,</b>
+<b class="fc">&nbsp;        &quot;low&quot;</b>
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    public final static NotificationPrivateModel callBackNotifyForUser = new NotificationPrivateModel(</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        450L,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        null,</b>
+<b class="fc">&nbsp;        &quot;心理咨询师主动关怀&quot;,</b>
+<b class="fc">&nbsp;        &quot;我们注意到您最近与AI助手进行了较长时间的交流，为了给您提供更专业的帮助，已为您安排心理咨询师主动回访。\n\n回访安排：\n• 专业咨询师将在24小时内联系您\n• 提供更深入的心理支持和建议\n• 完全免费，无需额外操作\n\n如果您暂时不需要回访，可以在设置中关闭此功能。\n\n我们始终关心您的心理健康！&quot;,</b>
+<b class="fc">&nbsp;        TimeUtil.now(),</b>
+<b class="fc">&nbsp;        1L,</b>
+<b class="fc">&nbsp;        &quot;medium&quot;</b>
+&nbsp;    );
+&nbsp;
+&nbsp;    public static NotificationPrivateModel getCallBackNotifyForPsy(String userid) {
+<b class="fc">&nbsp;        return new NotificationPrivateModel(</b>
+<b class="fc">&nbsp;            null,</b>
+<b class="fc">&nbsp;            451L,</b>
+<b class="fc">&nbsp;            null,</b>
+<b class="fc">&nbsp;            null,</b>
+<b class="fc">&nbsp;            &quot;系统分配主动回访任务&quot;,</b>
+<b class="fc">&nbsp;            &quot;系统检测到用户 &quot; + userid + &quot; 与AI助手交流时间超过1小时，现为您分配主动回访任务。\n\n用户情况：\n• 用户ID：&quot; + userid + &quot;\n• AI交流时长：超过1小时\n• 建议关注：情绪状态和心理需求\n• 回访方式：电话或在线咨询\n\n任务要求：\n• 请在24小时内联系该用户\n• 提供专业的心理支持和建议\n• 评估是否需要进一步干预\n\n如有疑问，请联系系统管理员。\n感谢您的专业服务！&quot;,</b>
+<b class="fc">&nbsp;            TimeUtil.now(),</b>
+<b class="fc">&nbsp;            1L,</b>
+<b class="fc">&nbsp;            &quot;medium&quot;</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

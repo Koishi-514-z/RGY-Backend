@@ -1,0 +1,86 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SessionRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Repository</a>
+</div>
+
+<h1>Coverage Summary for Class: SessionRepository (org.example.rgybackend.Repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">SessionRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Repository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.DTO.SessionTagDTO;
+&nbsp;import org.example.rgybackend.Entity.Session;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;
+&nbsp;public interface SessionRepository extends JpaRepository&lt;Session, Long&gt; {
+&nbsp;    @Query(&quot;SELECT s FROM Session s WHERE (s.userAid = :fromuserid AND s.userBid = :touserid) OR (s.userBid = :fromuserid AND s.userAid = :touserid)&quot;)
+&nbsp;    List&lt;Session&gt; findSession(String fromuserid, String touserid);
+&nbsp;
+&nbsp;    boolean existsByUserAidAndUserBid(String userAid, String userBid);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT new org.example.rgybackend.DTO.SessionTagDTO(s.sessionid, s.userAid, s.userBid, s.timestamp, s.unreadA, s.unreadB) FROM Session s WHERE s.userAid = :fromuserid OR s.userBid = :fromuserid&quot;)
+&nbsp;    List&lt;SessionTagDTO&gt; findSessionTags(String fromuserid);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

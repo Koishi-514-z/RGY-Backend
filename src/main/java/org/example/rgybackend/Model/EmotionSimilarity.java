@@ -56,8 +56,4 @@ public class EmotionSimilarity {
     public List<List<Integer>> getEmotion1() {
         return emotion1;
     }
-
-    public void setEmotion1(List<List<Integer>> emotion1) {
-        this.emotion1 = emotion1;
-    }
 }

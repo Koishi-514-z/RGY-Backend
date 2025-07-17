@@ -9,7 +9,10 @@ import org.junit.platform.suite.api.Suite;
     PushContentControllerTest.class,
     EmotionControllerTest.class,
     CounselingControllerTest.class,
-    ChatControllerTest.class
+    ChatControllerTest.class,
+    NotificationControllerTest.class,
+    CrisisControllerTest.class,
+    BlogControllerTest.class
 })
 public class ControllerTestSuite {
     

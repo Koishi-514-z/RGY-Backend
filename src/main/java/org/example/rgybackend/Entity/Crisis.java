@@ -47,22 +47,4 @@ public class Crisis {
     @Basic
     @Column(name = "contentid")
     private Long contentid;
-
-    public Crisis(String content, Long timestamp, String userid) {
-        this.content = content;
-        this.timestamp = timestamp;
-        this.userid = userid;
-    }
-
-    public Crisis(CrisisModel model) {
-        this.crisisid = model.getCrisisid();
-        this.userid = model.getUserid();
-        this.content = model.getContent();
-        this.timestamp = model.getTimestamp();
-        this.urgencyLevel = model.getUrgencyLevel();
-        this.status = model.getStatus();
-
-    }
-
-
 }

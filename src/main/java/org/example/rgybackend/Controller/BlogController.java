@@ -241,9 +241,6 @@ public class BlogController {
     @GetMapping ("/getIllegalBlogs")
     public List<IllegalModel> getIllegalBlogs(HttpSession session) {
         String userid = (String)session.getAttribute("user");
-        if(!userService.isAdmin(userid)) {
-            throw new ForbiddenException("只有管理员允许进行该操作");
-        }
         List<IllegalModel> result = new ArrayList<>();
         result = blogService.getIllegalBlogs();
         return result;
@@ -252,9 +249,6 @@ public class BlogController {
     @GetMapping ("/getIllegalReplies")
     public List<IllegalModel> getIllegalReplies(HttpSession session) {
         String userid = (String)session.getAttribute("user");
-        if(!userService.isAdmin(userid)) {
-            throw new ForbiddenException("只有管理员允许进行该操作");
-        }
         List<IllegalModel> result = new ArrayList<>();
         result = blogService.getIllegalReplies();
         return result;
@@ -262,9 +256,6 @@ public class BlogController {
      @PostMapping ("/sheldingBlog")
      public boolean sheldingBlog(@RequestBody String params, HttpSession session) {
          String userid = (String)session.getAttribute("user");
-         if(!userService.isAdmin(userid)) {
-             throw new ForbiddenException("只有管理员允许进行该操作");
-         }
          System.out.println(params);
          JSONObject json = new JSONObject();
          json = JSON.parseObject(params);
@@ -283,9 +274,6 @@ public class BlogController {
      @PostMapping("sheldingReply")
      public boolean sheldingReply(@RequestBody String params, HttpSession session) {
          String userid = (String)session.getAttribute("user");
-         if(!userService.isAdmin(userid)) {
-             throw new ForbiddenException("只有管理员允许进行该操作");
-         }
          JSONObject json = new JSONObject();
          json = JSON.parseObject(params);
          Long replyid = json.getLongValue("replyid");
@@ -299,9 +287,6 @@ public class BlogController {
      @PostMapping("recoverIllegal")
      public boolean recoverIllegal(@RequestBody String params, HttpSession session) {
          String userid = (String)session.getAttribute("user");
-         if(!userService.isAdmin(userid)) {
-             throw new ForbiddenException("只有管理员允许进行该操作");
-         }
          JSONObject json = new JSONObject();
          json = JSON.parseObject(params);
          //Long blogid = json.getLongValue("blogid");
@@ -313,9 +298,6 @@ public class BlogController {
      @PostMapping("deleteIllegal")
      public boolean deleteIllegal(@RequestBody String params, HttpSession session) {
          String userid = (String)session.getAttribute("user");
-         if(!userService.isAdmin(userid)) {
-             throw new ForbiddenException("只有管理员允许进行该操作");
-         }
          JSONObject json = new JSONObject();
          json = JSON.parseObject(params);
          int illegalid = json.getIntValue("illegalid");

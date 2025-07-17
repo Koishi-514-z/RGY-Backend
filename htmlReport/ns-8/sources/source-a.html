@@ -1,0 +1,485 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Service.Impl</a>
+</div>
+
+<h1>Coverage Summary for Class: UserServiceImpl (org.example.rgybackend.Service.Impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    86.8%
+  </span>
+  <span class="absValue">
+    (59/68)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98.7%
+  </span>
+  <span class="absValue">
+    (153/155)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Service.Impl;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Iterator;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import org.example.rgybackend.DAO.BlogDAO;
+&nbsp;import org.example.rgybackend.DAO.LikeDAO;
+&nbsp;import org.example.rgybackend.DAO.PsyExtraDAO;
+&nbsp;import org.example.rgybackend.DAO.ReplyDAO;
+&nbsp;import org.example.rgybackend.DAO.UserAuthDAO;
+&nbsp;import org.example.rgybackend.DAO.UserDAO;
+&nbsp;import org.example.rgybackend.DTO.IntimateDTO;
+&nbsp;import org.example.rgybackend.DTO.LikeData;
+&nbsp;import org.example.rgybackend.DTO.ProfileTag;
+&nbsp;import org.example.rgybackend.DTO.ReplyData;
+&nbsp;import org.example.rgybackend.Entity.PsyProfileExtra;
+&nbsp;import org.example.rgybackend.Model.*;
+&nbsp;import org.example.rgybackend.Service.MilestoneServive;
+&nbsp;import org.example.rgybackend.Service.SjtuMailService;
+&nbsp;import org.example.rgybackend.Service.UserService;
+&nbsp;import org.example.rgybackend.Utils.AuthCodeManager;
+&nbsp;import org.example.rgybackend.Utils.CacheUtil;
+&nbsp;import org.example.rgybackend.Utils.ImageCompressor;
+&nbsp;import org.example.rgybackend.Utils.TimeUtil;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class UserServiceImpl implements UserService {</b>
+&nbsp;    @Autowired
+&nbsp;    private UserDAO userDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private PsyExtraDAO psyExtraDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserAuthDAO userAuthDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private BCryptPasswordEncoder encoder;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private BlogDAO blogDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private LikeDAO likeDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ReplyDAO replyDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private CacheUtil cacheUtil;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ImageCompressor imageCompressor;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private MilestoneServive milestoneServive;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private SjtuMailService sjtuMailService;
+&nbsp;
+&nbsp;    @Value(&quot;${verify.admin.key}&quot;)
+&nbsp;    private String KEY;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean isAdmin(String userid) {
+<b class="fc">&nbsp;        return userDAO.getRole(userid) &gt; 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean verifyPasswordByName(String username, String password) {
+<b class="fc">&nbsp;        boolean exists = userDAO.existedByName(username);</b>
+<b class="fc">&nbsp;        if(!exists) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        ProfileModel profile = userDAO.getByName(username);</b>
+<b class="fc">&nbsp;        String userid = profile.getUserid();</b>
+<b class="fc">&nbsp;        return userAuthDAO.pwdMatch(userid, password);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean userExisted(String username) {
+<b class="fc">&nbsp;        return userDAO.existedByName(username);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // 获取用户的个人信息（自动缓存）
+&nbsp;    @Override
+&nbsp;    public ProfileModel getUserProfile(String userid) {
+<b class="fc">&nbsp;        ProfileModel profileModel = userDAO.get(userid);</b>
+<b class="fc">&nbsp;        profileModel.calcLevel(blogDAO.getBlogsByUserid(userid), replyDAO.findOppositeUser(userid), likeDAO.findOppositeUser(userid));</b>
+&nbsp;
+<b class="fc">&nbsp;        if(profileModel.getLevel() &gt; 20) {</b>
+<b class="fc">&nbsp;            milestoneServive.addMilestone(userid, 7L);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        cacheUtil.putProfileToCache(userid, profileModel);</b>
+<b class="fc">&nbsp;        return profileModel;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // 获取所有用户的个人信息（自动缓存）
+&nbsp;    @Override
+&nbsp;    public List&lt;AdminProfileModel&gt; getAllProfile(String adminid) {
+<b class="fc">&nbsp;        List&lt;ProfileModel&gt; profileModels = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        List&lt;ProfileTag&gt; profileTags = userDAO.getAllProfileTags();</b>
+<b class="fc">&nbsp;        for(ProfileTag profileTag : profileTags) {</b>
+<b class="fc">&nbsp;            profileModels.add(this.getUserProfile(profileTag.getUserid()));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;AdminProfileModel&gt; adminProfileModels = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for(ProfileModel profileModel : profileModels) {</b>
+<b class="fc">&nbsp;            if(profileModel.getRole() == 1 &amp;&amp; profileModel.getUserid().equals(adminid) || profileModel.getUserid().equals(&quot;System&quot;)) {</b>
+&nbsp;                continue;
+&nbsp;            }
+<b class="fc">&nbsp;            AdminProfileModel adminProfileModel = new AdminProfileModel(profileModel, userAuthDAO.isDisabled(profileModel.getUserid())? 1 : 0);</b>
+<b class="fc">&nbsp;            adminProfileModels.add(adminProfileModel);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return adminProfileModels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // 获取心理咨询师个人信息（自动缓存）
+&nbsp;    @Override
+&nbsp;    public PsyProfileModel getPsyProfile(String psyid) {
+<b class="fc">&nbsp;        ProfileModel profileModel = userDAO.get(psyid);</b>
+<b class="fc">&nbsp;        PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);</b>
+<b class="fc">&nbsp;        PsyProfileModel psyProfileModel = new PsyProfileModel(profileExtra);</b>
+<b class="fc">&nbsp;        psyProfileModel.setUsername(profileModel.getUsername());</b>
+<b class="fc">&nbsp;        psyProfileModel.setEmail(profileModel.getEmail());</b>
+<b class="fc">&nbsp;        psyProfileModel.setAvatar(profileModel.getAvatar());</b>
+<b class="fc">&nbsp;        psyProfileModel.setJointime(profileModel.getJointime());</b>
+<b class="fc">&nbsp;        cacheUtil.putPsyProfileToCache(psyid, psyProfileModel);</b>
+<b class="fc">&nbsp;        return psyProfileModel;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // 获取所有心理咨询师个人信息（自动缓存）
+&nbsp;    @Override
+&nbsp;    public List&lt;PsyProfileModel&gt; getPsyProfiles() {
+<b class="fc">&nbsp;        List&lt;ProfileTag&gt; profileTags = userDAO.getPsyProfileTags();</b>
+<b class="fc">&nbsp;        List&lt;PsyProfileModel&gt; psyProfileModels = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for(ProfileTag profileTag : profileTags) {</b>
+<b class="fc">&nbsp;            psyProfileModels.add(this.getPsyProfile(profileTag.getUserid()));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return psyProfileModels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ProfileModel getProfileByName(String username) {
+<b class="fc">&nbsp;        return userDAO.getByName(username);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // 获取简化后的个人信息（缓存）
+&nbsp;    @Override
+&nbsp;    public SimplifiedProfileModel getSimplifiedProfile(String userid) {
+<b class="fc">&nbsp;        ProfileModel profile = userDAO.get(userid);</b>
+<b class="fc">&nbsp;        cacheUtil.putProfileToCache(userid, profile);</b>
+<b class="fc">&nbsp;        return new SimplifiedProfileModel(profile);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;IntimateDTO&gt; getIntimateUsers(String userid) {
+<b class="fc">&nbsp;        List&lt;IntimateDTO&gt; intimateUsers = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        final int total = 4;</b>
+<b class="fc">&nbsp;        final double likeWeight = 0.6;   </b>
+<b class="fc">&nbsp;        final double timeWeight[] = {18.0, 9.0, 3.0, 1.0};</b>
+<b class="fc">&nbsp;        List&lt;LikeData&gt; likeDatas = likeDAO.findOppositeUser(userid);</b>
+<b class="fc">&nbsp;        List&lt;ReplyData&gt; replyDatas = replyDAO.findOppositeUser(userid);</b>
+&nbsp;
+<b class="fc">&nbsp;        LocalDate today = TimeUtil.today();</b>
+<b class="fc">&nbsp;        LocalDate yesterday = today.minusDays(1);</b>
+<b class="fc">&nbsp;        LocalDate prevWeek = today.minusDays(7);</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, Double&gt; intimateScores = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        for(LikeData likeData : likeDatas) {</b>
+<b class="fc">&nbsp;            intimateScores.put(likeData.getUserid(), 0.0);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        for(ReplyData replyData : replyDatas) {</b>
+<b class="fc">&nbsp;            intimateScores.put(replyData.getUserid(), 0.0);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        for(LikeData likeData : likeDatas) {</b>
+<b class="fc">&nbsp;            LocalDate date = TimeUtil.getLocalDate(likeData.getTimestamp());</b>
+&nbsp;            int timeClass;
+<b class="pc">&nbsp;            if(date.compareTo(yesterday) &gt;= 0) timeClass = 0;</b>
+<b class="fc">&nbsp;            else if(date.compareTo(prevWeek) &gt;= 0) timeClass = 1;</b>
+<b class="fc">&nbsp;            else timeClass = 2;</b>
+<b class="fc">&nbsp;            Double score = likeWeight * timeWeight[timeClass];</b>
+<b class="fc">&nbsp;            Double originScore = intimateScores.get(likeData.getUserid());</b>
+<b class="fc">&nbsp;            intimateScores.put(likeData.getUserid(), originScore + score);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        for(ReplyData replyData : replyDatas) {</b>
+<b class="fc">&nbsp;            LocalDate date = TimeUtil.getLocalDate(replyData.getTimestamp());</b>
+&nbsp;            int timeClass;
+<b class="pc">&nbsp;            if(date.compareTo(yesterday) &gt;= 0) timeClass = 0;</b>
+<b class="fc">&nbsp;            else if(date.compareTo(prevWeek) &gt;= 0) timeClass = 1;</b>
+<b class="fc">&nbsp;            else timeClass = 2;</b>
+<b class="fc">&nbsp;            Double score = (1 - likeWeight) * timeWeight[timeClass];</b>
+<b class="fc">&nbsp;            Double originScore = intimateScores.get(replyData.getUserid());</b>
+<b class="fc">&nbsp;            intimateScores.put(replyData.getUserid(), originScore + score);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Iterator&lt;Map.Entry&lt;String, Double&gt;&gt; iterator = intimateScores.entrySet().iterator();</b>
+<b class="fc">&nbsp;        while(iterator.hasNext()) {</b>
+<b class="fc">&nbsp;            Map.Entry&lt;String, Double&gt; entry = iterator.next();</b>
+<b class="fc">&nbsp;            if(entry.getKey().equals(userid)) {</b>
+<b class="fc">&nbsp;                iterator.remove();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        
+<b class="pc">&nbsp;        for(int i = 0; i &lt; total; ++i) {</b>
+<b class="fc">&nbsp;            if(intimateScores.isEmpty()) {</b>
+&nbsp;                break;
+&nbsp;            }
+<b class="fc">&nbsp;            String maxUserid = null;</b>
+<b class="fc">&nbsp;            Double maxScore = -1.0;</b>
+<b class="fc">&nbsp;            for(Map.Entry&lt;String, Double&gt; data : intimateScores.entrySet()) {</b>
+<b class="fc">&nbsp;                String datauserid = data.getKey();</b>
+<b class="fc">&nbsp;                Double score = data.getValue();</b>
+<b class="pc">&nbsp;                if(score &gt; maxScore) {</b>
+<b class="fc">&nbsp;                    maxScore = score;</b>
+<b class="fc">&nbsp;                    maxUserid = datauserid;</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            SimplifiedProfileModel profile = this.getSimplifiedProfile(maxUserid);</b>
+<b class="fc">&nbsp;            intimateUsers.add(new IntimateDTO(maxScore, profile));</b>
+<b class="fc">&nbsp;            intimateScores.remove(maxUserid);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return intimateUsers;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean isDisabled(String username) {
+<b class="fc">&nbsp;        boolean existed = userDAO.existedByName(username);</b>
+<b class="fc">&nbsp;        if(!existed) {</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        String userid = userDAO.getByName(username).getUserid();</b>
+<b class="fc">&nbsp;        return userAuthDAO.isDisabled(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean verifyPassword(String userid, String password) {
+<b class="fc">&nbsp;        return userAuthDAO.pwdMatch(userid, password);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean verifyAdmin(String verifyKey) {
+<b class="fc">&nbsp;        return encoder.matches(verifyKey, KEY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean addUser(UserModel user) {
+<b class="fc">&nbsp;        user.getProfile().setJointime(TimeUtil.now());</b>
+<b class="fc">&nbsp;        boolean result = userDAO.add(user.getProfile());</b>
+<b class="fc">&nbsp;        boolean resultAuth = userAuthDAO.addAuth(user.getProfile().getUserid(), user.getStuid(), user.getPassword());</b>
+<b class="fc">&nbsp;        milestoneServive.addMilestone(user.getProfile().getUserid(), 1L);</b>
+<b class="fc">&nbsp;        if(user.getProfile().getRole() != 2) {</b>
+<b class="pc">&nbsp;            return result &amp;&amp; resultAuth;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        PsyProfileExtra profileExtra = new PsyProfileExtra(user.getProfile().getUserid());</b>
+<b class="fc">&nbsp;        boolean resultExtra = psyExtraDAO.setPsyProfileExtra(profileExtra);</b>
+<b class="pc">&nbsp;        return result &amp;&amp; resultAuth &amp;&amp; resultExtra;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean updateProfile(ProfileModel profile) {
+<b class="fc">&nbsp;        cacheUtil.evictProfileCache(profile.getUserid());</b>
+&nbsp;
+<b class="fc">&nbsp;        String avatar = profile.getAvatar();</b>
+<b class="fc">&nbsp;        if(avatar != null) {</b>
+&nbsp;            String compressedAvatar;
+&nbsp;            try {
+<b class="fc">&nbsp;                compressedAvatar = imageCompressor.compressBase64Image(avatar);</b>
+&nbsp;            } catch (IOException e) {
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;图片压缩失败&quot;, e);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            profile.setAvatar(compressedAvatar);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return userDAO.update(profile);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean updatePsyProfile(PsyProfileModel psyProfileModel) {
+<b class="fc">&nbsp;        String psyid = psyProfileModel.getUserid();</b>
+<b class="fc">&nbsp;        cacheUtil.evictPsyProfileCache(psyid);</b>
+&nbsp;
+<b class="fc">&nbsp;        String avatar = psyProfileModel.getAvatar();</b>
+<b class="fc">&nbsp;        if(avatar != null) {</b>
+&nbsp;            String compressedAvatar;
+&nbsp;            try {
+<b class="fc">&nbsp;                compressedAvatar = imageCompressor.compressBase64Image(avatar);</b>
+&nbsp;            } catch (IOException e) {
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;图片压缩失败&quot;, e);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            psyProfileModel.setAvatar(compressedAvatar);</b>
+&nbsp;        }
+&nbsp;        
+<b class="fc">&nbsp;        ProfileModel newProfileModel = new ProfileModel();</b>
+<b class="fc">&nbsp;        newProfileModel.setUserid(psyid);</b>
+<b class="fc">&nbsp;        newProfileModel.setUsername(psyProfileModel.getUsername());</b>
+<b class="fc">&nbsp;        newProfileModel.setEmail(psyProfileModel.getEmail());</b>
+<b class="fc">&nbsp;        newProfileModel.setAvatar(psyProfileModel.getAvatar());</b>
+<b class="fc">&nbsp;        newProfileModel.setNote(&quot;&quot;);</b>
+<b class="fc">&nbsp;        newProfileModel.setRole(2L);</b>
+<b class="fc">&nbsp;        newProfileModel.setJointime(psyProfileModel.getJointime());</b>
+<b class="fc">&nbsp;        boolean result = userDAO.update(newProfileModel);</b>
+&nbsp;
+<b class="fc">&nbsp;        PsyProfileExtra profileExtra = psyExtraDAO.getPsyProfileExtra(psyid);</b>
+<b class="fc">&nbsp;        PsyProfileExtra newProfileExtra = new PsyProfileExtra(psyProfileModel);</b>
+<b class="fc">&nbsp;        newProfileExtra.setTotalClients(profileExtra.getTotalClients());</b>
+<b class="fc">&nbsp;        newProfileExtra.setTotalScore(profileExtra.getTotalScore());</b>
+<b class="fc">&nbsp;        newProfileExtra.setCommentNum(profileExtra.getCommentNum());</b>
+<b class="fc">&nbsp;        newProfileExtra.setSuccessNum(profileExtra.getSuccessNum());</b>
+<b class="fc">&nbsp;        boolean resultExtra = psyExtraDAO.setPsyProfileExtra(newProfileExtra);</b>
+&nbsp;
+<b class="pc">&nbsp;        return result &amp;&amp; resultExtra;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean updatePassword(String userid, String password) {
+<b class="pc">&nbsp;        if(password == null || password.isEmpty()) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Password cannot be null or empty&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return userAuthDAO.updatePassword(userid, password);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean setDisabled(String userid, boolean disabled) {
+<b class="fc">&nbsp;        return userAuthDAO.setDisabled(userid, disabled);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ProfileTag getProfileTag(String userid) {
+<b class="fc">&nbsp;        ProfileTag profileTag = new ProfileTag();</b>
+<b class="fc">&nbsp;        profileTag.setUserid(userid);</b>
+<b class="fc">&nbsp;        profileTag.setUsername(userDAO.getUsername(userid));</b>
+<b class="fc">&nbsp;        return profileTag;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean postAuthCode(String email) {
+<b class="fc">&nbsp;        Long authCode = AuthCodeManager.addAuthCode(email);</b>
+<b class="fc">&nbsp;        if(authCode == null) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        String subject = &quot;【心理健康互助社区】您的验证码&quot;;</b>
+<b class="fc">&nbsp;        String content = &quot;您好，\n\n&quot;</b>
+&nbsp;            + &quot;您正在进行邮箱验证操作，您的验证码为： &quot; + authCode + &quot;\n\n&quot;
+&nbsp;            + &quot;请在5分钟内完成验证。请勿将验证码泄露给他人。\n\n&quot;
+&nbsp;            + &quot;如非本人操作，请忽略此邮件。\n\n&quot;
+&nbsp;            + &quot;—— 心理健康互助社区团队&quot;;
+<b class="fc">&nbsp;        sjtuMailService.sendSimpleMail(email, subject, content);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }   
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean checkAuthCode(String email, Long authCode) {
+<b class="fc">&nbsp;        return AuthCodeManager.checkAuthCode(email, authCode);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

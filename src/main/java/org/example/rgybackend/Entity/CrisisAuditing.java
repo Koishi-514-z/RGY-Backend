@@ -49,15 +49,6 @@ public class CrisisAuditing {
     private Long urgencyLevel;
 
 
-
-    public CrisisAuditing(String content, Long timestamp, String userid, Long contentid, Long type, Long urgencyLevel) {
-        this.content = content;
-        this.timestamp = timestamp;
-        this.userid = userid;
-        this.contentid = contentid;
-        this.type = type;
-        this.urgencyLevel = urgencyLevel;
-    }
   
     public CrisisAuditing(CrisisAuditingModel model) {
         this.crisisid = model.getCrisisid();
@@ -68,14 +59,5 @@ public class CrisisAuditing {
         this.type = model.getType();
         this.urgencyLevel = model.getUrgencyLevel();
     }
-    
-    public CrisisAuditing(CrisisAuditing other) {
-        this.crisisid = other.crisisid;
-        this.userid = other.userid;
-        this.content = other.content;
-        this.timestamp = other.timestamp;
-        this.contentid = other.contentid;
-        this.type = other.type;
-        this.urgencyLevel = other.urgencyLevel;
-    }
+
 }

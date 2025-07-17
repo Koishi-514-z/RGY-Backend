@@ -1,0 +1,164 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EmotionDataModel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Model</a>
+</div>
+
+<h1>Coverage Summary for Class: EmotionDataModel (org.example.rgybackend.Model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EmotionDataModel</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.8%
+  </span>
+  <span class="absValue">
+    (15/16)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Model;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.Utils.TimeUtil;
+&nbsp;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;public class EmotionDataModel {
+&nbsp;    private Long timestamp;
+&nbsp;    private Long score;
+&nbsp;    private Long tagid;
+&nbsp;    private Long time;
+&nbsp;
+<b class="fc">&nbsp;    public EmotionDataModel(EmotionModel emotionModel) {</b>
+<b class="fc">&nbsp;        this.timestamp = emotionModel.getTimestamp();</b>
+<b class="fc">&nbsp;        this.score = emotionModel.getScore();</b>
+<b class="fc">&nbsp;        this.tagid = emotionModel.getTag().getId();</b>
+<b class="fc">&nbsp;        this.time = null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static List&lt;EmotionDataModel&gt; transToDatas(List&lt;EmotionModel&gt; emotionModels) {
+<b class="fc">&nbsp;        List&lt;EmotionDataModel&gt; emotionDataModels = new ArrayList&lt;&gt;();</b>
+<b class="pc">&nbsp;        if(emotionModels.isEmpty()) {</b>
+<b class="nc">&nbsp;            return emotionDataModels;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        for(EmotionModel emotionModel : emotionModels) {</b>
+<b class="fc">&nbsp;            emotionDataModels.add(new EmotionDataModel(emotionModel));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        emotionDataModels.sort((e1, e2) -&gt; e1.getTimestamp().compareTo(e2.getTimestamp()));</b>
+&nbsp;
+<b class="fc">&nbsp;        Long minTimestamp = TimeUtil.getStartOfDayTimestamp(emotionDataModels.get(0).getTimestamp());</b>
+<b class="fc">&nbsp;        for(EmotionDataModel emotionDataModel : emotionDataModels) {</b>
+<b class="fc">&nbsp;            Long diffDays = (emotionDataModel.getTimestamp() - minTimestamp) / TimeUtil.DAY;</b>
+<b class="fc">&nbsp;            emotionDataModel.setTime(diffDays + 1);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return emotionDataModels;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

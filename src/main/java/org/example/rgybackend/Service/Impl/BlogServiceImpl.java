@@ -284,7 +284,7 @@ public class BlogServiceImpl implements BlogService {
     private List<BlogModel> filterBlogs(List<BlogModel> blogs, String titleOrAuthor, List<String> tags) {
         List<BlogModel> result = new ArrayList<>();
         for (BlogModel blog : blogs) {
-            if (blog.getTitle().contains(titleOrAuthor) || blog.getUser().getUsername().contains(titleOrAuthor)) {
+            if (blog.getTitle().contains(titleOrAuthor)) {
                if(tags.isEmpty()|| new HashSet<>(blog.getTags()).containsAll(tags))
                    result.add(blog);
             }

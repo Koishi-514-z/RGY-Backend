@@ -1,0 +1,166 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ProfileModel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Model</a>
+</div>
+
+<h1>Coverage Summary for Class: ProfileModel (org.example.rgybackend.Model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProfileModel</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (16/16)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Model;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.DTO.LikeData;
+&nbsp;import org.example.rgybackend.DTO.ReplyData;
+&nbsp;import org.example.rgybackend.Entity.Blog;
+&nbsp;import org.example.rgybackend.Entity.UserProfile;
+&nbsp;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;public class ProfileModel {
+&nbsp;    private String userid;
+&nbsp;    private String username;
+&nbsp;    private String email;
+&nbsp;    private String avatar;
+&nbsp;    private String note;
+&nbsp;    private Long role;
+&nbsp;    private Long jointime;
+&nbsp;    private Long level;
+&nbsp;
+<b class="fc">&nbsp;    public ProfileModel(UserProfile userProfile) {</b>
+<b class="fc">&nbsp;        this.userid = userProfile.getUserid();</b>
+<b class="fc">&nbsp;        this.username = userProfile.getUsername();</b>
+<b class="fc">&nbsp;        this.email = userProfile.getEmail();</b>
+<b class="fc">&nbsp;        this.avatar = userProfile.getAvatar();</b>
+<b class="fc">&nbsp;        this.note = userProfile.getNote();</b>
+<b class="fc">&nbsp;        this.role = userProfile.getRole();</b>
+<b class="fc">&nbsp;        this.jointime = userProfile.getJointime();</b>
+<b class="fc">&nbsp;        this.level = 0L;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void calcLevel(List&lt;Blog&gt; blogs, List&lt;ReplyData&gt; replyDatas, List&lt;LikeData&gt; likeDatas) {
+<b class="fc">&nbsp;        final double blogWeight = 8.0, replyWeight = 1.0, likeWeight = 0.2;</b>
+<b class="fc">&nbsp;        double blogScore = 0, replyScore = 0, likeScore = 0;</b>
+&nbsp;
+<b class="fc">&nbsp;        for(Blog blog : blogs) {</b>
+<b class="fc">&nbsp;            blogScore += (blogWeight * (1 + blog.getBrowsenum() / 100));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        replyScore = replyWeight * replyDatas.size();</b>
+<b class="fc">&nbsp;        likeScore = likeWeight * likeDatas.size();</b>
+&nbsp;
+<b class="fc">&nbsp;        this.level = (long) (blogScore + replyScore + likeScore) / 10;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

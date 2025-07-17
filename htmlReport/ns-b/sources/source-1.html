@@ -1,0 +1,125 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BlogDAO</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.DAO</a>
+</div>
+
+<h1>Coverage Summary for Class: BlogDAO (org.example.rgybackend.DAO)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">BlogDAO</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.DAO;
+&nbsp;
+&nbsp;import org.example.rgybackend.Entity.Blog;
+&nbsp;import org.example.rgybackend.Entity.Illegal;
+&nbsp;import org.example.rgybackend.Entity.Like;
+&nbsp;import org.example.rgybackend.Entity.Reply;
+&nbsp;import org.example.rgybackend.Model.BlogModel;
+&nbsp;import org.example.rgybackend.Model.ReplyModel;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface BlogDAO {
+&nbsp;    Blog addBlog(BlogModel blogModel,int valid);
+&nbsp;
+&nbsp;    Reply addReply(ReplyModel replyModel, int valid);
+&nbsp;
+&nbsp;    void deleteBlog(Long blogId);
+&nbsp;
+&nbsp;
+&nbsp;    void deleteReply(Long replyId);
+&nbsp;
+&nbsp;    List&lt;Blog&gt; getAllBlogs();
+&nbsp;
+&nbsp;    Blog getBlogById(Long blogId);
+&nbsp;
+&nbsp;    List&lt;Reply&gt; getRepliesByBlogid(Long blogid);
+&nbsp;
+&nbsp;    void likeBlog(Long blogid, String userid);
+&nbsp;
+&nbsp;    void unlikeBlog(Long blogid, String userid);
+&nbsp;
+&nbsp;    List&lt;Blog&gt; getBlogsByUserid(String userid);
+&nbsp;
+&nbsp;    List&lt;Reply&gt; getRepliesByUserid(String userid);
+&nbsp;
+&nbsp;    List&lt;Like&gt; getBlogLikedByUserid(String userid);
+&nbsp;
+&nbsp;    void addBrowsenum(Long blogid);
+&nbsp;
+&nbsp;    void reportBlog(Long blogid, String reason);
+&nbsp;
+&nbsp;    void addBlockingRecord(Long contentid, String reason,int type);
+&nbsp;
+&nbsp;    void reportReply(Long replyid, String reason);
+&nbsp;
+&nbsp;    List&lt;Illegal&gt; getByType(int type);
+&nbsp;
+&nbsp;    String getReplyContentById(Long contentid);
+&nbsp;
+&nbsp;    void setIllegalStatus(int illegalid, int i);
+&nbsp;
+&nbsp;    void deleteIllegal(int illegalid);
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    Reply getReplyById(Long replyid);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

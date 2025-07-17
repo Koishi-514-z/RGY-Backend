@@ -1,0 +1,289 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PsyProfileExtra</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Entity</a>
+</div>
+
+<h1>Coverage Summary for Class: PsyProfileExtra (org.example.rgybackend.Entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PsyProfileExtra</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (4/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.4%
+  </span>
+  <span class="absValue">
+    (38/43)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PsyProfileExtra$HibernateInstantiator</td>
+  </tr>
+  <tr>
+    <td class="name">PsyProfileExtra$HibernateProxy</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (4/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.4%
+  </span>
+  <span class="absValue">
+    (38/43)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Entity;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.Model.PsyProfileModel;
+&nbsp;import org.example.rgybackend.Model.TagModel;
+&nbsp;
+&nbsp;import jakarta.persistence.Basic;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.Id;
+&nbsp;import jakarta.persistence.Table;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;psyextra&quot;)
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;public class PsyProfileExtra {
+&nbsp;    @Id
+&nbsp;    @Column(name = &quot;userid&quot;)
+&nbsp;    private String userid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;phone&quot;)
+&nbsp;    private String phone;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;title&quot;)
+&nbsp;    private String title;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;license&quot;)
+&nbsp;    private String license;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;specialty&quot;)
+&nbsp;    private String specialty;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;education&quot;)
+&nbsp;    private String education;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;certifications&quot;)
+&nbsp;    private String certifications;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;workingYears&quot;)
+&nbsp;    private Long workingYears;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;totalClients&quot;)
+&nbsp;    private Long totalClients;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;totalScore&quot;)
+&nbsp;    private Long totalScore;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;successNum&quot;)
+&nbsp;    private Long successNum;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;commentNum&quot;)
+&nbsp;    private Long commentNum;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;consultationFee&quot;)
+&nbsp;    private String consultationFee;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;location&quot;)
+&nbsp;    private String location;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;workingTime&quot;)
+&nbsp;    private String workingTime;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;responseTime&quot;)
+&nbsp;    private String responseTime;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;introduction&quot;)
+&nbsp;    private String introduction;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;achievements&quot;)
+&nbsp;    private String achievements;
+&nbsp;
+&nbsp;    private String toStringFromList(List&lt;String&gt; list) {
+<b class="pc">&nbsp;        if(list == null || list.isEmpty()) {</b>
+<b class="fc">&nbsp;            return &quot;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return String.join(&quot;|&quot;, list);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String toStringFromTags(List&lt;TagModel&gt; tags) {
+<b class="pc">&nbsp;        if(tags == null || tags.isEmpty()) {</b>
+<b class="fc">&nbsp;            return &quot;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        List&lt;String&gt; strList = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for(TagModel tagModel : tags) {</b>
+<b class="nc">&nbsp;            strList.add(String.valueOf(tagModel.getId()));</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return String.join(&quot;|&quot;, strList);</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public PsyProfileExtra(PsyProfileModel model) {</b>
+<b class="fc">&nbsp;        this.userid = model.getUserid();</b>
+<b class="fc">&nbsp;        this.phone = model.getPhone();</b>
+<b class="fc">&nbsp;        this.title = model.getTitle();</b>
+<b class="fc">&nbsp;        this.license = model.getLicense();</b>
+<b class="fc">&nbsp;        this.specialty = toStringFromTags(model.getSpecialty());</b>
+<b class="fc">&nbsp;        this.education = model.getEducation();</b>
+<b class="fc">&nbsp;        this.certifications = toStringFromTags(model.getCertifications());</b>
+<b class="fc">&nbsp;        this.workingYears = model.getWorkingYears();</b>
+<b class="fc">&nbsp;        this.consultationFee = model.getConsultationFee();</b>
+<b class="fc">&nbsp;        this.location = model.getLocation();</b>
+<b class="fc">&nbsp;        this.workingTime = model.getWorkingTime();</b>
+<b class="fc">&nbsp;        this.responseTime = model.getResponseTime();</b>
+<b class="fc">&nbsp;        this.introduction = model.getIntroduction();</b>
+<b class="fc">&nbsp;        this.achievements = toStringFromList(model.getAchievements());</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public PsyProfileExtra(String userid) {</b>
+<b class="fc">&nbsp;        this.userid = userid;</b>
+<b class="fc">&nbsp;        this.phone = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.title = &quot;心理咨询师&quot;;</b>
+<b class="fc">&nbsp;        this.license = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.specialty = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.education = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.certifications = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.workingYears = 0L;</b>
+<b class="fc">&nbsp;        this.totalClients = 0L;</b>
+<b class="fc">&nbsp;        this.totalScore = 0L;</b>
+<b class="fc">&nbsp;        this.successNum = 0L;</b>
+<b class="fc">&nbsp;        this.commentNum = 0L;</b>
+<b class="fc">&nbsp;        this.consultationFee = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.location = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.workingTime = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.responseTime = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.introduction = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.achievements = &quot;&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

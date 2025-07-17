@@ -1,0 +1,227 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ChatDAOImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.DAO.Impl</a>
+</div>
+
+<h1>Coverage Summary for Class: ChatDAOImpl (org.example.rgybackend.DAO.Impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChatDAOImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.4%
+  </span>
+  <span class="absValue">
+    (17/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.4%
+  </span>
+  <span class="absValue">
+    (37/38)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ChatDAOImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.4%
+  </span>
+  <span class="absValue">
+    (17/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.4%
+  </span>
+  <span class="absValue">
+    (37/38)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.DAO.Impl;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import org.example.rgybackend.DAO.ChatDAO;
+&nbsp;import org.example.rgybackend.DTO.SessionTagDTO;
+&nbsp;import org.example.rgybackend.Entity.Message;
+&nbsp;import org.example.rgybackend.Entity.Session;
+&nbsp;import org.example.rgybackend.Repository.SessionRepository;
+&nbsp;import org.example.rgybackend.Utils.NotExistException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;@Repository
+<b class="fc">&nbsp;public class ChatDAOImpl implements ChatDAO {</b>
+&nbsp;    @Autowired 
+&nbsp;    private SessionRepository sessionRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Session getById(Long sessionid) {
+<b class="fc">&nbsp;        Optional&lt;Session&gt; sessOptional = sessionRepository.findById(sessionid);</b>
+<b class="fc">&nbsp;        if(sessOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;            throw new NotExistException(&quot;Session not exists, sessionid: &quot; + sessionid);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return sessOptional.get();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;SessionTagDTO&gt; getSessionTags(String fromuserid) {
+<b class="fc">&nbsp;        return sessionRepository.findSessionTags(fromuserid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Long getSessionid(String fromuserid, String touserid) {
+<b class="fc">&nbsp;        List&lt;Session&gt; sessions = sessionRepository.findSession(fromuserid, touserid);</b>
+<b class="fc">&nbsp;        if(sessions.size() == 0) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return sessions.get(0).getSessionid();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean postMessage(Long sessionid, Message message) {
+<b class="fc">&nbsp;        Optional&lt;Session&gt; sessOptional = sessionRepository.findById(sessionid);</b>
+<b class="pc">&nbsp;        if(sessOptional.isEmpty()) {</b>
+<b class="nc">&nbsp;            throw new NotExistException(&quot;Session not exists, sessionid: &quot; + sessionid);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Session session = sessOptional.get();</b>
+<b class="fc">&nbsp;        if(message.getTouserid().equals(session.getUserAid())) {</b>
+<b class="fc">&nbsp;            session.setUnreadA(session.getUnreadA() + 1);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            session.setUnreadB(session.getUnreadB() + 1);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        session.getMessages().add(message);</b>
+<b class="fc">&nbsp;        sessionRepository.save(session);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean updateRead(Long sessionid, String userid) {
+<b class="fc">&nbsp;        Optional&lt;Session&gt; sessOptional = sessionRepository.findById(sessionid);</b>
+<b class="fc">&nbsp;        if(sessOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;            throw new NotExistException(&quot;Session not exists, sessionid: &quot; + sessionid);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Session session = sessOptional.get();</b>
+<b class="fc">&nbsp;        if(session.getUserAid().equals(userid)) {</b>
+<b class="fc">&nbsp;            session.setUnreadA(0L);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if(session.getUserBid().equals(userid)) {</b>
+<b class="fc">&nbsp;            session.setUnreadB(0L);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Session does not contain such user&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        sessionRepository.save(session);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Long createSession(Session session) {
+<b class="fc">&nbsp;        sessionRepository.save(session);</b>
+<b class="fc">&nbsp;        List&lt;Session&gt; sessions = sessionRepository.findSession(session.getUserAid(), session.getUserBid());</b>
+<b class="fc">&nbsp;        if(sessions.size() &gt; 1) {</b>
+<b class="fc">&nbsp;            for(Session s : sessions) {</b>
+<b class="fc">&nbsp;                sessionRepository.deleteById(s.getSessionid());</b>
+&nbsp;            }
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Duplicate Session&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return sessions.get(0).getSessionid();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,280 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Controller</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (org.example.rgybackend.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (20/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (16/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (52/52)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Controller;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.DTO.IntimateDTO;
+&nbsp;import org.example.rgybackend.Model.*;
+&nbsp;import org.example.rgybackend.Service.MilestoneServive;
+&nbsp;import org.example.rgybackend.Service.UserService;
+&nbsp;import org.example.rgybackend.Utils.ForbiddenException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import jakarta.servlet.http.HttpSession;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/user&quot;)
+<b class="fc">&nbsp;public class UserController {</b>
+&nbsp;    @Autowired
+&nbsp;    private UserService userService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private MilestoneServive milestoneServive;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/login&quot;)
+&nbsp;    public boolean login(@RequestParam String username, @RequestParam String password, HttpSession session) {
+<b class="fc">&nbsp;        boolean result = userService.verifyPasswordByName(username, password);</b>
+<b class="fc">&nbsp;        if(result) {</b>
+<b class="fc">&nbsp;            String userid = userService.getProfileByName(username).getUserid();</b>
+<b class="fc">&nbsp;            session.setAttribute(&quot;user&quot;, userid);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/logout&quot;)
+&nbsp;    public boolean logout(HttpSession session) {
+<b class="fc">&nbsp;        session.invalidate();</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/existed&quot;)
+&nbsp;    public boolean userExisted(@RequestParam String username) {
+<b class="fc">&nbsp;        return userService.userExisted(username);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/get&quot;)
+&nbsp;    public ProfileModel getUserProfile(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return userService.getUserProfile(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getall&quot;)
+&nbsp;    public List&lt;AdminProfileModel&gt; getAllProfile(HttpSession session) {
+<b class="fc">&nbsp;        String adminid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        if(!userService.isAdmin(adminid)) {</b>
+<b class="fc">&nbsp;            throw new ForbiddenException(&quot;只有管理员允许进行此操作&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return userService.getAllProfile(adminid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getpsy&quot;)
+&nbsp;    public PsyProfileModel getPsyProfile(HttpSession session) {
+<b class="fc">&nbsp;        String psyid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return userService.getPsyProfile(psyid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getsim&quot;)
+&nbsp;    public SimplifiedProfileModel getSimplifiedProfile(@RequestParam String userid) {
+<b class="fc">&nbsp;        return userService.getSimplifiedProfile(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getintm&quot;)
+&nbsp;    public List&lt;IntimateDTO&gt; getIntimateUsers(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return userService.getIntimateUsers(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/milestone&quot;)
+&nbsp;    public MilestoneModel getMilestone(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return milestoneServive.getMilestone(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/verify/pwd&quot;)
+&nbsp;    public boolean verifyPassword(@RequestParam String password, HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return userService.verifyPassword(userid, password);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/verify/admin&quot;)
+&nbsp;    public boolean verifyAdmin(@RequestParam String verifyKey) {
+<b class="fc">&nbsp;        return userService.verifyAdmin(verifyKey);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/disabled/get&quot;)
+&nbsp;    public boolean isDisabled(@RequestParam String username) {
+<b class="fc">&nbsp;        return userService.isDisabled(username);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/add&quot;)
+&nbsp;    public boolean addUser(@RequestBody UserModel user, HttpSession session) {
+<b class="fc">&nbsp;        String email = (String)session.getAttribute(&quot;check&quot;);</b>
+<b class="fc">&nbsp;        if(!user.getProfile().getEmail().equals(email)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return userService.addUser(user);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/profile/update&quot;)
+&nbsp;    public boolean updateProfile(@RequestBody ProfileModel profile, HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        if(!userid.equals(profile.getUserid())) {</b>
+<b class="fc">&nbsp;            throw new ForbiddenException(&quot;无权修改该用户信息&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return userService.updateProfile(profile);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/profile/updatepsy&quot;)
+&nbsp;    public boolean updatePsyProfile(@RequestBody PsyProfileModel profile, HttpSession session) {
+<b class="fc">&nbsp;        String psyid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        if(!psyid.equals(profile.getUserid())) {</b>
+<b class="fc">&nbsp;            throw new ForbiddenException(&quot;无权修改该用户信息&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return userService.updatePsyProfile(profile);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/pwd&quot;)
+&nbsp;    public boolean updatePassword(@RequestParam String password, HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return userService.updatePassword(userid, password);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/disabled/set&quot;)
+&nbsp;    public boolean setDisabled(@RequestParam String userid, @RequestParam boolean disabled, HttpSession session) {
+<b class="fc">&nbsp;        String adminid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        if(!userService.isAdmin(adminid)) {</b>
+<b class="fc">&nbsp;            throw new ForbiddenException(&quot;只有管理员允许进行此操作&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return userService.setDisabled(userid, disabled);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/secure/code&quot;)
+&nbsp;    public boolean postAuthCode(@RequestParam String email, HttpSession session) {
+<b class="fc">&nbsp;        boolean result = userService.postAuthCode(email);</b>
+<b class="fc">&nbsp;        if(result) {</b>
+<b class="fc">&nbsp;            session.setAttribute(&quot;check&quot;, email);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/secure/check&quot;)
+&nbsp;    public boolean checkAuthCode(@RequestParam Long authCode, HttpSession session) {
+<b class="fc">&nbsp;        String email = (String)session.getAttribute(&quot;check&quot;);</b>
+<b class="fc">&nbsp;        if(email == null) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return userService.checkAuthCode(email, authCode);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

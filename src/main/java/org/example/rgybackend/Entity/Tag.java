@@ -24,9 +24,4 @@ public class Tag {
     @Basic
     @Column(name = "content")
     private String content;
-
-    public Tag(TagModel tagModel) {
-        this.id = tagModel.getId();
-        this.content = tagModel.getContent();
-    }
 }

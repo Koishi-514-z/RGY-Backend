@@ -1,0 +1,187 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > NotificationPrivate</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Entity</a>
+</div>
+
+<h1>Coverage Summary for Class: NotificationPrivate (org.example.rgybackend.Entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NotificationPrivate</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">NotificationPrivate$HibernateInstantiator</td>
+  </tr>
+  <tr>
+    <td class="name">NotificationPrivate$HibernateProxy</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Entity;
+&nbsp;
+&nbsp;import org.example.rgybackend.Model.NotificationPrivateModel;
+&nbsp;
+&nbsp;import jakarta.persistence.Basic;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.GeneratedValue;
+&nbsp;import jakarta.persistence.GenerationType;
+&nbsp;import jakarta.persistence.Id;
+&nbsp;import jakarta.persistence.Table;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;notification_private&quot;)
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;public class NotificationPrivate {
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    @Id
+&nbsp;    @Column(name = &quot;notificationid&quot;)
+&nbsp;    private Long notificationid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;type&quot;)
+&nbsp;    private Long type;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;adminid&quot;)
+&nbsp;    private String adminid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;userid&quot;)
+&nbsp;    private String userid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;title&quot;)
+&nbsp;    private String title;
+&nbsp;
+&nbsp;     @Basic
+&nbsp;    @Column(name = &quot;content&quot;)
+&nbsp;    private String content;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;timestamp&quot;)
+&nbsp;    private Long timestamp;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;unread&quot;)
+&nbsp;    private Long unread;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;priority&quot;)
+&nbsp;    private String priority;
+&nbsp;
+<b class="fc">&nbsp;    public NotificationPrivate(NotificationPrivateModel notificationPrivateModel) {</b>
+<b class="fc">&nbsp;        this.notificationid = notificationPrivateModel.getNotificationid();</b>
+<b class="fc">&nbsp;        this.type = notificationPrivateModel.getType();</b>
+<b class="fc">&nbsp;        this.adminid = notificationPrivateModel.getAdminid();</b>
+<b class="fc">&nbsp;        this.userid = notificationPrivateModel.getUserid();</b>
+<b class="fc">&nbsp;        this.title = notificationPrivateModel.getTitle();</b>
+<b class="fc">&nbsp;        this.content = notificationPrivateModel.getContent();</b>
+<b class="fc">&nbsp;        this.timestamp = notificationPrivateModel.getTimestamp();</b>
+<b class="fc">&nbsp;        this.unread = notificationPrivateModel.getUnread();</b>
+<b class="fc">&nbsp;        this.priority = notificationPrivateModel.getPriority();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

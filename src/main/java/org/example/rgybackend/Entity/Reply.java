@@ -48,16 +48,6 @@ public class Reply {
     @Column(name = "valid")
     private Integer valid;
 
-    public Reply(ReplyModel replyModel) {
-        this.replyid = replyModel.getReplyid();
-        this.blogid = replyModel.getBlogid();
-        this.fromuserid = replyModel.getFromuserid();
-        this.touserid = replyModel.getTouserid();
-        this.timestamp = replyModel.getTimestamp();
-        this.content = replyModel.getContent();
-        this.valid = 1;
-    }
-
     public Reply(ReplyModel replyModel,int valid) {
         this.replyid = replyModel.getReplyid();
         this.blogid = replyModel.getBlogid();

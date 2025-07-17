@@ -1,0 +1,211 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserAuthDAOImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.DAO.Impl</a>
+</div>
+
+<h1>Coverage Summary for Class: UserAuthDAOImpl (org.example.rgybackend.DAO.Impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserAuthDAOImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (6/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.9%
+  </span>
+  <span class="absValue">
+    (29/33)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">UserAuthDAOImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (6/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.9%
+  </span>
+  <span class="absValue">
+    (29/33)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.DAO.Impl;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import org.example.rgybackend.DAO.UserAuthDAO;
+&nbsp;import org.example.rgybackend.Entity.UserAuth;
+&nbsp;import org.example.rgybackend.Repository.UserAuthRepository;
+&nbsp;import org.example.rgybackend.Utils.NotExistException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;@Repository
+<b class="fc">&nbsp;public class UserAuthDAOImpl implements UserAuthDAO {</b>
+&nbsp;    @Autowired
+&nbsp;    private UserAuthRepository userAuthRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private BCryptPasswordEncoder passwordEncoder;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean pwdMatch(String userid, String password) {
+<b class="fc">&nbsp;        Optional&lt;UserAuth&gt; userAuthOptional = userAuthRepository.findById(userid);</b>
+<b class="pc">&nbsp;        if(userAuthOptional.isEmpty()) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        UserAuth userAuthDTO = userAuthOptional.get();</b>
+<b class="fc">&nbsp;        return passwordEncoder.matches(password, userAuthDTO.getPassword());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean addAuth(String userid, String stuid, String password) {
+<b class="pc">&nbsp;        if(userAuthRepository.existsById(userid)) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Duplicate user, userid: &quot; + userid);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        String encodedPassword = passwordEncoder.encode(password);</b>
+<b class="fc">&nbsp;        String encodedStuid = passwordEncoder.encode(stuid);</b>
+<b class="fc">&nbsp;        UserAuth userAuth = new UserAuth(userid, encodedStuid, encodedPassword, false);</b>
+<b class="fc">&nbsp;        userAuthRepository.save(userAuth);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean updatePassword(String userid, String password) {
+<b class="fc">&nbsp;        Optional&lt;UserAuth&gt; userAuthOptional = userAuthRepository.findById(userid);</b>
+<b class="pc">&nbsp;        if(userAuthOptional.isEmpty()) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        UserAuth userAuth = userAuthOptional.get();</b>
+<b class="fc">&nbsp;        String encodedPassword = passwordEncoder.encode(password);</b>
+<b class="fc">&nbsp;        userAuth.setPassword(encodedPassword);</b>
+<b class="fc">&nbsp;        userAuthRepository.save(userAuth);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean isDisabled(String userid) {
+<b class="fc">&nbsp;        Optional&lt;UserAuth&gt; userAuthOptional = userAuthRepository.findById(userid);</b>
+<b class="pc">&nbsp;        if(userAuthOptional.isEmpty()) {</b>
+<b class="nc">&nbsp;            throw new NotExistException(&quot;User not exists, userid: &quot; + userid);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        UserAuth userAuth = userAuthOptional.get();</b>
+<b class="fc">&nbsp;        return userAuth.isDisabled();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean setDisabled(String userid, boolean disabled) {
+<b class="fc">&nbsp;        Optional&lt;UserAuth&gt; userAuthOptional = userAuthRepository.findById(userid);</b>
+<b class="fc">&nbsp;        if(userAuthOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;            throw new NotExistException(&quot;User not exists, userid: &quot; + userid);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        UserAuth userAuth = userAuthOptional.get();</b>
+<b class="fc">&nbsp;        userAuth.setDisabled(disabled);</b>
+<b class="fc">&nbsp;        userAuthRepository.save(userAuth);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

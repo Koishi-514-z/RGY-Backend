@@ -1,0 +1,225 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EmotionController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Controller</a>
+</div>
+
+<h1>Coverage Summary for Class: EmotionController (org.example.rgybackend.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EmotionController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (26/26)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Controller;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.DTO.EmotionData;
+&nbsp;import org.example.rgybackend.DTO.EmotionRecord;
+&nbsp;import org.example.rgybackend.DTO.StringDTO;
+&nbsp;import org.example.rgybackend.Model.DiaryModel;
+&nbsp;import org.example.rgybackend.Model.EmotionModel;
+&nbsp;import org.example.rgybackend.Model.EmotionDataModel;
+&nbsp;import org.example.rgybackend.Model.TagModel;
+&nbsp;import org.example.rgybackend.Service.EmotionService;
+&nbsp;import org.example.rgybackend.Service.UserService;
+&nbsp;import org.example.rgybackend.Utils.ForbiddenException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import jakarta.servlet.http.HttpSession;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/emotion&quot;)
+<b class="fc">&nbsp;public class EmotionController {</b>
+&nbsp;    @Autowired
+&nbsp;    private EmotionService emotionService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserService userService;
+&nbsp;    
+&nbsp;    @GetMapping(&quot;/tag/get&quot;)
+&nbsp;    public EmotionModel getEmotion(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return emotionService.getEmotion(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/record/getnum&quot;)
+&nbsp;    public Long getRecordNum(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return emotionService.getRecordNum(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/record/get&quot;)
+&nbsp;    public List&lt;EmotionRecord&gt; getHistoryRecords(@RequestParam Long pageIndex, @RequestParam Long pageSize, HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return emotionService.getHistoryRecords(pageIndex, pageSize, userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/tag/getall&quot;)
+&nbsp;    public List&lt;TagModel&gt; getTags() {
+<b class="fc">&nbsp;        return emotionService.getTags();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/tag/geturl&quot;)
+&nbsp;    public List&lt;TagModel&gt; getUrlTags() {
+<b class="fc">&nbsp;        return emotionService.getUrlTags();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/negative&quot;)
+&nbsp;    public boolean checkNegative(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return emotionService.checkNegative(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/diary/get&quot;)
+&nbsp;    public DiaryModel getDiary(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return emotionService.getDiary(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/data/getweek&quot;)
+&nbsp;    public List&lt;EmotionDataModel&gt; getWeekData(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return emotionService.getWeekData(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/data/getmonth&quot;)
+&nbsp;    public List&lt;EmotionDataModel&gt; getMonthData(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return emotionService.getMonthData(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/data/scan&quot;)
+&nbsp;    public EmotionData scanEmotionData(@RequestParam Long start, @RequestParam Long end, @RequestParam Long interval, HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        if(!userService.isAdmin(userid)) {</b>
+<b class="fc">&nbsp;            throw new ForbiddenException(&quot;只有管理员允许进行该操作&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return emotionService.scanEmotionData(start, end, interval);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/tag/update&quot;)
+&nbsp;    public boolean setEmotion(@RequestBody EmotionModel emotion, HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        emotion.setUserid(userid);</b>
+<b class="fc">&nbsp;        return emotionService.setEmotion(emotion);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/diary/update&quot;)
+&nbsp;    public boolean updateDiary(@RequestBody StringDTO content, HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return emotionService.updateDiary(userid, content.getStr());</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

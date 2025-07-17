@@ -1,0 +1,90 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CrisisService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Service</a>
+</div>
+
+<h1>Coverage Summary for Class: CrisisService (org.example.rgybackend.Service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">CrisisService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Service;
+&nbsp;
+&nbsp;import org.example.rgybackend.Model.CrisisModel;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface CrisisService {
+&nbsp;    void saveCrisis(int crisisid,Long urgencyLevel);
+&nbsp;
+&nbsp;
+&nbsp;    void deleteCrisisAuditing(int crisisid);
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    List&lt;CrisisModel&gt; getAllCrisis();
+&nbsp;
+&nbsp;    List&lt;CrisisModel&gt; getAllCrisisAuditing();
+&nbsp;
+&nbsp;    List&lt;CrisisModel&gt; getCrisisByUser(String userid);
+&nbsp;  
+&nbsp;    boolean updateStatus(Integer crisisid, Long status);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

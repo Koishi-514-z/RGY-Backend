@@ -1,0 +1,128 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Message</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Entity</a>
+</div>
+
+<h1>Coverage Summary for Class: Message (org.example.rgybackend.Entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">Message$HibernateInstantiator</td>
+  </tr>
+  <tr>
+    <td class="name">Message$HibernateProxy</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Entity;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;
+&nbsp;import jakarta.persistence.Basic;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.FetchType;
+&nbsp;import jakarta.persistence.GeneratedValue;
+&nbsp;import jakarta.persistence.GenerationType;
+&nbsp;import jakarta.persistence.Id;
+&nbsp;import jakarta.persistence.JoinColumn;
+&nbsp;import jakarta.persistence.ManyToOne;
+&nbsp;import jakarta.persistence.Table;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;message&quot;)
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;public class Message {
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    @Id
+&nbsp;    @Column(name = &quot;messageid&quot;)
+&nbsp;    private Long messageid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;sessionid&quot;)
+&nbsp;    private Long sessionid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;fromuserid&quot;)
+&nbsp;    private String fromuserid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;touserid&quot;)
+&nbsp;    private String touserid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;timestamp&quot;)
+&nbsp;    private Long timestamp;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;content&quot;)
+&nbsp;    private String content;
+&nbsp;
+&nbsp;    @JsonIgnore
+&nbsp;    @ManyToOne(fetch = FetchType.EAGER)
+&nbsp;    @JoinColumn(name = &quot;sessionid&quot;, referencedColumnName = &quot;sessionid&quot;, insertable=false, updatable=false)
+&nbsp;    private Session session;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

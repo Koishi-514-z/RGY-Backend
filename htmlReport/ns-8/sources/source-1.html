@@ -1,0 +1,664 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BlogServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Service.Impl</a>
+</div>
+
+<h1>Coverage Summary for Class: BlogServiceImpl (org.example.rgybackend.Service.Impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BlogServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (26/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    65.2%
+  </span>
+  <span class="absValue">
+    (60/92)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.2%
+  </span>
+  <span class="absValue">
+    (276/313)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Service.Impl;
+&nbsp;
+&nbsp;import org.example.rgybackend.DAO.BlogDAO;
+&nbsp;import org.example.rgybackend.DAO.CrisisAuditingDAO;
+&nbsp;import org.example.rgybackend.DAO.EmotionDAO;
+&nbsp;import org.example.rgybackend.DAO.NotificationPrivateDAO;
+&nbsp;import org.example.rgybackend.DAO.UserDAO;
+&nbsp;import org.example.rgybackend.Entity.Blog;
+&nbsp;import org.example.rgybackend.Entity.Illegal;
+&nbsp;import org.example.rgybackend.Entity.Like;
+&nbsp;import org.example.rgybackend.Entity.Reply;
+&nbsp;import org.example.rgybackend.Model.*;
+&nbsp;import org.example.rgybackend.Service.BlogService;
+&nbsp;import org.example.rgybackend.Service.UserService;
+&nbsp;import org.example.rgybackend.Service.MilestoneServive;
+&nbsp;import org.example.rgybackend.Utils.BERTModel;
+&nbsp;import org.example.rgybackend.Utils.CacheUtil;
+&nbsp;import org.example.rgybackend.Utils.NotificationUtil;
+&nbsp;import org.example.rgybackend.Utils.TimeUtil;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class BlogServiceImpl implements BlogService {</b>
+&nbsp;    @Autowired
+&nbsp;    private BlogDAO blogDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserDAO userDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserService userService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private EmotionDAO emotionDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private BERTModel bertModel;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private NotificationPrivateDAO notificationPrivateDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private CrisisAuditingDAO crisisAuditingDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private CacheUtil cacheUtil;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private MilestoneServive milestoneServive;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void addBlog(String title, String content, List&lt;String&gt; tags, String author) {
+<b class="fc">&nbsp;        milestoneServive.addMilestone(author, 2L);</b>
+&nbsp;        
+<b class="fc">&nbsp;        Long justify = bertModel.justify(content);</b>
+&nbsp;
+<b class="pc">&nbsp;        if(justify == 1) {</b>
+<b class="nc">&nbsp;            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);</b>
+<b class="nc">&nbsp;            notification.setAdminid(&quot;System&quot;);</b>
+<b class="nc">&nbsp;            notification.setUserid(author);</b>
+<b class="nc">&nbsp;            notificationPrivateDAO.addNotification(notification);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        else if(justify &gt;= 2) {</b>
+&nbsp;//            if(justify &gt;= 4) {
+<b class="fc">&nbsp;                NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);</b>
+<b class="fc">&nbsp;                notification.setAdminid(&quot;System&quot;);</b>
+<b class="fc">&nbsp;                notification.setUserid(author);</b>
+<b class="fc">&nbsp;                notificationPrivateDAO.addNotification(notification);</b>
+&nbsp;            //}
+<b class="fc">&nbsp;            Long timestamp = System.currentTimeMillis();</b>
+<b class="fc">&nbsp;            Long likeNum = 0L;</b>
+<b class="fc">&nbsp;            int emotion = 0;</b>
+<b class="pc">&nbsp;            if (emotionDAO.getEmotion(author, LocalDate.now()).getTag() == null)</b>
+<b class="fc">&nbsp;                emotion = 0;</b>
+<b class="nc">&nbsp;            else emotion = emotionDAO.getEmotion(author, LocalDate.now()).getTag().getId().intValue();</b>
+<b class="fc">&nbsp;            BlogModel blogModel = new BlogModel(null, author,null, timestamp, likeNum, title, content, tags, new ArrayList&lt;&gt;(), emotion, timestamp, 0L, 0);</b>
+<b class="fc">&nbsp;            Blog blog = blogDAO.addBlog(blogModel, 1);</b>
+<b class="fc">&nbsp;            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author, title + &#39;\n&#39; + content, TimeUtil.now(), blog.getBlogid(), 0L, justify - 2);</b>
+<b class="fc">&nbsp;            crisisAuditingDAO.addCrisis(crisisAuditingModel);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Long timestamp = System.currentTimeMillis();</b>
+<b class="fc">&nbsp;        Long likeNum = 0L;</b>
+<b class="fc">&nbsp;        int emotion = 0;</b>
+<b class="pc">&nbsp;        if (emotionDAO.getEmotion(author, LocalDate.now()).getTag() == null)</b>
+<b class="fc">&nbsp;            emotion = 0;</b>
+<b class="nc">&nbsp;        else emotion = emotionDAO.getEmotion(author, LocalDate.now()).getTag().getId().intValue();</b>
+<b class="fc">&nbsp;        BlogModel blogModel = new BlogModel(null, author,null, timestamp, likeNum, title, content, tags, new ArrayList&lt;&gt;(), emotion, timestamp, 0L, 1);</b>
+<b class="fc">&nbsp;        blogDAO.addBlog(blogModel, 1);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteBlog(Long blogid) {
+<b class="fc">&nbsp;        blogDAO.deleteBlog(blogid);</b>
+<b class="fc">&nbsp;        addBlockingRecord(blogid,0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void addBlockingRecord(Long contentid,int type) {
+<b class="fc">&nbsp;        blogDAO.addBlockingRecord(contentid,&quot;管理员屏蔽&quot;,type);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ReplyModel addReply(Long blogid, String content, String author) {
+<b class="fc">&nbsp;        String fromuserid = author;</b>
+<b class="fc">&nbsp;        String touserid = getBlogById(blogid).getUser().getUserid();</b>
+&nbsp;
+<b class="fc">&nbsp;        Long justify = bertModel.justify(content);</b>
+&nbsp;
+<b class="pc">&nbsp;        if(justify == 1) {</b>
+<b class="nc">&nbsp;            NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.psyAssist);</b>
+<b class="nc">&nbsp;            notification.setAdminid(&quot;System&quot;);</b>
+<b class="nc">&nbsp;            notification.setUserid(author);</b>
+<b class="nc">&nbsp;            notificationPrivateDAO.addNotification(notification);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        else if(justify &gt;= 2) {</b>
+&nbsp;//            if(justify &gt;= 4) {
+<b class="fc">&nbsp;                NotificationPrivateModel notification = new NotificationPrivateModel(NotificationUtil.crisis);</b>
+<b class="fc">&nbsp;                notification.setAdminid(&quot;System&quot;);</b>
+<b class="fc">&nbsp;                notification.setUserid(author);</b>
+<b class="fc">&nbsp;                notificationPrivateDAO.addNotification(notification);</b>
+&nbsp;//            }
+<b class="fc">&nbsp;            Long timestamp = System.currentTimeMillis();</b>
+<b class="fc">&nbsp;            ReplyModel replyModel = new ReplyModel(null, blogid, fromuserid, touserid, timestamp, content,null);</b>
+<b class="fc">&nbsp;            Reply reply = blogDAO.addReply(replyModel,1);</b>
+<b class="fc">&nbsp;            CrisisAuditingModel crisisAuditingModel = new CrisisAuditingModel(null, author, content, TimeUtil.now(), reply.getReplyid(), 1L, justify - 2);</b>
+<b class="fc">&nbsp;            crisisAuditingDAO.addCrisis(crisisAuditingModel);</b>
+<b class="fc">&nbsp;            return replyModel;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        cacheUtil.evictIntimateUsersCache(fromuserid);</b>
+<b class="fc">&nbsp;        cacheUtil.evictIntimateUsersCache(touserid);</b>
+&nbsp;
+<b class="fc">&nbsp;        Long timestamp = System.currentTimeMillis();</b>
+<b class="fc">&nbsp;        ReplyModel replyModel = new ReplyModel(null, blogid, fromuserid, touserid, timestamp, content, null);</b>
+<b class="fc">&nbsp;        blogDAO.addReply(replyModel,1);</b>
+<b class="fc">&nbsp;        return replyModel;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteReply(Long replyid) {
+<b class="fc">&nbsp;        Reply reply = blogDAO.getReplyById(replyid);</b>
+&nbsp;
+<b class="fc">&nbsp;        cacheUtil.evictIntimateUsersCache(reply.getFromuserid());</b>
+<b class="fc">&nbsp;        cacheUtil.evictIntimateUsersCache(reply.getTouserid());</b>
+&nbsp;
+<b class="fc">&nbsp;        blogDAO.deleteReply(replyid);</b>
+<b class="fc">&nbsp;        addBlockingRecord(replyid,1);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public BlogsRet getRequestedBlogs(int pageSize, int currentPage, String titleOrAuthor, List&lt;String&gt; tags, int emotion) {
+<b class="fc">&nbsp;        List&lt;Blog&gt; blogss = blogDAO.getAllBlogs();</b>
+<b class="fc">&nbsp;        BlogsRet blogsRet = new BlogsRet();</b>
+<b class="fc">&nbsp;        List&lt;BlogModel&gt; blogs = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (Blog blog : blogss) {</b>
+<b class="fc">&nbsp;            if(blog.getValid() == 0) continue;</b>
+<b class="fc">&nbsp;            BlogModel blogModel = new BlogModel();</b>
+<b class="fc">&nbsp;            blogModel.setBlogid(blog.getBlogid());</b>
+<b class="fc">&nbsp;            blogModel.setUserid(blog.getUserid());</b>
+<b class="fc">&nbsp;            blogModel.setTimestamp(blog.getTimestamp());</b>
+<b class="fc">&nbsp;            blogModel.setLikeNum(blog.getLikeNum());</b>
+<b class="fc">&nbsp;            blogModel.setTitle(blog.getTitle());</b>
+<b class="fc">&nbsp;            blogModel.setContent(blog.getContent());</b>
+<b class="fc">&nbsp;            blogModel.setTags(Arrays.asList(blog.getTags().split(&quot;,&quot;)));</b>
+<b class="fc">&nbsp;            blogModel.setEmotion(blog.getEmotion());</b>
+<b class="fc">&nbsp;            blogModel.setBrowsenum(blog.getBrowsenum());</b>
+<b class="fc">&nbsp;            blogModel.setLastreply(blog.getLastreply());</b>
+<b class="fc">&nbsp;            blogModel.setValid(blog.getValid());</b>
+<b class="fc">&nbsp;            blogs.add(blogModel);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        EmotionSimilarity emotionSimilarity = new EmotionSimilarity();</b>
+&nbsp;        //对所有blogs进行筛选，只选择blog的标题或作者包含titleOrAuthor的博客，且标签包含tags中的所有标签的博客
+<b class="fc">&nbsp;        List&lt;BlogModel&gt; filteredBlogs = filterBlogs(blogs, titleOrAuthor, tags);</b>
+<b class="fc">&nbsp;        int total = filteredBlogs.size();</b>
+<b class="fc">&nbsp;        blogsRet.setTotal(total);</b>
+&nbsp;        //对筛选后的blogs进行排序
+<b class="fc">&nbsp;        List&lt;BlogModel&gt; sortedBlogs = sortBlogs(filteredBlogs, emotionSimilarity, emotion);</b>
+&nbsp;        //分页
+<b class="fc">&nbsp;        int start = (currentPage - 1) * pageSize;</b>
+<b class="fc">&nbsp;        int end = start + pageSize;</b>
+<b class="pc">&nbsp;        if (start &gt;= sortedBlogs.size()) {</b>
+<b class="fc">&nbsp;            blogsRet.setBlogs(new ArrayList&lt;&gt;());</b>
+<b class="fc">&nbsp;            return blogsRet;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (end &gt; sortedBlogs.size()) {</b>
+<b class="nc">&nbsp;            end = sortedBlogs.size();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        blogsRet.setBlogs(sortedBlogs.subList(start, end));</b>
+<b class="nc">&nbsp;        for(BlogModel blogModel : blogsRet.getBlogs())</b>
+&nbsp;        {
+<b class="nc">&nbsp;            blogModel.setUser(userDAO.getSimplified(blogModel.getUserid()));</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return blogsRet;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public BlogsRet getLatestBlogs(int pageSize, int currentPage, String titleOrAuthor, List&lt;String&gt; tags){
+<b class="fc">&nbsp;        List&lt;Blog&gt; blogss = blogDAO.getAllBlogs();</b>
+<b class="fc">&nbsp;        BlogsRet blogsRet = new BlogsRet();</b>
+<b class="fc">&nbsp;        List&lt;BlogModel&gt; blogs = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (Blog blog : blogss) {</b>
+<b class="fc">&nbsp;            if(blog.getValid() == 0) continue;</b>
+<b class="fc">&nbsp;            BlogModel blogModel = new BlogModel();</b>
+<b class="fc">&nbsp;            blogModel.setBlogid(blog.getBlogid());</b>
+<b class="fc">&nbsp;            blogModel.setUserid(blog.getUserid());</b>
+<b class="fc">&nbsp;            blogModel.setTimestamp(blog.getTimestamp());</b>
+<b class="fc">&nbsp;            blogModel.setLikeNum(blog.getLikeNum());</b>
+<b class="fc">&nbsp;            blogModel.setTitle(blog.getTitle());</b>
+<b class="fc">&nbsp;            blogModel.setContent(blog.getContent());</b>
+<b class="fc">&nbsp;            blogModel.setTags(Arrays.asList(blog.getTags().split(&quot;,&quot;)));</b>
+<b class="fc">&nbsp;            blogModel.setEmotion(blog.getEmotion());</b>
+<b class="fc">&nbsp;            blogModel.setBrowsenum(blog.getBrowsenum());</b>
+<b class="fc">&nbsp;            blogModel.setLastreply(blog.getLastreply());</b>
+<b class="fc">&nbsp;            blogModel.setValid(blog.getValid());</b>
+<b class="fc">&nbsp;            blogs.add(blogModel);</b>
+&nbsp;        }
+&nbsp;        //对所有blogs进行筛选，只选择blog的标题或作者包含titleOrAuthor的博客，且标签包含tags中的所有标签的博客
+<b class="fc">&nbsp;        List&lt;BlogModel&gt; filteredBlogs = filterBlogs(blogs, titleOrAuthor, tags);</b>
+<b class="fc">&nbsp;        int total = filteredBlogs.size();</b>
+<b class="fc">&nbsp;        blogsRet.setTotal(total);</b>
+<b class="fc">&nbsp;        filteredBlogs.sort(Comparator.comparing(BlogModel::getLastreply).reversed());</b>
+<b class="fc">&nbsp;        int start = (currentPage - 1) * pageSize;</b>
+<b class="fc">&nbsp;        int end = start + pageSize;</b>
+<b class="pc">&nbsp;        if (start &gt;= filteredBlogs.size()) {</b>
+<b class="fc">&nbsp;            blogsRet.setBlogs(new ArrayList&lt;&gt;());</b>
+<b class="fc">&nbsp;            return blogsRet;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (end &gt; filteredBlogs.size()) {</b>
+<b class="nc">&nbsp;            end = filteredBlogs.size();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        blogsRet.setBlogs(filteredBlogs.subList(start, end));</b>
+<b class="nc">&nbsp;        for(BlogModel blogModel : blogsRet.getBlogs())</b>
+&nbsp;        {
+<b class="nc">&nbsp;            blogModel.setUser(userDAO.getSimplified(blogModel.getUserid()));</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return blogsRet;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private List&lt;BlogModel&gt; sortBlogs(List&lt;BlogModel&gt; filteredBlogs, EmotionSimilarity emotionSimilarity, int emotion) {
+<b class="fc">&nbsp;        List&lt;BlogModel&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        Map&lt;Long, Long&gt; similarityMap = new HashMap&lt;&gt;();</b>
+<b class="pc">&nbsp;        for (BlogModel blog : filteredBlogs) {</b>
+<b class="nc">&nbsp;            int similarity = 0;</b>
+&nbsp;//            if (emotion == 0) {
+&nbsp;//                similarity = emotionSimilarity.getEmotion1().get(0).get(blog.getEmotion());
+&nbsp;//            } else if (emotion == 1) {
+&nbsp;//                similarity = emotionSimilarity.getEmotion1().get(1).get(blog.getEmotion());
+&nbsp;//            } else if (emotion == 2) {
+&nbsp;//                similarity = emotionSimilarity.getEmotion1().get(2).get(blog.getEmotion());
+&nbsp;//            } else if (emotion == 3) {
+&nbsp;//                similarity = emotionSimilarity.getEmotion1().get(3).get(blog.getEmotion());
+&nbsp;//            } else if (emotion == 4) {
+&nbsp;//                similarity = emotionSimilarity.getEmotion1().get(4).get(blog.getEmotion());
+&nbsp;//            }
+<b class="nc">&nbsp;            similarity = emotionSimilarity.getEmotion1().get(emotion).get(blog.getEmotion());</b>
+<b class="nc">&nbsp;            similarityMap.put(blog.getBlogid(), (long) similarity * (10L + blog.getLikeNum() + blog.getBrowsenum()/10));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;Map.Entry&lt;Long, Long&gt;&gt; sortedSimilarityMap = new ArrayList&lt;&gt;(similarityMap.entrySet());</b>
+<b class="fc">&nbsp;        sortedSimilarityMap.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));</b>
+<b class="pc">&nbsp;        for (Map.Entry&lt;Long, Long&gt; entry : sortedSimilarityMap) {</b>
+<b class="nc">&nbsp;            for (BlogModel blog : filteredBlogs) {</b>
+<b class="nc">&nbsp;                if (blog.getBlogid() == entry.getKey()) {</b>
+<b class="nc">&nbsp;                    result.add(blog);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private List&lt;BlogModel&gt; filterBlogs(List&lt;BlogModel&gt; blogs, String titleOrAuthor, List&lt;String&gt; tags) {
+<b class="fc">&nbsp;        List&lt;BlogModel&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (BlogModel blog : blogs) {</b>
+<b class="pc">&nbsp;            if (blog.getTitle().contains(titleOrAuthor)) {</b>
+<b class="nc">&nbsp;               if(tags.isEmpty()|| new HashSet&lt;&gt;(blog.getTags()).containsAll(tags))</b>
+<b class="nc">&nbsp;                   result.add(blog);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public BlogModel getBlogById(Long blogid) {
+<b class="fc">&nbsp;        Blog blog = blogDAO.getBlogById(blogid);</b>
+<b class="pc">&nbsp;        if (blog == null)</b>
+<b class="nc">&nbsp;            return null;</b>
+<b class="fc">&nbsp;        BlogModel blogModel = new BlogModel();</b>
+<b class="fc">&nbsp;        blogModel.setBlogid(blog.getBlogid());</b>
+<b class="fc">&nbsp;        blogModel.setUser(userDAO.getSimplified(blog.getUserid()));</b>
+<b class="fc">&nbsp;        blogModel.setTimestamp(blog.getTimestamp());</b>
+<b class="fc">&nbsp;        blogModel.setLikeNum(blog.getLikeNum());</b>
+<b class="fc">&nbsp;        blogModel.setTitle(blog.getTitle());</b>
+<b class="fc">&nbsp;        blogModel.setContent(blog.getContent());</b>
+<b class="fc">&nbsp;        blogModel.setValid(blog.getValid());</b>
+<b class="fc">&nbsp;        blogModel.setBrowsenum(blog.getBrowsenum());</b>
+<b class="fc">&nbsp;        blogModel.setTags(Arrays.asList(blog.getTags().split(&quot;,&quot;)));</b>
+&nbsp;        //获得blog的reply
+<b class="fc">&nbsp;        List&lt;Reply&gt; replies = blogDAO.getRepliesByBlogid(blog.getBlogid());</b>
+<b class="fc">&nbsp;        List&lt;ReplyModel&gt; replyModels = new ArrayList&lt;&gt;(replies.size());</b>
+<b class="fc">&nbsp;        for (Reply reply : replies) {</b>
+<b class="fc">&nbsp;            if (reply.getValid() == 0) continue;</b>
+<b class="fc">&nbsp;            replyModels.add(null);</b>
+&nbsp;
+&nbsp;        }
+<b class="fc">&nbsp;        blogModel.setReplies(replyModels);</b>
+<b class="fc">&nbsp;        blogModel.setEmotion(blog.getEmotion());</b>
+<b class="fc">&nbsp;        return blogModel;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void likeBlog(Long blogid, String userid) {
+<b class="fc">&nbsp;        String touserid = getBlogById(blogid).getUser().getUserid();</b>
+&nbsp;
+<b class="fc">&nbsp;        milestoneServive.addMilestone(touserid, 3L);</b>
+&nbsp;
+<b class="fc">&nbsp;        cacheUtil.evictIntimateUsersCache(userid);</b>
+<b class="fc">&nbsp;        cacheUtil.evictIntimateUsersCache(touserid);</b>
+&nbsp;
+<b class="fc">&nbsp;        blogDAO.likeBlog(blogid, userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void unlikeBlog(Long blogid, String userid) {
+<b class="fc">&nbsp;        String touserid = getBlogById(blogid).getUser().getUserid();</b>
+&nbsp;
+<b class="fc">&nbsp;        cacheUtil.evictIntimateUsersCache(userid);</b>
+<b class="fc">&nbsp;        cacheUtil.evictIntimateUsersCache(touserid);</b>
+&nbsp;        
+<b class="fc">&nbsp;        blogDAO.unlikeBlog(blogid,userid);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;SimplifiedBlogModel&gt; getBlogsByUserid(String userid){
+<b class="fc">&nbsp;        List&lt;Blog&gt; blogss = blogDAO.getBlogsByUserid(userid);</b>
+<b class="fc">&nbsp;        List&lt;SimplifiedBlogModel&gt; blogs = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (Blog blog : blogss) {</b>
+<b class="fc">&nbsp;            if(blog.getValid() == 0) continue;</b>
+<b class="fc">&nbsp;            SimplifiedBlogModel blogModel = new SimplifiedBlogModel();</b>
+<b class="fc">&nbsp;            blogModel.setBlogid(blog.getBlogid());</b>
+<b class="fc">&nbsp;            blogModel.setTimestamp(blog.getTimestamp());</b>
+<b class="fc">&nbsp;            blogModel.setLikeNum(blog.getLikeNum());</b>
+<b class="fc">&nbsp;            blogModel.setTitle(blog.getTitle());</b>
+<b class="fc">&nbsp;            blogModel.setContent(blog.getContent());</b>
+<b class="fc">&nbsp;            blogModel.setTags(Arrays.asList(blog.getTags().split(&quot;,&quot;)));</b>
+<b class="fc">&nbsp;            blogModel.setUser(userService.getProfileTag(blog.getUserid()));</b>
+<b class="fc">&nbsp;            blogModel.setEmotion(blog.getEmotion());</b>
+<b class="fc">&nbsp;            blogModel.setValid(blog.getValid());</b>
+<b class="fc">&nbsp;            blogModel.setBrowsenum(blog.getBrowsenum());</b>
+<b class="fc">&nbsp;            List&lt;Reply&gt; replies = blogDAO.getRepliesByBlogid(blog.getBlogid());</b>
+<b class="fc">&nbsp;            List&lt;SimplifiedReplyModel&gt; replyModels = new ArrayList&lt;&gt;(replies.size());</b>
+<b class="pc">&nbsp;            for (Reply reply : replies) {</b>
+<b class="nc">&nbsp;                if (reply.getValid() == 0) continue;</b>
+<b class="nc">&nbsp;                replyModels.add(null);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            blogModel.setReplies(replyModels);</b>
+<b class="fc">&nbsp;            blogs.add(blogModel);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return blogs;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;SimplifiedBlogModel&gt; getBlogRepliedByUserid(String userid){
+<b class="fc">&nbsp;        List&lt;Reply&gt; replies = blogDAO.getRepliesByUserid(userid);</b>
+<b class="fc">&nbsp;        List&lt;SimplifiedBlogModel&gt; blogs = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        Map&lt;Long, SimplifiedBlogModel&gt; blogMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (Reply reply : replies){</b>
+<b class="fc">&nbsp;            if (reply.getValid() == 0) continue;</b>
+<b class="fc">&nbsp;            SimplifiedBlogModel blogModel = getSimplifiedBlogById(reply.getBlogid());</b>
+<b class="fc">&nbsp;            blogMap.put(reply.getBlogid(), blogModel);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        for (Map.Entry&lt;Long, SimplifiedBlogModel&gt; entry : blogMap.entrySet()) {</b>
+<b class="fc">&nbsp;            blogs.add(entry.getValue());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return blogs;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public SimplifiedBlogModel getSimplifiedBlogById(Long blogid) {
+<b class="fc">&nbsp;        Blog blog = blogDAO.getBlogById(blogid);</b>
+<b class="pc">&nbsp;        if (blog == null)</b>
+<b class="nc">&nbsp;            return null;</b>
+<b class="fc">&nbsp;        SimplifiedBlogModel blogModel = new SimplifiedBlogModel();</b>
+<b class="fc">&nbsp;        blogModel.setBlogid(blog.getBlogid());</b>
+<b class="fc">&nbsp;        blogModel.setUser(userService.getProfileTag(blog.getUserid()));</b>
+<b class="fc">&nbsp;        blogModel.setTimestamp(blog.getTimestamp());</b>
+<b class="fc">&nbsp;        blogModel.setLikeNum(blog.getLikeNum());</b>
+<b class="fc">&nbsp;        blogModel.setTitle(blog.getTitle());</b>
+<b class="fc">&nbsp;        blogModel.setContent(blog.getContent());</b>
+<b class="fc">&nbsp;        blogModel.setValid(blog.getValid());</b>
+<b class="fc">&nbsp;        blogModel.setBrowsenum(blog.getBrowsenum());</b>
+<b class="fc">&nbsp;        blogModel.setTags(Arrays.asList(blog.getTags().split(&quot;,&quot;)));</b>
+<b class="fc">&nbsp;        List&lt;Reply&gt; replies = blogDAO.getRepliesByBlogid(blog.getBlogid());</b>
+<b class="fc">&nbsp;        List&lt;SimplifiedReplyModel&gt; replyModels = new ArrayList&lt;&gt;(replies.size());</b>
+<b class="fc">&nbsp;        for (Reply reply : replies) {</b>
+<b class="fc">&nbsp;            if (reply.getValid() == 0) continue;</b>
+<b class="fc">&nbsp;            replyModels.add(null);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        blogModel.setReplies(replyModels);</b>
+<b class="fc">&nbsp;        blogModel.setEmotion(blog.getEmotion());</b>
+<b class="fc">&nbsp;        return blogModel;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;Like&gt; getBlogLikedByUserid(String userid) {
+<b class="fc">&nbsp;        return blogDAO.getBlogLikedByUserid(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void addBrowsenum(Long blogid){
+<b class="fc">&nbsp;        blogDAO.addBrowsenum(blogid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void reportBlog(Long blogid, String reason){
+<b class="fc">&nbsp;        blogDAO.reportBlog(blogid, reason);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void reportReply(Long replyid, String reason){
+<b class="fc">&nbsp;        blogDAO.reportReply(replyid, reason);</b>
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public List&lt;IllegalModel&gt; getIllegalBlogs(){
+<b class="fc">&nbsp;        List&lt;Illegal&gt; illegals = blogDAO.getByType(0);</b>
+<b class="fc">&nbsp;        List&lt;IllegalModel&gt; illegalBlogs = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (Illegal illegal : illegals) {</b>
+<b class="fc">&nbsp;            IllegalModel illegalModel = new IllegalModel();</b>
+<b class="fc">&nbsp;            illegalModel.setIllegalid(illegal.getIllegalid());</b>
+<b class="fc">&nbsp;            illegalModel.setType(illegal.getType());</b>
+<b class="fc">&nbsp;            illegalModel.setContentid(illegal.getContentid());</b>
+<b class="fc">&nbsp;            illegalModel.setUser(userService.getProfileTag(illegal.getUserid()));</b>
+<b class="fc">&nbsp;            illegalModel.setTimestamp(illegal.getTimestamp());</b>
+<b class="fc">&nbsp;            illegalModel.setReason(illegal.getReason());</b>
+<b class="fc">&nbsp;            illegalModel.setStatus(illegal.getStatus());</b>
+<b class="fc">&nbsp;            illegalModel.setBlogid(illegal.getContentid());</b>
+<b class="fc">&nbsp;            illegalModel.setContent(getBlogById(illegal.getContentid()).getContent());</b>
+<b class="fc">&nbsp;            illegalModel.setTitle(getBlogById(illegal.getContentid()).getTitle());</b>
+<b class="fc">&nbsp;            illegalBlogs.add(illegalModel);</b>
+&nbsp;        }
+&nbsp;        //将illegalBlogs按时间排序
+<b class="fc">&nbsp;        illegalBlogs.sort(Comparator.comparing(IllegalModel::getTimestamp).reversed());</b>
+<b class="fc">&nbsp;        return illegalBlogs;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;IllegalModel&gt; getIllegalReplies(){
+<b class="fc">&nbsp;        List&lt;Illegal&gt; illegals = blogDAO.getByType(1);</b>
+<b class="fc">&nbsp;        List&lt;IllegalModel&gt; illegalReplies = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (Illegal illegal : illegals) {</b>
+<b class="fc">&nbsp;            IllegalModel illegalModel = new IllegalModel();</b>
+<b class="fc">&nbsp;            illegalModel.setIllegalid(illegal.getIllegalid());</b>
+<b class="fc">&nbsp;            illegalModel.setType(illegal.getType());</b>
+<b class="fc">&nbsp;            illegalModel.setContentid(illegal.getContentid());</b>
+<b class="fc">&nbsp;            illegalModel.setUser(userService.getProfileTag(illegal.getUserid()));</b>
+<b class="fc">&nbsp;            illegalModel.setTimestamp(illegal.getTimestamp());</b>
+<b class="fc">&nbsp;            illegalModel.setReason(illegal.getReason());</b>
+<b class="fc">&nbsp;            illegalModel.setStatus(illegal.getStatus());</b>
+<b class="fc">&nbsp;            illegalModel.setTitle(&quot;&quot;);</b>
+<b class="fc">&nbsp;            illegalModel.setBlogid(blogDAO.getReplyById(illegal.getContentid()).getBlogid());</b>
+<b class="fc">&nbsp;            illegalModel.setContent(blogDAO.getReplyContentById(illegal.getContentid()));</b>
+<b class="fc">&nbsp;            illegalReplies.add(illegalModel);</b>
+&nbsp;        }
+&nbsp;        //将illegalReplies按时间排序
+<b class="fc">&nbsp;        illegalReplies.sort(Comparator.comparing(IllegalModel::getTimestamp).reversed());</b>
+<b class="fc">&nbsp;        return illegalReplies;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void setIllegalStatus(int illegalid, int i){
+<b class="fc">&nbsp;        blogDAO.setIllegalStatus(illegalid, i);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteIllegal(int illegalid){
+<b class="fc">&nbsp;        blogDAO.deleteIllegal(illegalid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;SimplifiedReplyModel&gt; getRepliesByUserid(String userid){
+<b class="fc">&nbsp;        List&lt;Reply&gt; replies = blogDAO.getRepliesByUserid(userid);</b>
+<b class="fc">&nbsp;        List&lt;SimplifiedReplyModel&gt; replyModels = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (Reply reply : replies) {</b>
+<b class="fc">&nbsp;            if (reply.getValid() == 0) continue;</b>
+<b class="fc">&nbsp;            SimplifiedReplyModel replyModel = new SimplifiedReplyModel();</b>
+<b class="fc">&nbsp;            replyModel.setReplyid(reply.getReplyid());</b>
+<b class="fc">&nbsp;            replyModel.setBlogid(reply.getBlogid());</b>
+<b class="fc">&nbsp;            replyModel.setUser(userService.getProfileTag(reply.getFromuserid()));</b>
+<b class="fc">&nbsp;            replyModel.setFromuserid(reply.getFromuserid());</b>
+<b class="fc">&nbsp;            replyModel.setTouserid(reply.getTouserid());</b>
+<b class="fc">&nbsp;            replyModel.setTimestamp(reply.getTimestamp());</b>
+<b class="fc">&nbsp;            replyModel.setContent(reply.getContent());</b>
+<b class="fc">&nbsp;            replyModels.add(replyModel);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return replyModels;</b>
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public List&lt;ReplyModel&gt; getRepliesByBlogid(Long blogid, int pageSize,int currentPage){
+<b class="fc">&nbsp;        List&lt;Reply&gt; replies = blogDAO.getRepliesByBlogid(blogid);</b>
+<b class="fc">&nbsp;        List&lt;ReplyModel&gt; replyModels = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        List&lt;ReplyModel&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (Reply reply : replies) {</b>
+<b class="fc">&nbsp;            if (reply.getValid() == 0) continue;</b>
+<b class="fc">&nbsp;            ReplyModel replyModel = new ReplyModel();</b>
+<b class="fc">&nbsp;            replyModel.setReplyid(reply.getReplyid());</b>
+<b class="fc">&nbsp;            replyModel.setBlogid(reply.getBlogid());</b>
+<b class="fc">&nbsp;            replyModel.setFromuserid(reply.getFromuserid());</b>
+<b class="fc">&nbsp;            replyModel.setTouserid(reply.getTouserid());</b>
+<b class="fc">&nbsp;            replyModel.setTimestamp(reply.getTimestamp());</b>
+<b class="fc">&nbsp;            replyModel.setContent(reply.getContent());</b>
+<b class="fc">&nbsp;            replyModels.add(replyModel);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        replyModels.sort(Comparator.comparing(ReplyModel::getTimestamp).reversed());</b>
+<b class="fc">&nbsp;        int start = (currentPage - 1) * pageSize;</b>
+<b class="fc">&nbsp;        int end = start + pageSize;</b>
+<b class="pc">&nbsp;        if (start &gt;= replyModels.size()) {</b>
+<b class="nc">&nbsp;            replyModels = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;            return replyModels;</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (end &gt; replyModels.size()) {</b>
+<b class="nc">&nbsp;            end = replyModels.size();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        result = replyModels.subList(start, end);</b>
+<b class="fc">&nbsp;        for(ReplyModel replyModel : result)</b>
+&nbsp;        {
+<b class="fc">&nbsp;            replyModel.setUser(userService.getSimplifiedProfile(replyModel.getFromuserid()));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,219 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EmotionDAOImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.DAO.Impl</a>
+</div>
+
+<h1>Coverage Summary for Class: EmotionDAOImpl (org.example.rgybackend.DAO.Impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EmotionDAOImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (8/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.1%
+  </span>
+  <span class="absValue">
+    (32/34)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">EmotionDAOImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (8/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.1%
+  </span>
+  <span class="absValue">
+    (32/34)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.DAO.Impl;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.DAO.EmotionDAO;
+&nbsp;import org.example.rgybackend.Entity.Emotion;
+&nbsp;import org.example.rgybackend.Entity.Tag;
+&nbsp;import org.example.rgybackend.Model.EmotionModel;
+&nbsp;import org.example.rgybackend.Model.TagModel;
+&nbsp;import org.example.rgybackend.Repository.EmotionRepository;
+&nbsp;import org.example.rgybackend.Repository.TagRepository;
+&nbsp;import org.example.rgybackend.Utils.TimeUtil;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;@Repository
+<b class="fc">&nbsp;public class EmotionDAOImpl implements EmotionDAO {</b>
+&nbsp;    @Autowired
+&nbsp;    private EmotionRepository emotionRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private TagRepository tagRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public EmotionModel getEmotion(String userid, LocalDate date) {
+<b class="fc">&nbsp;        Long timestamp = TimeUtil.getStartOfDayTimestamp(date);</b>
+<b class="fc">&nbsp;        List&lt;Emotion&gt; emotions = emotionRepository.scanEmotion(userid, timestamp, timestamp + TimeUtil.DAY);</b>
+<b class="pc">&nbsp;        if(emotions.size() == 0) {</b>
+<b class="fc">&nbsp;            return new EmotionModel(userid, timestamp, null, null);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return new EmotionModel(emotions.get(0));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean setEmotion(EmotionModel emotionModel) {
+<b class="fc">&nbsp;        Long timestamp = TimeUtil.getStartOfDayTimestamp(emotionModel.getTimestamp());</b>
+<b class="fc">&nbsp;        List&lt;Emotion&gt; emotions = emotionRepository.scanEmotion(emotionModel.getUserid(), timestamp, timestamp + TimeUtil.DAY);</b>
+<b class="pc">&nbsp;        if(emotions.isEmpty()) {</b>
+<b class="nc">&nbsp;            emotionRepository.save(new Emotion(emotionModel));</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            Long emotionid = emotions.get(0).getEmotionid();</b>
+<b class="fc">&nbsp;            Emotion emotion = new Emotion(emotionModel);</b>
+<b class="fc">&nbsp;            emotion.setEmotionid(emotionid);</b>
+<b class="fc">&nbsp;            emotionRepository.save(emotion);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;EmotionModel&gt; scanEmotion(String userid, LocalDate startDate, LocalDate endDate) {
+<b class="fc">&nbsp;        Long start = TimeUtil.getStartOfDayTimestamp(startDate);</b>
+<b class="fc">&nbsp;        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;</b>
+<b class="fc">&nbsp;        List&lt;Emotion&gt; emotions = emotionRepository.scanEmotion(userid, start, end);</b>
+<b class="fc">&nbsp;        List&lt;EmotionModel&gt; emotionModels = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for(Emotion emotion : emotions) {</b>
+<b class="fc">&nbsp;            emotionModels.add(new EmotionModel(emotion));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return emotionModels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;EmotionModel&gt; scanAllEmotion(LocalDate startDate, LocalDate endDate) {
+<b class="fc">&nbsp;        Long start = TimeUtil.getStartOfDayTimestamp(startDate);</b>
+<b class="fc">&nbsp;        Long end = TimeUtil.getStartOfDayTimestamp(endDate) + TimeUtil.DAY;</b>
+<b class="fc">&nbsp;        List&lt;Emotion&gt; emotions = emotionRepository.scanAllEmotion(start, end);</b>
+<b class="fc">&nbsp;        List&lt;EmotionModel&gt; emotionModels = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for(Emotion emotion : emotions) {</b>
+<b class="fc">&nbsp;            emotionModels.add(new EmotionModel(emotion));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return emotionModels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;TagModel&gt; getTags() {
+<b class="fc">&nbsp;        List&lt;Tag&gt; tags = tagRepository.findAll();</b>
+<b class="fc">&nbsp;        List&lt;TagModel&gt; tagModels = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for(Tag tag : tags) {</b>
+<b class="fc">&nbsp;            tagModels.add(new TagModel(tag));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return tagModels;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

@@ -17,13 +17,4 @@ public class CrisisModel {
     private Long timestamp;
     private Long urgencyLevel;
     private Long status;
-
-    public CrisisModel(Crisis crisis) {
-        this.crisisid = crisis.getCrisisid();
-        this.userid = crisis.getUserid();
-        this.content = crisis.getContent();
-        this.timestamp = crisis.getTimestamp();
-        this.urgencyLevel = crisis.getUrgencyLevel();
-        this.status = crisis.getStatus();
-    }
 }

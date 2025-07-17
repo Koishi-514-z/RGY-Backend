@@ -74,17 +74,11 @@ public class CrisisController {
     @GetMapping("/getall")
     public List<CrisisModel> getAllCrisis(HttpSession session) {
         String userid = (String)session.getAttribute("user");
-        if(!userService.isAdmin(userid)) {
-            throw new ForbiddenException("只有管理员允许进行该操作");
-        }
         return crisisService.getAllCrisis();
     }
     @PutMapping("update")
     public boolean updateCrisisStatus(@RequestParam Integer crisisid, @RequestParam Long status, HttpSession session) {
         String userid = (String)session.getAttribute("user");
-        if(!userService.isAdmin(userid)) {
-            throw new ForbiddenException("只有管理员允许进行该操作");
-        }
         return crisisService.updateStatus(crisisid, status);
     }
 }

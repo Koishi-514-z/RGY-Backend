@@ -1,0 +1,227 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PushContentDAOImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.DAO.Impl</a>
+</div>
+
+<h1>Coverage Summary for Class: PushContentDAOImpl (org.example.rgybackend.DAO.Impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PushContentDAOImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (16/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (35/35)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PushContentDAOImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (16/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (35/35)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.DAO.Impl;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.DAO.PushContentDAO;
+&nbsp;import org.example.rgybackend.DTO.PushContentDTO;
+&nbsp;import org.example.rgybackend.DTO.SimplifiedUrlData;
+&nbsp;import org.example.rgybackend.Entity.PushContent;
+&nbsp;import org.example.rgybackend.Model.TagModel;
+&nbsp;import org.example.rgybackend.Model.UrlDataModel;
+&nbsp;import org.example.rgybackend.Repository.PushContentRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageRequest;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.domain.Sort;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;@Repository
+<b class="fc">&nbsp;public class PushContentDAOImpl implements PushContentDAO {</b>
+&nbsp;    @Autowired
+&nbsp;    public PushContentRepository pushContentRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean pushContent(UrlDataModel urlDataModel) {
+<b class="fc">&nbsp;        PushContent pushContent = new PushContent(urlDataModel);</b>
+<b class="fc">&nbsp;        pushContentRepository.save(pushContent);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;UrlDataModel&gt; getAllContent() {
+<b class="fc">&nbsp;        List&lt;PushContent&gt; pushContents = pushContentRepository.findAll();</b>
+<b class="fc">&nbsp;        List&lt;UrlDataModel&gt; urlDataModels = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for(PushContent pushContent : pushContents) {</b>
+<b class="fc">&nbsp;            urlDataModels.add(new UrlDataModel(pushContent));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return urlDataModels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;SimplifiedUrlData&gt; getSimplifiedContent() {
+<b class="fc">&nbsp;        List&lt;PushContentDTO&gt; pushContents = pushContentRepository.findSimplifiedDatas();</b>
+<b class="fc">&nbsp;        List&lt;SimplifiedUrlData&gt; simplifiedUrlDatas = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for(PushContentDTO pushContent : pushContents) {</b>
+<b class="fc">&nbsp;            simplifiedUrlDatas.add(new SimplifiedUrlData(pushContent));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return simplifiedUrlDatas;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;UrlDataModel&gt; getContentByTag(Long tagid, Integer pageIndex, Integer pageSize) {
+<b class="fc">&nbsp;        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));</b>
+<b class="fc">&nbsp;        Page&lt;PushContent&gt; pushContents = pushContentRepository.findAll(pageable);</b>
+<b class="fc">&nbsp;        List&lt;UrlDataModel&gt; urlDataModels = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for(PushContent pushContent : pushContents) {</b>
+<b class="fc">&nbsp;            UrlDataModel urlDataModel = new UrlDataModel(pushContent);</b>
+<b class="fc">&nbsp;            boolean contain = false;</b>
+<b class="fc">&nbsp;            for(TagModel tag : urlDataModel.getTags()) {</b>
+<b class="pc">&nbsp;                if(tag.getId() == tagid) {</b>
+<b class="fc">&nbsp;                    contain = true;</b>
+&nbsp;                }
+&nbsp;            }
+<b class="pc">&nbsp;            if(contain) {</b>
+<b class="fc">&nbsp;                urlDataModels.add(urlDataModel);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return urlDataModels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Long getDataNum(Long tagid) {
+<b class="fc">&nbsp;        List&lt;PushContent&gt; pushContents = pushContentRepository.findAll();</b>
+<b class="fc">&nbsp;        Long number = 0L;</b>
+<b class="fc">&nbsp;        for(PushContent pushContent : pushContents) {</b>
+<b class="fc">&nbsp;            UrlDataModel urlDataModel = new UrlDataModel(pushContent);</b>
+<b class="fc">&nbsp;            for(TagModel tag : urlDataModel.getTags()) {</b>
+<b class="fc">&nbsp;                if(tag.getId() == tagid) {</b>
+<b class="fc">&nbsp;                    number++;</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return number;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Long getAllDataNum() {
+<b class="fc">&nbsp;        return pushContentRepository.count();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

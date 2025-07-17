@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BlogController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Controller</a>
+</div>
+
+<h1>Coverage Summary for Class: BlogController (org.example.rgybackend.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BlogController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (25/25)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44.4%
+  </span>
+  <span class="absValue">
+    (8/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95.1%
+  </span>
+  <span class="absValue">
+    (154/162)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Controller;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import jakarta.servlet.http.HttpSession;
+&nbsp;import org.example.rgybackend.DAO.EmotionDAO;
+&nbsp;import org.example.rgybackend.Entity.Like;
+&nbsp;import org.example.rgybackend.Model.*;
+&nbsp;import org.example.rgybackend.Service.BlogService;
+&nbsp;import org.example.rgybackend.Service.UserService;
+&nbsp;import org.example.rgybackend.Utils.ForbiddenException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import com.alibaba.fastjson2.JSON;
+&nbsp;import com.alibaba.fastjson2.JSONObject;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/blogs&quot;)
+<b class="fc">&nbsp;public class BlogController {</b>
+&nbsp;    @Autowired
+&nbsp;    private BlogService blogService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserService userService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private EmotionDAO emotionDAO;
+&nbsp;    
+&nbsp;    @GetMapping(&quot;/getmine&quot;)
+&nbsp;    public List&lt;SimplifiedBlogModel&gt; getMyBlogs(@RequestParam String userid) {
+<b class="fc">&nbsp;        List&lt;SimplifiedBlogModel&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        result = blogService.getBlogsByUserid(userid);</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getlike&quot;)
+&nbsp;    public List&lt;SimplifiedBlogModel&gt; getLikeBlogs(@RequestParam String userid) {
+<b class="fc">&nbsp;        List&lt;SimplifiedBlogModel&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        List&lt;Like&gt; userLikes = blogService.getBlogLikedByUserid(userid);</b>
+<b class="fc">&nbsp;        Map&lt;Long, SimplifiedBlogModel&gt; blogMap = new HashMap&lt;&gt;();</b>
+<b class="pc">&nbsp;        for (Like userLike : userLikes) {</b>
+<b class="nc">&nbsp;            SimplifiedBlogModel blogModel = blogService.getSimplifiedBlogById(userLike.getBlogid());</b>
+<b class="nc">&nbsp;            if (blogModel == null || blogModel.getValid() == 0)</b>
+&nbsp;                continue;
+<b class="nc">&nbsp;            blogMap.put(blogModel.getBlogid(), blogModel);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        result = new ArrayList&lt;&gt;(blogMap.values());</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getcomment&quot;)
+&nbsp;    public List&lt;SimplifiedBlogModel&gt; getCommentBlogs(@RequestParam String userid) {
+<b class="fc">&nbsp;        List&lt;SimplifiedBlogModel&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        result = blogService.getBlogRepliedByUserid(userid);</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getreply&quot;)
+&nbsp;    public List&lt;SimplifiedReplyModel&gt; getReplies(@RequestParam String userid) {
+<b class="fc">&nbsp;        List&lt;SimplifiedReplyModel&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        result = blogService.getRepliesByUserid(userid);</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;    @PostMapping (&quot;/getrepliesforblog&quot;)
+&nbsp;    public List&lt;ReplyModel&gt; getRepliesForBlog(@RequestBody String params) {
+<b class="fc">&nbsp;        List&lt;ReplyModel&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        Long blogid = json.getLongValue(&quot;blogid&quot;);</b>
+<b class="fc">&nbsp;        int pageSize = json.getIntValue(&quot;pageSize&quot;);</b>
+<b class="fc">&nbsp;        int currentPage = json.getIntValue(&quot;currentPage&quot;);</b>
+<b class="fc">&nbsp;        result = blogService.getRepliesByBlogid(blogid, pageSize, currentPage);</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;    @PostMapping (&quot;/get&quot;)
+&nbsp;    public BlogsRet getAllBlogs(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;        BlogsRet result = new BlogsRet();</b>
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        int pageSize = json.getIntValue(&quot;pageSize&quot;);</b>
+<b class="fc">&nbsp;        int currentPage = json.getIntValue(&quot;currentPage&quot;);</b>
+<b class="fc">&nbsp;        String titleOrAuthor = json.getString(&quot;searchText&quot;);</b>
+<b class="fc">&nbsp;        List&lt;String&gt; tags = json.getJSONArray(&quot;tags&quot;).toJavaList(String.class);</b>
+<b class="fc">&nbsp;        int emotion = 0;</b>
+<b class="pc">&nbsp;        if (emotionDAO.getEmotion(session.getAttribute(&quot;user&quot;).toString(), LocalDate.now()).getTag() == null)</b>
+<b class="fc">&nbsp;            emotion = 0;</b>
+&nbsp;        else
+<b class="nc">&nbsp;            emotion = emotionDAO.getEmotion(session.getAttribute(&quot;user&quot;).toString(), LocalDate.now()).getTag().getId().intValue();</b>
+<b class="fc">&nbsp;        result =  blogService.getRequestedBlogs(pageSize, currentPage, titleOrAuthor, tags, emotion);</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping (&quot;/getLatest&quot;)
+&nbsp;    public BlogsRet getLatestBlogs(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        int pageSize = json.getIntValue(&quot;pageSize&quot;);</b>
+<b class="fc">&nbsp;        int currentPage = json.getIntValue(&quot;currentPage&quot;);</b>
+<b class="fc">&nbsp;        String titleOrAuthor = json.getString(&quot;searchText&quot;);</b>
+<b class="fc">&nbsp;        List&lt;String&gt; tags = json.getJSONArray(&quot;tags&quot;).toJavaList(String.class);</b>
+<b class="fc">&nbsp;        return blogService.getLatestBlogs(pageSize, currentPage, titleOrAuthor, tags);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping (&quot;/getById/{id}&quot;)
+&nbsp;    public BlogModel getBlogById(@PathVariable String id) {
+<b class="fc">&nbsp;        Long idLong = Long.parseLong(id);</b>
+<b class="fc">&nbsp;        BlogModel blogModel = blogService.getBlogById(idLong);</b>
+<b class="fc">&nbsp;        return blogModel;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping (&quot;/add&quot;)
+&nbsp;    public boolean addBlog(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        String title = json.getString(&quot;title&quot;);</b>
+<b class="fc">&nbsp;        String content = json.getString(&quot;content&quot;);</b>
+<b class="fc">&nbsp;        List&lt;String&gt; tags = json.getJSONArray(&quot;tags&quot;).toJavaList(String.class);</b>
+&nbsp;        //输出tags内容
+<b class="fc">&nbsp;        String author = session.getAttribute(&quot;user&quot;).toString();</b>
+<b class="fc">&nbsp;        blogService.addBlog(title, content, tags, author);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping (&quot;/delete&quot;)
+&nbsp;    public boolean deleteBlog(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="pc">&nbsp;        if(!userService.isAdmin(userid)) {</b>
+<b class="nc">&nbsp;            throw new ForbiddenException(&quot;只有管理员允许进行该操作&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        Long blogid = json.getLongValue(&quot;blogid&quot;);</b>
+<b class="fc">&nbsp;        blogService.deleteBlog(blogid);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping (&quot;/addReply&quot;)
+&nbsp;    public ReplyModel addReply(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        Long blogid = json.getLongValue(&quot;blogid&quot;);</b>
+<b class="fc">&nbsp;        String content = json.getString(&quot;content&quot;);</b>
+<b class="fc">&nbsp;        String author = session.getAttribute(&quot;user&quot;).toString();</b>
+<b class="fc">&nbsp;        return blogService.addReply(blogid, content, author);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping (&quot;/deleteReply&quot;)
+&nbsp;    public boolean deleteReply(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        if(!userService.isAdmin(userid)) {</b>
+<b class="fc">&nbsp;            throw new ForbiddenException(&quot;只有管理员允许进行该操作&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        Long replyid = json.getLongValue(&quot;replyid&quot;);</b>
+<b class="fc">&nbsp;        blogService.deleteReply(replyid);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;    @PostMapping (&quot;/getIfLiked&quot;)
+&nbsp;    public boolean getIfLiked(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        Long blogid = json.getLongValue(&quot;blogid&quot;);</b>
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+&nbsp;        //判断是否已经点过赞
+<b class="pc">&nbsp;        if (blogService.getBlogLikedByUserid(userid).stream().anyMatch(like -&gt; like.getBlogid().equals(blogid))) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping (&quot;/like&quot;)
+&nbsp;    public boolean likeBlog(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        Long blogid = json.getLongValue(&quot;blogid&quot;);</b>
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+&nbsp;        //判断是否已经点过赞
+<b class="pc">&nbsp;        if (blogService.getBlogLikedByUserid(userid).stream().anyMatch(like -&gt; like.getBlogid().equals(blogid))) {</b>
+<b class="nc">&nbsp;            blogService.unlikeBlog(blogid, userid);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;        blogService.likeBlog(blogid, userid);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping (&quot;/cancellike&quot;)
+&nbsp;    public boolean unlikeBlog(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        Long blogid = json.getLongValue(&quot;blogid&quot;);</b>
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="pc">&nbsp;        if (blogService.getBlogLikedByUserid(userid).stream().anyMatch(like -&gt; like.getBlogid().equals(blogid))) {</b>
+<b class="fc">&nbsp;            blogService.unlikeBlog(blogid, userid);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            blogService.likeBlog(blogid, userid);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;    @PostMapping (&quot;/addBrowsenum&quot;)
+&nbsp;    public boolean addBrowsenum(@RequestBody String params) {
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+&nbsp;
+<b class="fc">&nbsp;        Long blogid = json.getLongValue(&quot;blogid&quot;);</b>
+<b class="fc">&nbsp;        blogService.addBrowsenum(blogid);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;    @PostMapping (&quot;/report&quot;)
+&nbsp;    public boolean reportBlog(@RequestBody String params) {
+<b class="fc">&nbsp;        System.out.println(params);</b>
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        String id = json.getString(&quot;blogid&quot;);</b>
+<b class="fc">&nbsp;        Long blogid = Long.parseLong(id);</b>
+<b class="fc">&nbsp;        String reason = json.getString(&quot;reason&quot;);</b>
+<b class="fc">&nbsp;        blogService.reportBlog(blogid, reason);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping (&quot;/reportReply&quot;)
+&nbsp;    public boolean reportReply(@RequestBody String params) {
+<b class="fc">&nbsp;        JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;        json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;        String rid = json.getString(&quot;replyid&quot;);</b>
+<b class="fc">&nbsp;        Long replyid = Long.parseLong(rid);</b>
+<b class="fc">&nbsp;        String reason = json.getString(&quot;reason&quot;);</b>
+<b class="fc">&nbsp;        blogService.reportReply(replyid, reason);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;    @GetMapping (&quot;/getIllegalBlogs&quot;)
+&nbsp;    public List&lt;IllegalModel&gt; getIllegalBlogs(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        List&lt;IllegalModel&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        result = blogService.getIllegalBlogs();</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping (&quot;/getIllegalReplies&quot;)
+&nbsp;    public List&lt;IllegalModel&gt; getIllegalReplies(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        List&lt;IllegalModel&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        result = blogService.getIllegalReplies();</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;     @PostMapping (&quot;/sheldingBlog&quot;)
+&nbsp;     public boolean sheldingBlog(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;         String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;         System.out.println(params);</b>
+<b class="fc">&nbsp;         JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;         json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;         String id = json.getString(&quot;blogid&quot;);</b>
+<b class="fc">&nbsp;         Long blogid = Long.parseLong(id);</b>
+<b class="fc">&nbsp;         String iid = json.getString(&quot;illegalid&quot;);</b>
+<b class="fc">&nbsp;         int illegalid = Integer.parseInt(iid);</b>
+&nbsp;        // int illegalid = json.getIntValue(&quot;illegalid&quot;);
+&nbsp;         //将违规记录标记为已处理
+<b class="fc">&nbsp;         blogService.setIllegalStatus(illegalid, 1);</b>
+&nbsp;         //删除博客
+<b class="fc">&nbsp;         blogService.deleteBlog(blogid);</b>
+<b class="fc">&nbsp;         return true;</b>
+&nbsp;     }
+&nbsp;
+&nbsp;     @PostMapping(&quot;sheldingReply&quot;)
+&nbsp;     public boolean sheldingReply(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;         String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;         JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;         json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;         Long replyid = json.getLongValue(&quot;replyid&quot;);</b>
+<b class="fc">&nbsp;         int illegalid = json.getIntValue(&quot;illegalid&quot;);</b>
+&nbsp;         //将违规记录标记为已处理
+<b class="fc">&nbsp;         blogService.setIllegalStatus(illegalid, 1);</b>
+&nbsp;         //删除回复
+<b class="fc">&nbsp;         blogService.deleteReply(replyid);</b>
+<b class="fc">&nbsp;         return true;</b>
+&nbsp;     }
+&nbsp;     @PostMapping(&quot;recoverIllegal&quot;)
+&nbsp;     public boolean recoverIllegal(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;         String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;         JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;         json = JSON.parseObject(params);</b>
+&nbsp;         //Long blogid = json.getLongValue(&quot;blogid&quot;);
+<b class="fc">&nbsp;         int illegalid = json.getIntValue(&quot;illegalid&quot;);</b>
+<b class="fc">&nbsp;         blogService.setIllegalStatus(illegalid, 2);</b>
+<b class="fc">&nbsp;         return true;</b>
+&nbsp;     }
+&nbsp;
+&nbsp;     @PostMapping(&quot;deleteIllegal&quot;)
+&nbsp;     public boolean deleteIllegal(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;         String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;         JSONObject json = new JSONObject();</b>
+<b class="fc">&nbsp;         json = JSON.parseObject(params);</b>
+<b class="fc">&nbsp;         int illegalid = json.getIntValue(&quot;illegalid&quot;);</b>
+<b class="fc">&nbsp;         blogService.deleteIllegal(illegalid);</b>
+<b class="fc">&nbsp;         return true;</b>
+&nbsp;     }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

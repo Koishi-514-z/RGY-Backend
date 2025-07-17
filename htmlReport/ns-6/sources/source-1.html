@@ -1,0 +1,212 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Blog</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Entity</a>
+</div>
+
+<h1>Coverage Summary for Class: Blog (org.example.rgybackend.Entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Blog</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (15/15)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Blog$HibernateInstantiator</td>
+  </tr>
+  <tr>
+    <td class="name">Blog$HibernateProxy</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (15/15)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Entity;
+&nbsp;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.*;
+&nbsp;import org.example.rgybackend.Model.BlogModel;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;blog&quot;)
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;public class Blog {
+&nbsp;    @Id
+&nbsp;    @Column(name = &quot;blogid&quot;)
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private Long blogid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;userid&quot;)
+&nbsp;    private String userid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;timestamp&quot;)
+&nbsp;    private Long timestamp;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;likeNum&quot;)
+&nbsp;    private Long likeNum;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;title&quot;)
+&nbsp;    private String title;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;content&quot;)
+&nbsp;    private String content;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;tags&quot;)
+&nbsp;    private String tags;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;valid&quot;)
+&nbsp;    private Integer valid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;emotion&quot;)
+&nbsp;    private int emotion;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;lastreply&quot;)
+&nbsp;    private Long lastreply;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;browsenum&quot;)
+&nbsp;    private Long browsenum;
+&nbsp;
+<b class="fc">&nbsp;    public Blog(BlogModel blogModel,int valid) {</b>
+<b class="fc">&nbsp;        this.userid = blogModel.getUserid();</b>
+<b class="fc">&nbsp;        this.timestamp = blogModel.getTimestamp();</b>
+<b class="fc">&nbsp;        this.likeNum = blogModel.getLikeNum();</b>
+<b class="fc">&nbsp;        this.title = blogModel.getTitle();</b>
+<b class="fc">&nbsp;        this.content = blogModel.getContent();</b>
+<b class="fc">&nbsp;        this.blogid = blogModel.getBlogid();</b>
+<b class="fc">&nbsp;        this.tags = &quot;&quot;;</b>
+<b class="fc">&nbsp;        for (String tag : blogModel.getTags()) {</b>
+<b class="fc">&nbsp;            this.tags += tag + &quot;,&quot;;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.tags = this.tags.substring(0, this.tags.length() - 1);</b>
+<b class="fc">&nbsp;        this.valid = valid;</b>
+<b class="fc">&nbsp;        this.emotion = blogModel.getEmotion();</b>
+<b class="fc">&nbsp;        this.lastreply = blogModel.getTimestamp();</b>
+<b class="fc">&nbsp;        this.browsenum = 0L;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

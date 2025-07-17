@@ -46,13 +46,4 @@ public class Notification {
     @Basic
     @Column(name = "priority")
     private String priority;
-
-    public Notification(NotificationPrivateModel notificationPrivateModel) {
-        this.notificationid = notificationPrivateModel.getNotificationid();
-        this.adminid = notificationPrivateModel.getAdminid();
-        this.title = notificationPrivateModel.getTitle();
-        this.content = notificationPrivateModel.getContent();
-        this.timestamp = notificationPrivateModel.getTimestamp();
-        this.priority = notificationPrivateModel.getPriority();
-    }
 }

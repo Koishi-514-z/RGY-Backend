@@ -1,0 +1,236 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PushContentServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Service.Impl</a>
+</div>
+
+<h1>Coverage Summary for Class: PushContentServiceImpl (org.example.rgybackend.Service.Impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PushContentServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.1%
+  </span>
+  <span class="absValue">
+    (33/34)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Service.Impl;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.DAO.PushContentDAO;
+&nbsp;import org.example.rgybackend.DAO.QuoteDAO;
+&nbsp;import org.example.rgybackend.DTO.PushContentSortDTO;
+&nbsp;import org.example.rgybackend.DTO.SimplifiedUrlData;
+&nbsp;import org.example.rgybackend.Model.EmotionDataModel;
+&nbsp;import org.example.rgybackend.Model.PushContentMatrix;
+&nbsp;import org.example.rgybackend.Model.QuoteModel;
+&nbsp;import org.example.rgybackend.Model.TagModel;
+&nbsp;import org.example.rgybackend.Model.UrlDataModel;
+&nbsp;import org.example.rgybackend.Service.EmotionService;
+&nbsp;import org.example.rgybackend.Service.PushContentService;
+&nbsp;import org.example.rgybackend.Utils.ImageCompressor;
+&nbsp;import org.example.rgybackend.Utils.TimeUtil;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class PushContentServiceImpl implements PushContentService {</b>
+&nbsp;    @Autowired
+&nbsp;    private PushContentDAO pushContentDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private QuoteDAO quoteDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private EmotionService emotionService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ImageCompressor imageCompressor;
+&nbsp;
+&nbsp;    public List&lt;UrlDataModel&gt; getAllContent() {
+<b class="fc">&nbsp;        return pushContentDAO.getAllContent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean pushContent(UrlDataModel urlDataModel) {
+<b class="fc">&nbsp;        String img = urlDataModel.getImg();</b>
+<b class="fc">&nbsp;        if(img != null) {</b>
+&nbsp;            String compressedImg;
+&nbsp;            try {
+<b class="fc">&nbsp;                compressedImg = imageCompressor.compressBase64Image(img);</b>
+&nbsp;            } catch (IOException e) {
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;图片压缩失败&quot;, e);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            urlDataModel.setImg(compressedImg);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        urlDataModel.setCreatedAt(TimeUtil.now());</b>
+<b class="fc">&nbsp;        return pushContentDAO.pushContent(urlDataModel);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;SimplifiedUrlData&gt; getSimplifiedContent() {
+<b class="fc">&nbsp;        return pushContentDAO.getSimplifiedContent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;UrlDataModel&gt; getContentByTag(Long tagid, Integer pageIndex, Integer pageSize) {
+<b class="fc">&nbsp;        return pushContentDAO.getContentByTag(tagid, pageIndex, pageSize);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;UrlDataModel&gt; getContent(String userid, Integer pageIndex, Integer pageSize) {
+<b class="fc">&nbsp;        List&lt;UrlDataModel&gt; results = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        List&lt;UrlDataModel&gt; urlDataModels = this.getAllContent();</b>
+<b class="fc">&nbsp;        LocalDate today = TimeUtil.today();</b>
+<b class="fc">&nbsp;        LocalDate prevThreeDay = today.minusDays(3);</b>
+<b class="fc">&nbsp;        List&lt;EmotionDataModel&gt; emotionDataModels = emotionService.scanUserEmotionDatas(userid, prevThreeDay, today);</b>
+&nbsp;
+<b class="fc">&nbsp;        double[] suitabilityArray = PushContentMatrix.getSuitabilityArray(emotionDataModels);</b>
+<b class="fc">&nbsp;        List&lt;PushContentSortDTO&gt; pushContentSortDTOs = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for(UrlDataModel urlDataModel : urlDataModels) {</b>
+<b class="fc">&nbsp;            double suitability = 0.0;</b>
+<b class="fc">&nbsp;            for(TagModel tagModel : urlDataModel.getTags()) {</b>
+<b class="fc">&nbsp;                suitability += suitabilityArray[tagModel.getId().intValue()];</b>
+&nbsp;            }
+<b class="fc">&nbsp;            suitability /= urlDataModel.getTags().size();</b>
+&nbsp;
+<b class="fc">&nbsp;            int diffDays = (int)((TimeUtil.now() - urlDataModel.getCreatedAt()) / TimeUtil.DAY);</b>
+<b class="fc">&nbsp;            double timeWeight = 1 / (diffDays + 1);</b>
+&nbsp;
+<b class="fc">&nbsp;            pushContentSortDTOs.add(new PushContentSortDTO(urlDataModel, suitability * timeWeight));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        pushContentSortDTOs.sort((s1, s2) -&gt; Double.compare(s2.getRate(), s1.getRate()));</b>
+&nbsp;
+<b class="fc">&nbsp;        for(int i = pageIndex * pageSize; i &lt; Math.min((pageIndex + 1) * pageSize, pushContentSortDTOs.size()); ++i) {</b>
+<b class="fc">&nbsp;            results.add(pushContentSortDTOs.get(i).getUrlDataModel());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return results;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Long getDataNum(Long tagid) {
+<b class="fc">&nbsp;        return pushContentDAO.getDataNum(tagid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Long getAllDataNum() {
+<b class="fc">&nbsp;        return pushContentDAO.getAllDataNum();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public QuoteModel getQuote() {
+<b class="fc">&nbsp;        return quoteDAO.getQuote();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean addQuote(QuoteModel quoteModel) {
+<b class="fc">&nbsp;        return quoteDAO.addQuote(quoteModel, TimeUtil.now());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

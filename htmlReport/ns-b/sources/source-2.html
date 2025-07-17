@@ -1,0 +1,93 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CounselingDAO</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.DAO</a>
+</div>
+
+<h1>Coverage Summary for Class: CounselingDAO (org.example.rgybackend.DAO)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">CounselingDAO</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.DAO;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.Entity.Counseling;
+&nbsp;import org.example.rgybackend.Model.CounselingModel;
+&nbsp;
+&nbsp;public interface CounselingDAO {
+&nbsp;    boolean counseled(String psyid, Long timestamp);
+&nbsp;
+&nbsp;    Counseling getCounselingById(Long counselingid);
+&nbsp;
+&nbsp;    List&lt;CounselingModel&gt; getCounseling(String psyid);
+&nbsp;
+&nbsp;    List&lt;CounselingModel&gt; getUserCounseling(String userid);
+&nbsp;
+&nbsp;    List&lt;CounselingModel&gt; getDateCounseling(String psyid, LocalDate date);
+&nbsp;    
+&nbsp;    boolean addCounseling(CounselingModel counselingModel, String userid);
+&nbsp;
+&nbsp;    boolean setStatus(Long counselingid, Long status);
+&nbsp;
+&nbsp;    boolean remove(Long counselingid);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

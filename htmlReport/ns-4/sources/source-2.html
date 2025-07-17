@@ -1,0 +1,351 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BlogDAOImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.DAO.Impl</a>
+</div>
+
+<h1>Coverage Summary for Class: BlogDAOImpl (org.example.rgybackend.DAO.Impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BlogDAOImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    62.5%
+  </span>
+  <span class="absValue">
+    (5/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.3%
+  </span>
+  <span class="absValue">
+    (71/73)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">BlogDAOImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    62.5%
+  </span>
+  <span class="absValue">
+    (5/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.3%
+  </span>
+  <span class="absValue">
+    (71/73)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.DAO.Impl;
+&nbsp;
+&nbsp;import org.example.rgybackend.DAO.BlogDAO;
+&nbsp;import org.example.rgybackend.Entity.Blog;
+&nbsp;import org.example.rgybackend.Entity.Illegal;
+&nbsp;import org.example.rgybackend.Entity.Like;
+&nbsp;import org.example.rgybackend.Entity.Reply;
+&nbsp;import org.example.rgybackend.Model.BlogModel;
+&nbsp;import org.example.rgybackend.Model.ReplyModel;
+&nbsp;import org.example.rgybackend.Repository.BlogRepository;
+&nbsp;import org.example.rgybackend.Repository.IllegalRepository;
+&nbsp;import org.example.rgybackend.Repository.LikeRepository;
+&nbsp;import org.example.rgybackend.Repository.ReplyRepository;
+&nbsp;import org.example.rgybackend.Utils.Notification;
+&nbsp;import org.example.rgybackend.Utils.SocketMessage;
+&nbsp;import org.example.rgybackend.Utils.TimeUtil;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+<b class="fc">&nbsp;public class BlogDAOImpl implements BlogDAO {</b>
+&nbsp;    @Autowired
+&nbsp;    private BlogRepository blogRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ReplyRepository replyRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private LikeRepository userLikeRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private IllegalRepository illegalRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private Notification socket;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Blog addBlog(BlogModel blogModel, int valid) {
+<b class="fc">&nbsp;        blogRepository.save(new Blog(blogModel,valid));</b>
+<b class="fc">&nbsp;        SocketMessage sockMessage = new SocketMessage(&quot;System&quot;, blogModel.getBlogid(), &quot;System&quot;, null, blogModel.getTimestamp(), blogModel.getContent());</b>
+<b class="fc">&nbsp;        socket.pushBlogToAllClients(sockMessage);</b>
+<b class="fc">&nbsp;        return blogRepository.findByTimestampAndUserid(blogModel.getTimestamp(),blogModel.getUserid());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Reply addReply(ReplyModel replyModel, int valid) {
+<b class="fc">&nbsp;        replyRepository.save(new Reply(replyModel,valid));</b>
+<b class="fc">&nbsp;        Blog blog = blogRepository.findById(replyModel.getBlogid()).get();</b>
+<b class="fc">&nbsp;        blog.setLastreply(replyModel.getTimestamp());</b>
+<b class="fc">&nbsp;        blogRepository.save(blog);</b>
+<b class="fc">&nbsp;        SocketMessage sockMessage = new SocketMessage(&quot;System&quot;, replyModel.getReplyid(), &quot;System&quot;, null, replyModel.getTimestamp(), replyModel.getContent());</b>
+<b class="fc">&nbsp;        socket.pushBlogToAllClients(sockMessage);</b>
+<b class="fc">&nbsp;        return replyRepository.findByTimestampAndFromuserid(replyModel.getTimestamp(),replyModel.getFromuserid());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteBlog(Long blogId) {
+<b class="fc">&nbsp;        Blog blog = blogRepository.findById(blogId).get();</b>
+<b class="fc">&nbsp;        blog.setValid(0);</b>
+<b class="fc">&nbsp;        blogRepository.save(blog);</b>
+<b class="fc">&nbsp;        SocketMessage sockMessage = new SocketMessage(&quot;System&quot;, blogId, &quot;System&quot;, null, blog.getTimestamp(), blog.getContent());</b>
+<b class="fc">&nbsp;        socket.pushBlogToAllClients(sockMessage);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;//    @Override
+&nbsp;//    public void recoverBlog(Long blogId) {
+&nbsp;//        Blog blog = blogRepository.findById(blogId).get();
+&nbsp;//        blog.setValid(1);
+&nbsp;//        blogRepository.save(blog);
+&nbsp;//        SocketMessage sockMessage = new SocketMessage(&quot;System&quot;, blogId, &quot;System&quot;, null, blog.getTimestamp(), blog.getContent());
+&nbsp;//        socket.pushBlogToAllClients(sockMessage);
+&nbsp;//    }
+&nbsp;    @Override
+&nbsp;    public void deleteReply(Long replyId) {
+<b class="fc">&nbsp;        Reply reply = replyRepository.findById(replyId).get();</b>
+<b class="fc">&nbsp;        reply.setValid(0);</b>
+<b class="fc">&nbsp;        replyRepository.save(reply);</b>
+<b class="fc">&nbsp;        SocketMessage sockMessage = new SocketMessage(&quot;System&quot;, replyId, &quot;System&quot;, null, reply.getTimestamp(), reply.getContent());</b>
+<b class="fc">&nbsp;        socket.pushBlogToAllClients(sockMessage);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;//    @Override
+&nbsp;//    public void recoverReply(Long replyId) {
+&nbsp;//        Reply reply = replyRepository.findById(replyId).get();
+&nbsp;//        reply.setValid(1);
+&nbsp;//        replyRepository.save(reply);
+&nbsp;//        SocketMessage sockMessage = new SocketMessage(&quot;System&quot;, replyId, &quot;System&quot;, null, reply.getTimestamp(), reply.getContent());
+&nbsp;//        socket.pushBlogToAllClients(sockMessage);
+&nbsp;//    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;Blog&gt; getAllBlogs() {
+<b class="fc">&nbsp;        return blogRepository.findAll();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    @Override
+&nbsp;    public Blog getBlogById(Long blogid) {
+<b class="pc">&nbsp;        if (blogRepository.findById(blogid).isPresent()) {</b>
+<b class="fc">&nbsp;            return blogRepository.findById(blogid).get();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;Reply&gt; getRepliesByBlogid(Long blogid) {
+<b class="fc">&nbsp;        return replyRepository.findAllByBlogid(blogid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void likeBlog(Long blogid, String userid) {
+<b class="fc">&nbsp;        Blog blog = blogRepository.findById(blogid).get();</b>
+<b class="fc">&nbsp;        blog.setLikeNum(blog.getLikeNum() + 1);</b>
+<b class="fc">&nbsp;        Long timestamp = System.currentTimeMillis();</b>
+<b class="fc">&nbsp;        Like userLike = new Like(userid,blog.getUserid(),blogid,timestamp);</b>
+<b class="fc">&nbsp;        userLikeRepository.save(userLike);</b>
+<b class="fc">&nbsp;        blogRepository.save(blog);</b>
+<b class="fc">&nbsp;        SocketMessage sockMessage = new SocketMessage(&quot;System&quot;, blogid, &quot;System&quot;, null, TimeUtil.now(), &quot;like&quot;);</b>
+<b class="fc">&nbsp;        socket.pushBlogToAllClients(sockMessage);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void unlikeBlog(Long blogid, String userid) {
+<b class="fc">&nbsp;        Blog blog = blogRepository.findById(blogid).get();</b>
+<b class="fc">&nbsp;        blog.setLikeNum(blog.getLikeNum() - 1);</b>
+<b class="fc">&nbsp;        blogRepository.save(blog);</b>
+<b class="fc">&nbsp;        userLikeRepository.deleteByFromuseridAndBlogid(userid,blogid);</b>
+<b class="fc">&nbsp;        SocketMessage sockMessage = new SocketMessage(&quot;System&quot;, blogid, &quot;System&quot;, null, TimeUtil.now(), &quot;unlike&quot;);</b>
+<b class="fc">&nbsp;        socket.pushBlogToAllClients(sockMessage);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;Blog&gt; getBlogsByUserid(String userid) {
+<b class="fc">&nbsp;        List&lt;Blog&gt; blogs = blogRepository.findAllByUserid(userid);</b>
+<b class="fc">&nbsp;        return blogs;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;Reply&gt; getRepliesByUserid(String userid) {
+<b class="fc">&nbsp;        List&lt;Reply&gt; replies = replyRepository.findAllByFromuserid(userid);</b>
+<b class="fc">&nbsp;        return replies;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;Like&gt; getBlogLikedByUserid(String userid){
+<b class="fc">&nbsp;        List&lt;Like&gt; userLikes = userLikeRepository.findAllByFromuserid(userid);</b>
+<b class="fc">&nbsp;        return userLikes;</b>
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public void addBrowsenum(Long blogid){
+<b class="fc">&nbsp;        Blog blog = blogRepository.findById(blogid).get();</b>
+<b class="fc">&nbsp;        blog.setBrowsenum(blog.getBrowsenum() + 1);</b>
+<b class="fc">&nbsp;        blogRepository.save(blog);</b>
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public void reportBlog(Long blogid, String reason){
+<b class="fc">&nbsp;        Blog blog = blogRepository.findById(blogid).get();</b>
+<b class="fc">&nbsp;        Illegal illegal = new Illegal(0,blogid,blog.getUserid(),System.currentTimeMillis(),reason,0);</b>
+<b class="fc">&nbsp;        illegalRepository.save(illegal);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void addBlockingRecord(Long contentid, String reason,int type){
+<b class="fc">&nbsp;        if(type == 0){</b>
+<b class="fc">&nbsp;            Blog blog = blogRepository.findById(contentid).get();</b>
+<b class="fc">&nbsp;            Illegal illegal = new Illegal(0,blog.getBlogid(),blog.getUserid(),System.currentTimeMillis(),reason,1);</b>
+<b class="fc">&nbsp;            illegalRepository.save(illegal);</b>
+<b class="pc">&nbsp;        }else if(type == 1){</b>
+<b class="fc">&nbsp;            Reply reply = replyRepository.findById(contentid).get();</b>
+<b class="fc">&nbsp;            Illegal illegal = new Illegal(1,reply.getReplyid(),reply.getFromuserid(),System.currentTimeMillis(),reason,1);</b>
+<b class="fc">&nbsp;            illegalRepository.save(illegal);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void reportReply(Long replyid, String reason){
+<b class="fc">&nbsp;        Reply reply = replyRepository.findById(replyid).get();</b>
+<b class="fc">&nbsp;        Illegal illegal = new Illegal(1,replyid,reply.getFromuserid(),System.currentTimeMillis(),reason,0);</b>
+<b class="fc">&nbsp;        illegalRepository.save(illegal);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;Illegal&gt; getByType(int type){
+<b class="fc">&nbsp;        return illegalRepository.findAllByType(type);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String getReplyContentById(Long contentid){
+<b class="fc">&nbsp;        return replyRepository.findById(contentid).get().getContent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void setIllegalStatus(int illegalid, int i){
+<b class="fc">&nbsp;        Illegal illegal = illegalRepository.findByIllegalid(illegalid);</b>
+<b class="fc">&nbsp;        illegal.setStatus(i);</b>
+<b class="fc">&nbsp;        illegalRepository.save(illegal);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteIllegal(int illegalid){
+<b class="fc">&nbsp;        illegalRepository.deleteById(illegalid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Reply getReplyById(Long replyid) {
+<b class="pc">&nbsp;        if (replyRepository.findById(replyid).isPresent()) {</b>
+<b class="fc">&nbsp;            return replyRepository.findById(replyid).get();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;//    @Override
+&nbsp;//    public void (){
+&nbsp;//        return illegalRepository.findAll();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,217 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PushContent</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Entity</a>
+</div>
+
+<h1>Coverage Summary for Class: PushContent (org.example.rgybackend.Entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PushContent</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (4/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.3%
+  </span>
+  <span class="absValue">
+    (14/15)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PushContent$HibernateInstantiator</td>
+  </tr>
+  <tr>
+    <td class="name">PushContent$HibernateProxy</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (4/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.3%
+  </span>
+  <span class="absValue">
+    (14/15)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Entity;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.Model.TagModel;
+&nbsp;import org.example.rgybackend.Model.UrlDataModel;
+&nbsp;
+&nbsp;import jakarta.persistence.Basic;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.GeneratedValue;
+&nbsp;import jakarta.persistence.GenerationType;
+&nbsp;import jakarta.persistence.Id;
+&nbsp;import jakarta.persistence.Table;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;urldata&quot;)
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;public class PushContent {
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    @Id
+&nbsp;    @Column(name = &quot;dataid&quot;)
+&nbsp;    private Long dataid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;type&quot;)
+&nbsp;    private String type;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;title&quot;)
+&nbsp;    private String title;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;img&quot;)
+&nbsp;    private String img;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;description&quot;)
+&nbsp;    private String description;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;url&quot;)
+&nbsp;    private String url;
+&nbsp;    
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;tags&quot;)
+&nbsp;    private String tags;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;createdAt&quot;)
+&nbsp;    private Long createdAt;
+&nbsp;
+&nbsp;    private String toStringFromTags(List&lt;TagModel&gt; tags) {
+<b class="pc">&nbsp;        if(tags == null || tags.isEmpty()) {</b>
+<b class="nc">&nbsp;            return &quot;&quot;;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        List&lt;String&gt; strList = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for(TagModel tagModel : tags) {</b>
+<b class="fc">&nbsp;            strList.add(String.valueOf(tagModel.getId()));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return String.join(&quot;|&quot;, strList);</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public PushContent(UrlDataModel urlDataModel) {</b>
+<b class="fc">&nbsp;        this.dataid = null;</b>
+<b class="fc">&nbsp;        this.type = urlDataModel.getType();</b>
+<b class="fc">&nbsp;        this.title = urlDataModel.getTitle();</b>
+<b class="fc">&nbsp;        this.img = urlDataModel.getImg();</b>
+<b class="fc">&nbsp;        this.description = urlDataModel.getDescription();</b>
+<b class="fc">&nbsp;        this.url = urlDataModel.getUrl();</b>
+<b class="fc">&nbsp;        this.createdAt = urlDataModel.getCreatedAt();</b>
+<b class="fc">&nbsp;        this.tags = toStringFromTags(urlDataModel.getTags());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

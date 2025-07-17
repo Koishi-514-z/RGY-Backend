@@ -1,0 +1,247 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PsyProfileModel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Model</a>
+</div>
+
+<h1>Coverage Summary for Class: PsyProfileModel (org.example.rgybackend.Model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PsyProfileModel</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.4%
+  </span>
+  <span class="absValue">
+    (17/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (63/63)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Model;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.Entity.PsyProfileExtra;
+&nbsp;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;public class PsyProfileModel {
+&nbsp;    private String userid;
+&nbsp;    private String username;
+&nbsp;    private String email;
+&nbsp;    private String avatar;
+&nbsp;    private Long role;
+&nbsp;    private Long jointime;
+&nbsp;    private String phone;
+&nbsp;    private String title;
+&nbsp;    private String license;
+&nbsp;
+&nbsp;    private List&lt;TagModel&gt; specialty;
+&nbsp;    private String education;
+&nbsp;    private List&lt;TagModel&gt; certifications;
+&nbsp;    private Long workingYears;
+&nbsp;
+&nbsp;    private Long totalClients;
+&nbsp;    private Double avgScore;
+&nbsp;    private Long commentNum;
+&nbsp;    private Double successRate;
+&nbsp;
+&nbsp;    private String consultationFee;
+&nbsp;    private String location;
+&nbsp;    private String workingTime;
+&nbsp;    private String responseTime;
+&nbsp;
+&nbsp;    private String introduction;
+&nbsp;    private List&lt;String&gt; achievements;
+&nbsp;
+<b class="fc">&nbsp;    public final List&lt;TagModel&gt; specialtyTags = new ArrayList&lt;&gt;(</b>
+<b class="fc">&nbsp;        Arrays.asList(</b>
+<b class="fc">&nbsp;            new TagModel(1L, &quot;情感咨询&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(2L, &quot;焦虑抑郁&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(3L, &quot;职场压力&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(4L, &quot;亲子关系&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(5L, &quot;婚姻家庭&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(6L, &quot;青少年心理&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(7L, &quot;创伤治疗&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(8L, &quot;强迫症&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(9L, &quot;恐惧症&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(10L, &quot;人际关系&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(11L, &quot;职业规划&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(12L, &quot;学习障碍&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(13L, &quot;行为问题&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(14L, &quot;情绪管理&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(15L, &quot;性心理&quot;)</b>
+&nbsp;        )
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    public final List&lt;TagModel&gt; certificationTags = new ArrayList&lt;&gt;(</b>
+<b class="fc">&nbsp;        Arrays.asList(</b>
+<b class="fc">&nbsp;            new TagModel(1L, &quot;国家二级心理咨询师&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(2L, &quot;国家三级心理咨询师&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(3L, &quot;认知行为治疗师&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(4L, &quot;家庭治疗师&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(5L, &quot;沙盘游戏治疗师&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(6L, &quot;艺术治疗师&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(7L, &quot;催眠治疗师&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(8L, &quot;精神分析师&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(9L, &quot;人本主义治疗师&quot;),</b>
+<b class="fc">&nbsp;            new TagModel(10L, &quot;EMDR治疗师&quot;)</b>
+&nbsp;        )
+&nbsp;    );
+&nbsp;
+&nbsp;    private List&lt;String&gt; fromStringToList(String str) {
+<b class="pc">&nbsp;        if(str == null || str.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return Arrays.asList(str.split(&quot;\\|&quot;));</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public PsyProfileModel(PsyProfileExtra entity) {</b>
+<b class="fc">&nbsp;        this.userid = entity.getUserid();</b>
+<b class="fc">&nbsp;        this.role = 2L;</b>
+<b class="fc">&nbsp;        this.phone = entity.getPhone();</b>
+<b class="fc">&nbsp;        this.title = entity.getTitle();</b>
+<b class="fc">&nbsp;        this.license = entity.getLicense();</b>
+<b class="fc">&nbsp;        this.education = entity.getEducation();</b>
+<b class="fc">&nbsp;        this.workingYears = entity.getWorkingYears();</b>
+<b class="fc">&nbsp;        this.totalClients = entity.getTotalClients();</b>
+<b class="fc">&nbsp;        this.commentNum = entity.getCommentNum();</b>
+<b class="fc">&nbsp;        this.consultationFee = entity.getConsultationFee();</b>
+<b class="fc">&nbsp;        this.location = entity.getLocation();</b>
+<b class="fc">&nbsp;        this.workingTime = entity.getWorkingTime();</b>
+<b class="fc">&nbsp;        this.responseTime = entity.getResponseTime();</b>
+<b class="fc">&nbsp;        this.introduction = entity.getIntroduction();</b>
+<b class="fc">&nbsp;        this.achievements = fromStringToList(entity.getAchievements());</b>
+&nbsp;
+<b class="fc">&nbsp;        if(entity.getCommentNum() &gt; 0) {</b>
+<b class="fc">&nbsp;            this.avgScore = entity.getTotalScore() * 1.0 / entity.getCommentNum();</b>
+<b class="fc">&nbsp;            this.successRate = entity.getSuccessNum() * 1.0 / entity.getCommentNum();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;String&gt; specialtyList = fromStringToList(entity.getSpecialty());</b>
+<b class="fc">&nbsp;        this.specialty = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for(TagModel tag : specialtyTags) {</b>
+<b class="fc">&nbsp;            for(String id : specialtyList) {</b>
+<b class="fc">&nbsp;                if(tag.getId() == Long.parseLong(id)) {</b>
+<b class="fc">&nbsp;                    this.specialty.add(tag);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;String&gt; certificationList = fromStringToList(entity.getCertifications());</b>
+<b class="fc">&nbsp;        this.certifications = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for(TagModel tag : certificationTags) {</b>
+<b class="fc">&nbsp;            for(String id : certificationList) {</b>
+<b class="fc">&nbsp;                if(tag.getId() == Long.parseLong(id)) {</b>
+<b class="fc">&nbsp;                    this.certifications.add(tag);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

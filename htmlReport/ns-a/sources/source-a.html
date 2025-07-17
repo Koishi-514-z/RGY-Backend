@@ -1,0 +1,119 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Service</a>
+</div>
+
+<h1>Coverage Summary for Class: UserService (org.example.rgybackend.Service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">UserService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Service;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.DTO.IntimateDTO;
+&nbsp;import org.example.rgybackend.DTO.ProfileTag;
+&nbsp;import org.example.rgybackend.Model.*;
+&nbsp;
+&nbsp;public interface UserService {
+&nbsp;    boolean isAdmin(String userid);
+&nbsp;
+&nbsp;    boolean verifyPasswordByName(String username, String password);
+&nbsp;
+&nbsp;    boolean userExisted(String username);
+&nbsp;
+&nbsp;    ProfileModel getUserProfile(String userid);
+&nbsp;
+&nbsp;    List&lt;AdminProfileModel&gt; getAllProfile(String adminid);
+&nbsp;
+&nbsp;    PsyProfileModel getPsyProfile(String psyid);
+&nbsp;
+&nbsp;    List&lt;PsyProfileModel&gt; getPsyProfiles();
+&nbsp;
+&nbsp;    ProfileModel getProfileByName(String username);
+&nbsp;
+&nbsp;    SimplifiedProfileModel getSimplifiedProfile(String userid);
+&nbsp;
+&nbsp;    List&lt;IntimateDTO&gt; getIntimateUsers(String userid);
+&nbsp;
+&nbsp;    boolean isDisabled(String userid);
+&nbsp;
+&nbsp;    boolean verifyPassword(String userid, String password);
+&nbsp;
+&nbsp;    boolean verifyAdmin(String verifyKey);
+&nbsp;
+&nbsp;    boolean addUser(UserModel user);
+&nbsp;
+&nbsp;    boolean updateProfile(ProfileModel profile);
+&nbsp;
+&nbsp;    boolean updatePsyProfile(PsyProfileModel psyProfileModel);
+&nbsp;
+&nbsp;    boolean updatePassword(String userid, String password);
+&nbsp;
+&nbsp;    boolean setDisabled(String userid, boolean disabled);
+&nbsp;
+&nbsp;    ProfileTag getProfileTag(String userid);
+&nbsp;  
+&nbsp;    boolean postAuthCode(String email);
+&nbsp;
+&nbsp;    boolean checkAuthCode(String email, Long authCode);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

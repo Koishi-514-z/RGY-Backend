@@ -9,16 +9,8 @@ public class Notification {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    public void pushToAllClients(SocketMessage message) {
-        messagingTemplate.convertAndSend("/topic/messages", message);
-    }
-
     public void pushBlogToAllClients(SocketMessage message) {
         messagingTemplate.convertAndSend("/topic/messages/blog", message);
-    }
-
-    public void pushToUser(SocketMessage message) {
-        messagingTemplate.convertAndSendToUser(message.getTouserid(), "/queue/notifications", message);
     }
 
     public void pushChatToUser(SocketMessage message) {

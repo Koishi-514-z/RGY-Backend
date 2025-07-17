@@ -1,0 +1,213 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > NotificationController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Controller</a>
+</div>
+
+<h1>Coverage Summary for Class: NotificationController (org.example.rgybackend.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NotificationController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (36/36)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Controller;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import com.alibaba.fastjson2.JSONObject;
+&nbsp;import org.example.rgybackend.Model.NotificationPrivateModel;
+&nbsp;import org.example.rgybackend.Model.NotificationSentModel;
+&nbsp;import org.example.rgybackend.Service.NotificationService;
+&nbsp;import org.example.rgybackend.Utils.TimeUtil;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import jakarta.servlet.http.HttpSession;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/notification&quot;)
+<b class="fc">&nbsp;public class NotificationController {</b>
+&nbsp;    @Autowired
+&nbsp;    private NotificationService notificationService;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/get&quot;)
+&nbsp;    public List&lt;NotificationPrivateModel&gt; getPrivateNotification(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return notificationService.getPrivateNotification(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/getmine&quot;)
+&nbsp;    public List&lt;NotificationSentModel&gt; getPrivateNotificationMine(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return notificationService.getPrivateNotificationMine(userid);</b>
+&nbsp;    }
+&nbsp;    @PutMapping(&quot;/private/add&quot;)
+&nbsp;    public boolean addPrivateNotification(@RequestBody NotificationPrivateModel notification, HttpSession session) {
+<b class="fc">&nbsp;        String adminid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        notification.setAdminid(adminid);</b>
+<b class="fc">&nbsp;        notification.setTimestamp(TimeUtil.now());</b>
+<b class="fc">&nbsp;        return notificationService.addPrivateNotification(notification);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/multiple/add&quot;)
+&nbsp;    public boolean addMultiplePrivateNotification(@RequestBody String params, HttpSession session) {
+<b class="fc">&nbsp;        String adminid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        Long timestamp = TimeUtil.now();</b>
+<b class="fc">&nbsp;        JSONObject json = JSONObject.parseObject(params);</b>
+<b class="fc">&nbsp;        List&lt;String&gt; users = json.getJSONArray(&quot;users&quot;).toJavaList(String.class);</b>
+<b class="fc">&nbsp;        System.out.println(users);</b>
+<b class="fc">&nbsp;        Long type = json.getLong(&quot;type&quot;);</b>
+<b class="fc">&nbsp;        String title = json.getString(&quot;title&quot;);</b>
+<b class="fc">&nbsp;        String content = json.getString(&quot;content&quot;);</b>
+<b class="fc">&nbsp;        String priority = json.getString(&quot;priority&quot;);</b>
+<b class="fc">&nbsp;        for (String userid : users) {</b>
+<b class="fc">&nbsp;            NotificationPrivateModel notification = new NotificationPrivateModel();</b>
+<b class="fc">&nbsp;            notification.setUserid(userid);</b>
+<b class="fc">&nbsp;            notification.setAdminid(adminid);</b>
+<b class="fc">&nbsp;            notification.setTimestamp(timestamp);</b>
+<b class="fc">&nbsp;            notification.setType(type);</b>
+<b class="fc">&nbsp;            notification.setTitle(title);</b>
+<b class="fc">&nbsp;            notification.setContent(content);</b>
+<b class="fc">&nbsp;            notification.setPriority(priority);</b>
+<b class="fc">&nbsp;            notification.setUnread(1L);</b>
+<b class="fc">&nbsp;            notificationService.addPrivateNotification(notification);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/markread&quot;)
+&nbsp;    public boolean markRead(@RequestParam Long notificationid) {
+<b class="fc">&nbsp;        return notificationService.markRead(notificationid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/private/markallread&quot;)
+&nbsp;    public boolean markAllPrivateRead(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return notificationService.markAllPrivateRead(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/public/markallread&quot;)
+&nbsp;    public boolean markAllPublicRead(HttpSession session) {
+<b class="fc">&nbsp;        String userid = (String)session.getAttribute(&quot;user&quot;);</b>
+<b class="fc">&nbsp;        return notificationService.markAllPublicRead(userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/private/del&quot;)
+&nbsp;    public boolean deleteNotification(@RequestParam Long notificationid) {
+<b class="fc">&nbsp;        return notificationService.deleteNotification(notificationid);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

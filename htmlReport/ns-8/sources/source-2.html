@@ -1,0 +1,267 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ChatServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Service.Impl</a>
+</div>
+
+<h1>Coverage Summary for Class: ChatServiceImpl (org.example.rgybackend.Service.Impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChatServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (16/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (65/65)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Service.Impl;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.example.rgybackend.DAO.ChatDAO;
+&nbsp;import org.example.rgybackend.DTO.SessionTagDTO;
+&nbsp;import org.example.rgybackend.Entity.Message;
+&nbsp;import org.example.rgybackend.Entity.Session;
+&nbsp;import org.example.rgybackend.Model.MessageModel;
+&nbsp;import org.example.rgybackend.Model.SessionModel;
+&nbsp;import org.example.rgybackend.Model.SessionTagModel;
+&nbsp;import org.example.rgybackend.Service.ChatService;
+&nbsp;import org.example.rgybackend.Service.MilestoneServive;
+&nbsp;import org.example.rgybackend.Service.UserService;
+&nbsp;import org.example.rgybackend.Utils.SocketMessage;
+&nbsp;import org.example.rgybackend.Utils.Notification;
+&nbsp;import org.example.rgybackend.Utils.TimeUtil;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class ChatServiceImpl implements ChatService {</b>
+&nbsp;    @Autowired
+&nbsp;    private ChatDAO chatDAO;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserService userService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private Notification notification;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private MilestoneServive milestoneServive;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public SessionModel getSession(String fromuserid, Long sessionid) {
+<b class="fc">&nbsp;        Session session = chatDAO.getById(sessionid);</b>
+<b class="fc">&nbsp;        List&lt;MessageModel&gt; messageModels = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        SessionModel sessionModel = new SessionModel();</b>
+&nbsp;
+<b class="fc">&nbsp;        sessionModel.setSessionid(sessionid);</b>
+<b class="fc">&nbsp;        sessionModel.setTimestamp(session.getTimestamp());</b>
+<b class="fc">&nbsp;        for(Message message : session.getMessages()) {</b>
+<b class="fc">&nbsp;            if(fromuserid.equals(message.getFromuserid())) {</b>
+<b class="fc">&nbsp;                messageModels.add(new MessageModel(message, 0L));</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if(fromuserid.equals(message.getTouserid())) {</b>
+<b class="fc">&nbsp;                messageModels.add(new MessageModel(message, 1L));</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                throw new RuntimeException(&quot;Message does not contain such user, userid: &quot; + fromuserid);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        messageModels.sort((m1, m2) -&gt; m1.getTimestamp().compareTo(m2.getTimestamp()));</b>
+<b class="fc">&nbsp;        sessionModel.setMessages(messageModels);</b>
+&nbsp;
+<b class="fc">&nbsp;        if(fromuserid.equals(session.getUserAid())) {</b>
+<b class="fc">&nbsp;            sessionModel.setMyself(userService.getSimplifiedProfile(session.getUserAid()));</b>
+<b class="fc">&nbsp;            sessionModel.setOther(userService.getSimplifiedProfile(session.getUserBid()));</b>
+<b class="fc">&nbsp;            sessionModel.setUnread(session.getUnreadA());</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            sessionModel.setMyself(userService.getSimplifiedProfile(session.getUserBid()));</b>
+<b class="fc">&nbsp;            sessionModel.setOther(userService.getSimplifiedProfile(session.getUserAid()));</b>
+<b class="fc">&nbsp;            sessionModel.setUnread(session.getUnreadB());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return sessionModel;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;SessionTagModel&gt; getSessionTags(String fromuserid) {
+<b class="fc">&nbsp;        List&lt;SessionTagDTO&gt; sessionTagDTOs = chatDAO.getSessionTags(fromuserid);</b>
+<b class="fc">&nbsp;        List&lt;SessionTagModel&gt; sessionTagModels = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for(SessionTagDTO sessionTagDTO : sessionTagDTOs) {</b>
+<b class="fc">&nbsp;            SessionTagModel sessionTagModel = new SessionTagModel();</b>
+<b class="fc">&nbsp;            sessionTagModel.setSessionid(sessionTagDTO.getSessionid());</b>
+<b class="fc">&nbsp;            sessionTagModel.setTimestamp(sessionTagDTO.getTimestamp());</b>
+&nbsp;
+<b class="fc">&nbsp;            if(fromuserid.equals(sessionTagDTO.getUserAid())) {</b>
+<b class="fc">&nbsp;                sessionTagModel.setMyself(userService.getSimplifiedProfile(sessionTagDTO.getUserAid()));</b>
+<b class="fc">&nbsp;                sessionTagModel.setOther(userService.getSimplifiedProfile(sessionTagDTO.getUserBid()));</b>
+<b class="fc">&nbsp;                sessionTagModel.setUnread(sessionTagDTO.getUnreadA());</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                sessionTagModel.setMyself(userService.getSimplifiedProfile(sessionTagDTO.getUserBid()));</b>
+<b class="fc">&nbsp;                sessionTagModel.setOther(userService.getSimplifiedProfile(sessionTagDTO.getUserAid()));</b>
+<b class="fc">&nbsp;                sessionTagModel.setUnread(sessionTagDTO.getUnreadB());</b>
+&nbsp;            }
+<b class="fc">&nbsp;            sessionTagModels.add(sessionTagModel);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        sessionTagModels.sort((s1, s2) -&gt; s2.getTimestamp().compareTo(s1.getTimestamp()));</b>
+<b class="fc">&nbsp;        return sessionTagModels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Long getSessionid(String fromuserid, String touserid) {
+<b class="fc">&nbsp;        return chatDAO.getSessionid(fromuserid, touserid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean postMessage(Long sessionid, String content, String fromuserid) {
+<b class="fc">&nbsp;        Message message = new Message();</b>
+<b class="fc">&nbsp;        Session session = chatDAO.getById(sessionid);</b>
+&nbsp;        String touserid;
+<b class="fc">&nbsp;        if(session.getUserAid().equals(fromuserid)) {</b>
+<b class="fc">&nbsp;            touserid = session.getUserBid();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if(session.getUserBid().equals(fromuserid)) {</b>
+<b class="fc">&nbsp;            touserid = session.getUserAid();</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Session does not contain such user, userid: &quot; + fromuserid);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        milestoneServive.addMilestone(fromuserid, 5L);</b>
+&nbsp;
+<b class="fc">&nbsp;        message.setSessionid(sessionid);</b>
+<b class="fc">&nbsp;        message.setFromuserid(fromuserid);</b>
+<b class="fc">&nbsp;        message.setTouserid(touserid);</b>
+<b class="fc">&nbsp;        message.setTimestamp(TimeUtil.now());</b>
+<b class="fc">&nbsp;        message.setContent(content);</b>
+&nbsp;
+<b class="fc">&nbsp;        chatDAO.postMessage(sessionid, message);</b>
+&nbsp;
+<b class="fc">&nbsp;        SocketMessage sockMessage = new SocketMessage(&quot;System&quot;, sessionid, fromuserid, touserid, TimeUtil.now(), content);</b>
+<b class="fc">&nbsp;        notification.pushChatToUser(sockMessage);</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean updateRead(Long sessionid, String userid) {
+<b class="fc">&nbsp;        return chatDAO.updateRead(sessionid, userid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Long createSession(String fromuserid, String touserid) {
+<b class="fc">&nbsp;        Session session = new Session();</b>
+<b class="fc">&nbsp;        session.setUserAid(fromuserid);</b>
+<b class="fc">&nbsp;        session.setUserBid(touserid);</b>
+<b class="fc">&nbsp;        session.setTimestamp(TimeUtil.now());</b>
+<b class="fc">&nbsp;        session.setUnreadA(0L);</b>
+<b class="fc">&nbsp;        session.setUnreadB(0L);</b>
+<b class="fc">&nbsp;        session.setMessages(new ArrayList&lt;Message&gt;());</b>
+<b class="fc">&nbsp;        return chatDAO.createSession(session);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>

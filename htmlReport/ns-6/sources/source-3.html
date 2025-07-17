@@ -1,0 +1,180 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CrisisAuditing</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.rgybackend.Entity</a>
+</div>
+
+<h1>Coverage Summary for Class: CrisisAuditing (org.example.rgybackend.Entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CrisisAuditing</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CrisisAuditing$HibernateInstantiator</td>
+  </tr>
+  <tr>
+    <td class="name">CrisisAuditing$HibernateProxy</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.rgybackend.Entity;
+&nbsp;
+&nbsp;import org.example.rgybackend.Model.CrisisAuditingModel;
+&nbsp;
+&nbsp;import jakarta.persistence.Basic;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.GeneratedValue;
+&nbsp;import jakarta.persistence.GenerationType;
+&nbsp;import jakarta.persistence.Id;
+&nbsp;import jakarta.persistence.Table;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;crisis_auditing&quot;)
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;public class CrisisAuditing {
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    @Id
+&nbsp;    @Column(name = &quot;crisisid&quot;)
+&nbsp;    private Integer crisisid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;userid&quot;)
+&nbsp;    private String userid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;content&quot;)
+&nbsp;    private String content;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;timestamp&quot;)
+&nbsp;    private Long timestamp;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;contentid&quot;)
+&nbsp;    private Long contentid;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;type&quot;)
+&nbsp;    private Long type;
+&nbsp;
+&nbsp;    @Basic
+&nbsp;    @Column(name = &quot;urgencyLevel&quot;)
+&nbsp;    private Long urgencyLevel;
+&nbsp;
+&nbsp;
+&nbsp;  
+<b class="fc">&nbsp;    public CrisisAuditing(CrisisAuditingModel model) {</b>
+<b class="fc">&nbsp;        this.crisisid = model.getCrisisid();</b>
+<b class="fc">&nbsp;        this.userid = model.getUserid();</b>
+<b class="fc">&nbsp;        this.content = model.getContent();</b>
+<b class="fc">&nbsp;        this.timestamp = model.getTimestamp();</b>
+<b class="fc">&nbsp;        this.contentid = model.getContentid();</b>
+<b class="fc">&nbsp;        this.type = model.getType();</b>
+<b class="fc">&nbsp;        this.urgencyLevel = model.getUrgencyLevel();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-17 21:48</div>
+</div>
+</body>
+</html>
