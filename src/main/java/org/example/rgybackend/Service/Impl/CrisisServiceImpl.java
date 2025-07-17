@@ -71,18 +71,12 @@ public class CrisisServiceImpl implements CrisisService {
         crisisDAO.deleteCrisisAuditing(crisisid);
     }
 
-    public void deleteCrisis(int crisisid) {
-        crisisDAO.deleteCrisis(crisisid);
-    }
+
     @Override
     public void deleteCrisisAuditing(int crisisid) {
         crisisDAO.deleteCrisisAuditing(crisisid);
     }
 
-    @Override
-    public void saveCrisisAuditing(String content, Long timestamp, String userid) {
-        crisisDAO.saveCrisisAuditing(content, timestamp, userid);
-    }
 
     @Override
     public List<CrisisModel> getAllCrisis() {

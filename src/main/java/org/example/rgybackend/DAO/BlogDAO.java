@@ -16,11 +16,8 @@ public interface BlogDAO {
 
     void deleteBlog(Long blogId);
 
-    void recoverBlog(Long blogId);
 
     void deleteReply(Long replyId);
-
-    void recoverReply(Long replyId);
 
     List<Blog> getAllBlogs();
 

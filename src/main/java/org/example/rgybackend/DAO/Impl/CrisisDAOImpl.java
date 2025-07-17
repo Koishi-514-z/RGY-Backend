@@ -34,24 +34,12 @@ public class CrisisDAOImpl implements CrisisDAO {
         crisisRepository.save(crisis);
     }
 
-    @Override
-    public void deleteCrisis(int crisisid) {
-        crisisRepository.deleteById(crisisid);
-    }
 
     @Override
     public void deleteCrisisAuditing(int crisisid) {
         crisisAuditingRepository.deleteById(crisisid);
     }
 
-    @Override
-    public void saveCrisisAuditing(String content, Long timestamp, String userid) {
-        CrisisAuditing crisisAuditing = new CrisisAuditing();
-        crisisAuditing.setContent(content);
-        crisisAuditing.setTimestamp(timestamp);
-        crisisAuditing.setUserid(userid);
-        crisisAuditingRepository.save(crisisAuditing);
-    }
 
     @Override
     public List<Crisis> findAllCrisis() {
@@ -73,22 +61,6 @@ public class CrisisDAOImpl implements CrisisDAO {
         return crisisRepository.findAllByUserid(userid);
     }
 
-    @Override
-    public List<CrisisModel> getAllCrisis() {
-        List<Crisis> crisises = crisisRepository.findAll();
-        List<CrisisModel> crisisModels = new ArrayList<>();
-        for(Crisis crisis : crisises) {
-            crisisModels.add(new CrisisModel(crisis));
-        }
-        return crisisModels;
-    }
-
-    @Override
-    public boolean addCrisis(CrisisModel crisisModel) {
-        Crisis crisis = new Crisis(crisisModel);
-        crisisRepository.save(crisis);
-        return true;
-    }
 
     @Override
     public boolean updateStatus(Integer crisisid, Long status) {

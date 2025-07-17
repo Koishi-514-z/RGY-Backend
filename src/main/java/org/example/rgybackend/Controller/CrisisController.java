@@ -30,10 +30,12 @@ public class CrisisController {
 
     @GetMapping("/listAuditing")
     public List<CrisisModel> listCrisisAuditing(HttpSession session) {
-
+        String id = (String)session.getAttribute("user");
+        if(!userService.isAdmin(id)) {
+            throw new ForbiddenException("只有管理员允许进行该操作");
+        }
         return crisisService.getAllCrisisAuditing();
     }
-
     @GetMapping("/listUser/{userid}")
     public List<CrisisModel> listCrisisByUser(@PathVariable String userid, HttpSession session) {
         String id = (String)session.getAttribute("user");
@@ -77,7 +79,6 @@ public class CrisisController {
         }
         return crisisService.getAllCrisis();
     }
-
     @PutMapping("update")
     public boolean updateCrisisStatus(@RequestParam Integer crisisid, @RequestParam Long status, HttpSession session) {
         String userid = (String)session.getAttribute("user");

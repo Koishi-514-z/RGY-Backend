@@ -130,6 +130,10 @@ public class BlogController {
 
     @PostMapping ("/delete")
     public boolean deleteBlog(@RequestBody String params, HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        if(!userService.isAdmin(userid)) {
+            throw new ForbiddenException("只有管理员允许进行该操作");
+        }
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         Long blogid = json.getLongValue("blogid");
@@ -150,6 +154,10 @@ public class BlogController {
 
     @PostMapping ("/deleteReply")
     public boolean deleteReply(@RequestBody String params, HttpSession session) {
+        String userid = (String)session.getAttribute("user");
+        if(!userService.isAdmin(userid)) {
+            throw new ForbiddenException("只有管理员允许进行该操作");
+        }
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         Long replyid = json.getLongValue("replyid");
@@ -191,7 +199,11 @@ public class BlogController {
         json = JSON.parseObject(params);
         Long blogid = json.getLongValue("blogid");
         String userid = (String)session.getAttribute("user");
-        blogService.unlikeBlog(blogid,userid);
+        if (blogService.getBlogLikedByUserid(userid).stream().anyMatch(like -> like.getBlogid().equals(blogid))) {
+            blogService.unlikeBlog(blogid, userid);
+        } else {
+            blogService.likeBlog(blogid, userid);
+        }
         return true;
     }
     @PostMapping ("/addBrowsenum")
