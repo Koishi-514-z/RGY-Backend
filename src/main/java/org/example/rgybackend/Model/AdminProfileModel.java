@@ -11,7 +11,6 @@ public class AdminProfileModel {
     private String userid;
     private String username;
     private String email;
-    private String avatar;
     private String note;
     private Long role;
     private Long jointime;
@@ -21,7 +20,6 @@ public class AdminProfileModel {
         this.userid = userProfile.getUserid();
         this.username = userProfile.getUsername();
         this.email = userProfile.getEmail();
-        this.avatar = userProfile.getAvatar();
         this.note = userProfile.getNote();
         this.role = userProfile.getRole();
         this.jointime = userProfile.getJointime();
