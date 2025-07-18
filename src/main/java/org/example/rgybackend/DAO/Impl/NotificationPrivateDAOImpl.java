@@ -87,11 +87,11 @@ public class NotificationPrivateDAOImpl implements NotificationPrivateDAO {
         for(NotificationPrivate notificationPrivate : notificationPrivates) {
             NotificationSentModel notificationSentModel = notificationSentMap.get(notificationPrivate.getTimestamp());
             if(notificationSentModel == null) {
-                notificationSentModel = new NotificationSentModel(notificationPrivate.getType(),notificationPrivate.getAdminid(), notificationPrivate.getTitle(), notificationPrivate.getContent(),  notificationPrivate.getTimestamp(),1L,notificationPrivate.getPriority());
+                notificationSentModel = new NotificationSentModel(notificationPrivate.getType(),notificationPrivate.getAdminid(), notificationPrivate.getTitle(), notificationPrivate.getContent(),  notificationPrivate.getTimestamp(),notificationPrivate.getUnread(),notificationPrivate.getPriority());
                 notificationSentMap.put(notificationPrivate.getTimestamp(), notificationSentModel);
             }
             else {
-                notificationSentModel.setUnreadnum(notificationSentModel.getUnreadnum() + 1);
+                notificationSentModel.setUnreadnum(notificationSentModel.getUnreadnum() + notificationPrivate.getUnread());
             }
         }
         List<NotificationSentModel> notificationSentModels = new ArrayList<>(notificationSentMap.values());
