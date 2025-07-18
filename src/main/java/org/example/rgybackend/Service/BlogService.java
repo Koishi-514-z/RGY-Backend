@@ -8,13 +8,13 @@ import java.util.List;
 public interface BlogService {
     public void addBlog(String title, String content, List<String> tags, String author);
 
-    void deleteBlog(Long blogid);
+    void deleteBlog(Long blogid,int type);
 
     void addBlockingRecord(Long blogid,int type);
 
     public ReplyModel addReply(Long blogid, String content, String author);
 
-    public void deleteReply(Long replyid);
+    public void deleteReply(Long replyid,int type);
 
     BlogsRet getRequestedBlogs(int pageSize, int currentPage, String titleOrAuthor, List<String> tags, int emotion);
 

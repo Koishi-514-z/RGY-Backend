@@ -139,7 +139,7 @@ public class BlogController {
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         Long blogid = json.getLongValue("blogid");
-        blogService.deleteBlog(blogid);
+        blogService.deleteBlog(blogid,0);
         return true;
     }
 
@@ -163,9 +163,10 @@ public class BlogController {
         JSONObject json = new JSONObject();
         json = JSON.parseObject(params);
         Long replyid = json.getLongValue("replyid");
-        blogService.deleteReply(replyid);
+        blogService.deleteReply(replyid,0);
         return true;
     }
+
     @PostMapping ("/getIfLiked")
     public boolean getIfLiked(@RequestBody String params, HttpSession session) {
         JSONObject json = new JSONObject();
@@ -274,7 +275,7 @@ public class BlogController {
          //将违规记录标记为已处理
          blogService.setIllegalStatus(illegalid, 1);
          //删除博客
-         blogService.deleteBlog(blogid);
+         blogService.deleteBlog(blogid,1);
          return true;
      }
 
@@ -291,7 +292,7 @@ public class BlogController {
          //将违规记录标记为已处理
          blogService.setIllegalStatus(illegalid, 1);
          //删除回复
-         blogService.deleteReply(replyid);
+         blogService.deleteReply(replyid,1);
          return true;
      }
      @PostMapping("recoverIllegal")

@@ -49,7 +49,7 @@ public class ChatServiceImpl implements ChatService {
                 messageModels.add(new MessageModel(message, 1L));
             }
             else {
-                throw new RuntimeException("Message does not contain such user, userid: " + fromuserid);
+                throw new RuntimeException("Message does not contain such user, userid: " + fromuserid + "messageid: " + message.getMessageid());
             }
         }
         messageModels.sort((m1, m2) -> m1.getTimestamp().compareTo(m2.getTimestamp()));

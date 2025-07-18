@@ -96,15 +96,16 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void deleteBlog(Long blogid) {
+    public void deleteBlog(Long blogid, int type) {
         blogDAO.deleteBlog(blogid);
-        addBlockingRecord(blogid,0);
+        if(type == 0) {
+            addBlockingRecord(blogid,0);
+        }
     }
 
     @Override
     public void addBlockingRecord(Long contentid,int type) {
-        blogDAO.addBlockingRecord(contentid,"管理员屏蔽",type);
-
+        blogDAO.addBlockingRecord(contentid,"管理员屏蔽", type);
     }
 
     @Override
@@ -146,14 +147,16 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void deleteReply(Long replyid) {
+    public void deleteReply(Long replyid, int type) {
         Reply reply = blogDAO.getReplyById(replyid);
 
         cacheUtil.evictIntimateUsersCache(reply.getFromuserid());
         cacheUtil.evictIntimateUsersCache(reply.getTouserid());
 
         blogDAO.deleteReply(replyid);
-        addBlockingRecord(replyid,1);
+        if(type == 0) {
+            addBlockingRecord(replyid,1);
+        } 
     }
 
     @Override
